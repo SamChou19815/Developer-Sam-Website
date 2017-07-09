@@ -1,0 +1,8 @@
+/out/*
+/.idea/*
+/lib/*
+developersam.iml
+/web/resource/papers/*
+/web/resource/store/*
+/web/resource/blog/*
+.DS_Store

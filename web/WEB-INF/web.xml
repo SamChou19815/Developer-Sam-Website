@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <trim-directive-whitespaces>true</trim-directive-whitespaces>
+        </jsp-property-group>
+    </jsp-config>
+
+    <servlet>
+        <servlet-name>Projects</servlet-name>
+        <jsp-file>/projects.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Projects</servlet-name>
+        <url-pattern>/projects</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>Store</servlet-name>
+        <jsp-file>/store.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Store</servlet-name>
+        <url-pattern>/store</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>Blog Admin</servlet-name>
+        <jsp-file>/apps/admin/blog/index.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Blog Admin</servlet-name>
+        <url-pattern>/apps/admin/blog/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Apps - Shield</servlet-name>
+        <jsp-file>/apps/shield/index.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Apps - Shield</servlet-name>
+        <url-pattern>/apps/shield/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Apps - TEN</servlet-name>
+        <jsp-file>/apps/ten/index.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Apps - TEN</servlet-name>
+        <url-pattern>/apps/ten/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Apps - Bots Civ</servlet-name>
+        <jsp-file>/apps/botsciv/index.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Apps - Bots Civ</servlet-name>
+        <url-pattern>/apps/botsciv/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CreateOrUpdateServlet</servlet-name>
+        <servlet-class>com.developersam.web.control.admin.blog.CreateOrUpdateServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateOrUpdateServlet</servlet-name>
+        <url-pattern>/apps/admin/blog/createOrUpdate</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>LoadContentServlet</servlet-name>
+        <servlet-class>com.developersam.web.control.admin.blog.LoadContentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoadContentServlet</servlet-name>
+        <url-pattern>/apps/admin/blog/loadContent</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>LoadStatisticsServlet</servlet-name>
+        <servlet-class>com.developersam.web.control.admin.blog.LoadStatisticsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoadStatisticsServlet</servlet-name>
+        <url-pattern>/apps/admin/blog/loadStatistics</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>BlogArticlesServlet</servlet-name>
+        <servlet-class>com.developersam.web.control.blog.BlogArticlesServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BlogArticlesServlet</servlet-name>
+        <url-pattern>/blog</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>BlogArticleServlet</servlet-name>
+        <servlet-class>com.developersam.web.control.blog.BlogArticleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BlogArticleServlet</servlet-name>
+        <url-pattern>/blogArticle</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>SubmitCommentServlet</servlet-name>
+        <servlet-class>com.developersam.web.control.blog.SubmitCommentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SubmitCommentServlet</servlet-name>
+        <url-pattern>/apps/blog/submitComment</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>DeleteCommentServlet</servlet-name>
+        <servlet-class>com.developersam.web.control.blog.DeleteCommentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteCommentServlet</servlet-name>
+        <url-pattern>/apps/blog/deleteComment</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GameResponseServlet</servlet-name>
+        <servlet-class>com.developersam.web.control.ten.GameResponseServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GameResponseServlet</servlet-name>
+        <url-pattern>/apps/ten/response</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>LoadEntireGameServlet</servlet-name>
+        <servlet-class>com.developersam.web.control.botsciv.LoadEntireGameServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoadEntireGameServlet</servlet-name>
+        <url-pattern>/apps/botsciv/loadEntireGame</url-pattern>
+    </servlet-mapping>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>restricted urls</web-resource-name>
+            <url-pattern>/resource/store/protected/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>restricted urls</web-resource-name>
+            <url-pattern>/apps/admin/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Google User Only Apps</web-resource-name>
+            <url-pattern>/apps/ten/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>*</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Google User Only Apps</web-resource-name>
+            <url-pattern>/apps/botsciv/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>*</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>

@@ -90,6 +90,8 @@ public class HeaderTag extends TemplateTag {
         printNavLink("TEN", "/apps/ten/", selected == 4);
         printNavLink("Bots Civ", "/apps/botsciv/", selected == 5);
         printNavLink("Shield", "/apps/shield/", selected == 6);
+        printContent("<a href=\"https://github.com/SamChou19815/Developer-Sam-Website\"");
+        printContent(" class=\"mdl-navigation__link\" target=_blank>Open Source</a>");
         printContent("</nav>");
         printContent("</div>");
     }

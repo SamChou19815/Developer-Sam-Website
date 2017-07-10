@@ -134,15 +134,6 @@
                 <div>The thinking time for AI is around 1.5s.</div>
             </t:CardText>
         </t:Card>
-        <t:Card title="Copyrights">
-            <t:CardText>
-                The app uses open-source programs
-                <a href="https://github.com/SamChou19815/MCTS"
-                   target=_blank>MCTS</a> and
-                <a href="https://github.com/SamChou19815/TEN-Board-Game"
-                   target=_blank>TEN</a>.
-            </t:CardText>
-        </t:Card>
     </main>
 </div>
 </body>

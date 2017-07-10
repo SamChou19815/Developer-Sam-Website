@@ -111,12 +111,6 @@
                 A city tile with red border means it performs attack action.
             </t:CardText>
         </t:Card>
-        <t:Card title="Copyrights">
-            <t:CardText>
-                The app uses open-source program <a href="https://github.com/SamChou19815/Bots-Civ"
-                                                    target=_blank>Bots Civ</a>.
-            </t:CardText>
-        </t:Card>
     </main>
 </div>
 </body>

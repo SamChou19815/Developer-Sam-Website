@@ -15,7 +15,7 @@ import java.util.List;
 public abstract class BlockTag extends CustomTag {
 
     // Variables that supports nested custom tags
-    private CustomTag parentTag;
+    private BlockTag parentTag;
     private List<CustomTag> childrenTag = new ArrayList<>();
 
     // Variables that supports common tag attributes and info

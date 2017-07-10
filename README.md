@@ -6,10 +6,13 @@ Open Source Acknowledgement
 ---------------------------
 It is impossible for this website to run without 
 
-* [Jsoup](https://github.com/jhy/jsoup)
+* [Jsoup](https://jsoup.org/)
 * [MCTS](https://github.com/SamChou19815/MCTS)
 * [TEN](https://github.com/SamChou19815/TEN-Board-Game)
 * [Bots Civ](https://github.com/SamChou19815/Bots-Civ)
+* [Material Design Lite](https://getmdl.io/)
+* [jQuery](https://jquery.com/)
+* [Crypto JS](https://github.com/sytelus/CryptoJS)
 
 Documentation
 -------------

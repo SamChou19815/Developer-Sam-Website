@@ -1,10 +1,7 @@
 package com.developersam.web.model.blog;
 
 import com.developersam.web.model.datastore.DataStoreObject;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +18,11 @@ class BlogComments extends DataStoreObject {
     BlogComments(Key parentKey) {
         super("BlogComment");
         setParentKey(parentKey);
+    }
+
+    int getCommentsNumber() {
+        PreparedQuery pq = getPreparedQuery(getQuery());
+        return pq.countEntities(FetchOptions.Builder.withLimit(1000));
     }
 
     /**

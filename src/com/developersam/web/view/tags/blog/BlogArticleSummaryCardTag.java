@@ -36,7 +36,7 @@ public class BlogArticleSummaryCardTag extends BlogArticleCardTag {
         if (updated != null) {
             blogInfo += "<span class='blogInfo'>Updated: " + updated + "</span>";
         }
-        blogInfo += "<span class='blogInfo'>Comments: " + blogArticle.getComments().size() + "</span>";
+        blogInfo += "<span class='blogInfo'>Comments: " + blogArticle.getCommentsNumber() + "</span>";
         // blog content
         blogContent = blogArticle.getSummary();
         if (blogContent == null) {

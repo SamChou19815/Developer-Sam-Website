@@ -216,6 +216,16 @@ public class BlogArticle extends DataStoreObject {
     }
 
     /**
+     * Get the number of comments associated with the article.
+     * The method has cheaper cost than fetching all entities and then count
+     * @return number of comments
+     */
+    public int getCommentsNumber() {
+        BlogComments blogComments = new BlogComments(key);
+        return blogComments.getCommentsNumber();
+    }
+
+    /**
      * Get the comments associated with the article
      * @return comment list
      */

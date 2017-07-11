@@ -130,7 +130,6 @@
         <url-pattern>/apps/ten/response</url-pattern>
     </servlet-mapping>
 
-
     <servlet>
         <servlet-name>LoadEntireGameServlet</servlet-name>
         <servlet-class>com.developersam.web.control.botsciv.LoadEntireGameServlet</servlet-class>

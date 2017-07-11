@@ -24,7 +24,7 @@ public class BlogArticleSummaryCardTag extends BlogArticleCardTag {
         CardTitleLinkedTag cardTitleLinkedTag = new CardTitleLinkedTag();
         cardTitleLinkedTag.setTitle(blogArticle.getTitle());
         cardTitleLinkedTag.setUrl("blogArticle?url="+blogArticle.getUrl());
-        cardTitleLinkedTag.setParentTag(this);
+        cardTitleLinkedTag.setParent(this);
         cardTitleLinkedTag.doTag();
     }
 
@@ -57,7 +57,7 @@ public class BlogArticleSummaryCardTag extends BlogArticleCardTag {
         super.printBodyContent();
         if (shouldPrintReadMore) {
             CardActionsTag cardActionsTag = new CardActionsTag();
-            cardActionsTag.setParentTag(this);
+            cardActionsTag.setParent(this);
             LinkButtonTag linkButtonTag = new LinkButtonTag();
             linkButtonTag.setHref("blogArticle?url="+blogArticle.getUrl());
             linkButtonTag.setBodyContent("Read More");

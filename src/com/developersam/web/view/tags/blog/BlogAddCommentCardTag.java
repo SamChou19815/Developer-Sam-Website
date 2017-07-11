@@ -52,7 +52,7 @@ public class BlogAddCommentCardTag extends CardTag {
     private void printAddComment()  throws JspException, IOException {
         // print comment box
         CardTextTag cardTextTag = new CardTextTag();
-        cardTextTag.setParentTag(this);
+        cardTextTag.setParent(this);
         TextAreaInputTag textAreaInputTag = new TextAreaInputTag();
         textAreaInputTag.setId("newComment");
         textAreaInputTag.setRows(5);
@@ -68,7 +68,7 @@ public class BlogAddCommentCardTag extends CardTag {
         cardTextTag.doTag();
         // print submit button
         CardActionsTag cardActionsTag = new CardActionsTag();
-        cardActionsTag.setParentTag(this);
+        cardActionsTag.setParent(this);
         LinkButtonTag linkButtonTag = new LinkButtonTag();
         linkButtonTag.setHref("#");
         linkButtonTag.setOpenInNewTab(false);
@@ -86,7 +86,7 @@ public class BlogAddCommentCardTag extends CardTag {
     private void printLogin()  throws JspException, IOException {
         // print login link button
         CardActionsTag cardActionsTag = new CardActionsTag();
-        cardActionsTag.setParentTag(this);
+        cardActionsTag.setParent(this);
         LinkButtonTag linkButtonTag = new LinkButtonTag();
         String currentURL = "/blogArticle?url=" + url;
         linkButtonTag.setHref(userService.createLoginURL(currentURL));

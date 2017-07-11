@@ -1,6 +1,7 @@
 package com.developersam.web.devsuit.tags.basis;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspTag;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ import java.util.List;
 public abstract class BlockTag extends CustomTag {
 
     // Variables that supports nested custom tags
-    private BlockTag parentTag;
     private List<CustomTag> childrenTag = new ArrayList<>();
 
     // Variables that supports common tag attributes and info
@@ -30,10 +30,25 @@ public abstract class BlockTag extends CustomTag {
     /**
      * Link a parent block tag to itself.
      * It can therefore use its parent's JspWriter, which is the only available one, to doTag.
-     * @param parentTag parent tag
+     * @param parentTag parent tag that is a BlockTag
      */
-    public void setParentTag(BlockTag parentTag) {
-        this.parentTag = parentTag;
+    @Override
+    public void setParent(JspTag parentTag) {
+        super.setParent(parentTag);
+    }
+
+    /**
+     * Obtain a parent tag.
+     * Although this method is public, it is intended to be used by this superclass only to support nested block tag.
+     * @return parent block tag
+     */
+    @Override
+    public BlockTag getParent() {
+        try {
+            return (BlockTag) super.getParent();
+        }catch (ClassCastException e) {
+            return null; // only BlockTag is considered as valid parent
+        }
     }
 
     /**
@@ -44,7 +59,7 @@ public abstract class BlockTag extends CustomTag {
      * @param child child tag
      */
     public void addChildrenTag(BlockTag child) {
-        child.setParentTag(this);
+        child.setParent(this);
         childrenTag.add(child);
     }
 
@@ -98,10 +113,10 @@ public abstract class BlockTag extends CustomTag {
      * @throws IOException io exception
      */
     protected void printContent(String content) throws JspException, IOException {
-        if (parentTag == null) {
+        if (getParent() == null) {
             super.printContent(content);
         }else{
-            parentTag.printContent(content);
+            getParent().printContent(content);
         }
     }
 

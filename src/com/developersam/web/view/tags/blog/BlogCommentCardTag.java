@@ -39,7 +39,7 @@ public class BlogCommentCardTag extends CardTag {
      */
     private void printCommentInfo() throws JspException, IOException {
         CardTextBorderedTag cardTextTagForCommentInfo = new CardTextBorderedTag();
-        cardTextTagForCommentInfo.setParentTag(this);
+        cardTextTagForCommentInfo.setParent(this);
         final String authorLine = blogComment.isAnonymous()? "" :
                 "<span class='blogInfo'>Author: " + blogComment.getUsername() + "</span>";
         final String publishedLine = "<span class='blogInfo'>Published: " + blogComment.getPublished() + "</span>";
@@ -54,7 +54,7 @@ public class BlogCommentCardTag extends CardTag {
      */
     private void printCommentContent() throws JspException, IOException {
         CardTextTag cardTextTagForCommentContent = new CardTextTag();
-        cardTextTagForCommentContent.setParentTag(this);
+        cardTextTagForCommentContent.setParent(this);
         String comment = blogComment.getContent();
         comment = comment.replaceAll("(\r\n|\n)", "<br>"); // format content
         cardTextTagForCommentContent.setBodyContent(comment);
@@ -68,7 +68,7 @@ public class BlogCommentCardTag extends CardTag {
      */
     private void printDeleteCommentAction() throws JspException, IOException {
         CardActionsTag actionsTag = new CardActionsTag();
-        actionsTag.setParentTag(this);
+        actionsTag.setParent(this);
         LinkButtonTag linkButtonTag = new LinkButtonTag();
         linkButtonTag.setHref("#");
         linkButtonTag.setOpenInNewTab(false);

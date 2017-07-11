@@ -47,7 +47,7 @@ public class CardTag extends BlockTag {
         if (titleID != null) {
             cardTitleTag.setId(titleID);
         }
-        cardTitleTag.setParentTag(this);
+        cardTitleTag.setParent(this);
         cardTitleTag.doTag();
     }
 

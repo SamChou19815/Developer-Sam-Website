@@ -41,7 +41,7 @@ public abstract class BlogArticleCardTag extends CardTag {
      */
     private void printBlogInfo() throws JspException, IOException {
         CardTextBorderedTag cardTextTagForBlogInfo = new CardTextBorderedTag();
-        cardTextTagForBlogInfo.setParentTag(this);
+        cardTextTagForBlogInfo.setParent(this);
         cardTextTagForBlogInfo.setBodyContent(blogInfo);
         cardTextTagForBlogInfo.doTag();
     }
@@ -53,7 +53,7 @@ public abstract class BlogArticleCardTag extends CardTag {
      */
     private void printBlogContent() throws JspException, IOException {
         CardTextTag cardTextTagForBlogContent = new CardTextTag();
-        cardTextTagForBlogContent.setParentTag(this);
+        cardTextTagForBlogContent.setParent(this);
         cardTextTagForBlogContent.setCustomClasses("blogArticleContent");
         cardTextTagForBlogContent.setBodyContent(blogContent);
         cardTextTagForBlogContent.doTag();

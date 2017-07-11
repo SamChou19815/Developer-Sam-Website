@@ -4,6 +4,7 @@ import com.developersam.web.model.blog.BlogArticle;
 import com.developersam.web.model.blog.BlogArticles;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import java.io.IOException;
 /**
  * A servlet to process admin's request to load statistics of blog articles.
  */
+@WebServlet(name = "LoadStatisticsServlet", value="/apps/admin/blog/loadStatistics")
 public class LoadStatisticsServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

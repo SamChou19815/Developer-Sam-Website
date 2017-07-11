@@ -3,6 +3,7 @@ package com.developersam.web.control.ten;
 import com.developersam.ten.game.Controller;
 
 import java.io.IOException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,6 +12,7 @@ import javax.servlet.ServletException;
 /**
  * A servlet that returns AI's response to human's move in board game TEN
  */
+@WebServlet(name = "GameResponseServlet", value="/apps/ten/response")
 public class GameResponseServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

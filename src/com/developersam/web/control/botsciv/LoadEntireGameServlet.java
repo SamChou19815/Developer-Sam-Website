@@ -4,6 +4,7 @@ import com.developersam.botsciv.model.compiler.parser.ProgramSyntaxError;
 import com.developersam.botsciv.model.game.World;
 
 import java.io.IOException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import javax.servlet.ServletException;
 /**
  * A servlet that parses user programs, uses them, and sends back the entire game process for game Bots Civ.
  */
+@WebServlet(name = "LoadEntireGameServlet", value="/apps/botsciv/loadEntireGame")
 public class LoadEntireGameServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

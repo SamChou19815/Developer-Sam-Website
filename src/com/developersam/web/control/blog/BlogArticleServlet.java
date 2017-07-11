@@ -5,6 +5,7 @@ import com.developersam.web.model.blog.BlogArticle;
 import com.developersam.web.model.blog.exceptions.BlogArticleNotFoundException;
 import com.developersam.web.model.blog.BlogComment;
 
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +15,7 @@ import java.util.List;
 /**
  * A servlet that loads blog article object and some of its info onto blogArticle.jsp.
  */
+@WebServlet(name = "BlogArticleServlet", value="/blogArticle")
 public class BlogArticleServlet extends IPStatisticsServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

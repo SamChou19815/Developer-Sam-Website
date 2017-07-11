@@ -6,6 +6,7 @@ import com.developersam.web.model.blog.exceptions.BlogCommentActionPermissionDen
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import java.io.IOException;
 /**
  * A servlet to process user's request to add a comment.
  */
+@WebServlet(name = "SubmitCommentServlet", value="/apps/blog/submitComment")
 public class SubmitCommentServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

@@ -24,7 +24,8 @@ public class DataStoreObject {
 
     /**
      * This constructor is used when dataStore object must be initialized to support db operations.
-     * @param dataStoreTableName DataStore table name
+     * @param dataStoreTableName DataStore table name, which specifies for the entire class which kind of object
+     *                           to fetch
      */
     protected DataStoreObject(String dataStoreTableName) {
         this.dataStoreTableName = dataStoreTableName;

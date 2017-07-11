@@ -9,7 +9,8 @@
     UserStatistics userStatistics = new UserStatistics("ten");
     userStatistics.usagePlusOne(currentUser);
 %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %><%@ taglib uri="/WEB-INF/custom.tld" prefix="t" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="/WEB-INF/custom.tld" prefix="t" %>
 <!DOCTYPE HTML>
 <html>
 <head>

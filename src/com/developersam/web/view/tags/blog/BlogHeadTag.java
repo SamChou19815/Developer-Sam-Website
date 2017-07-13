@@ -14,6 +14,6 @@ public class BlogHeadTag extends HeadTag {
     public void doTag() throws JspException, IOException {
         super.doTag();
         printContent("<link href=\"https://fonts.googleapis.com/css?family=Roboto+Slab:300\" rel=\"stylesheet\">");
-        printContent("<link rel=\"stylesheet\" href=\"/framework/css/blog.css?v=1\" />");
+        printContent("<link rel=\"stylesheet\" href=\"/framework/css/blog.css?v=2\" />");
     }
 }

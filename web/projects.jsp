@@ -9,6 +9,15 @@
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <t:Header title="Projects - Developer Sam" selected="2"/>
     <main class="mdl-layout__content">
+        <t:Card title="DevSALON">
+            <t:CardMedia src="resource/icon/devsalon.png" alt="DevSALON"/>
+            <t:CardText>
+                Developer Sam's Association of Loosely Organized Nerds
+            </t:CardText>
+            <t:CardActions>
+                <t:LinkButton href="https://devsalon.github.io/" openInNewTab="true">View on GitHub</t:LinkButton>
+            </t:CardActions>
+        </t:Card>
         <t:Card title="SAM">
             <t:CardText>An online platform for homework assignment.</t:CardText>
             <t:CardActions>

@@ -35,7 +35,7 @@ public class CardMediaTag extends BlockTag {
 
     @Override
     protected void printBodyContent() throws JspException, IOException {
-        printContent("<img src=\"" + src +"\" alt=\"" + alt + "\" style=\"padding:10px;width:50%\" />"); // image
+        printContent("<img src=\"" + src +"\" alt=\"" + alt + "\" style=\"padding:10px;width:90%\" />"); // image
     }
 
 }

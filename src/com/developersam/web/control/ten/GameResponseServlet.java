@@ -19,7 +19,7 @@ public class GameResponseServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String clientInfo = request.getParameter("clientInfo");
-        byte[] move = Controller.respondToHumanMove(clientInfo);
+        int[] move = Controller.respondToHumanMove(clientInfo);
         String responseMove = String.valueOf(move[0]) + "," + String.valueOf(move[1]) + ","
                 + String.valueOf(move[2]) + "," + String.valueOf(move[3] + "," + String.valueOf(move[4]));
         response.setContentType("text/html;charset=UTF-8");

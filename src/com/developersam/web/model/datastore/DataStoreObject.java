@@ -2,6 +2,7 @@ package com.developersam.web.model.datastore;
 
 import com.google.appengine.api.datastore.*;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -128,16 +129,35 @@ public class DataStoreObject {
     }
 
     /**
-     * format a date object to yyyy-MM-dd hh:mm in EST
+     * Obtain a date formatter based in New York.
+     * @return a date formatter
+     */
+    protected SimpleDateFormat getDateFormatter() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+        return formatter;
+    }
+
+    /**
+     * format a date object to yyyy-MM-dd hh:mm in EST.
      * @param date date object
      * @return a string representation of time in EST (US New York)
      */
-    protected static String dateFormatter(Date date) {
+    protected String dateFormatter(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-        formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
-        return formatter.format(calendar.getTime());
+        return getDateFormatter().format(calendar.getTime());
     }
+
+    /**
+     * format date string like yyyy-MM-dd hh:mm in EST to a date object.
+     * @param date string representation of the day
+     * @return a date object
+     * @throws ParseException error of parsing
+     */
+    protected Date dateFormatter(String date) throws ParseException {
+        return getDateFormatter().parse(date);
+    }
+
 
 }

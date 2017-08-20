@@ -9,7 +9,7 @@ import java.io.IOException;
  */
 public class LineInputTag extends TextInputTag {
 
-    private String valueString = "";
+    String valueString = "";
 
     /**
      * Set the default value of the input.

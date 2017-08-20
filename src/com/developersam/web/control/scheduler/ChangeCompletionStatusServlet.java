@@ -10,16 +10,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * A servlet that loads list of scheduler items onto /apps/scheduler/.
+ * A servlet that delete an scheduler item.
  */
-@WebServlet(name = "LoadItemsServlet", value="/apps/scheduler/")
-public class LoadItemsServlet extends HttpServlet {
+@WebServlet(name = "ChangeCompletionStatusServlet", value="/apps/scheduler/changeCompletionStatus")
+public class ChangeCompletionStatusServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Scheduler scheduler = new Scheduler();
-        request.setAttribute("schedulerItems", scheduler.getAllSchedulerItems());
-        request.getRequestDispatcher("/apps/scheduler/index.jsp").forward(request, response);
+        String key = request.getParameter("key");
+        boolean completed = Boolean.parseBoolean(request.getParameter("completed"));
+        scheduler.changeCompletionStatus(key, completed);
     }
 
 }

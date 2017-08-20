@@ -67,7 +67,16 @@ public class DataStoreObject {
     }
 
     /**
-     * A helper method to obtain an entity by key
+     * A helper method to obtain an entity by a string form of key.
+     * @param key key in string
+     * @return entity with given key
+     */
+    protected Entity getEntityByKey(String key) {
+        return getEntityByKey(KeyFactory.stringToKey(key));
+    }
+
+    /**
+     * A helper method to obtain an entity by key.
      * @param key key of entity
      * @return entity with given key
      */

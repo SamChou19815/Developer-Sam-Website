@@ -1,5 +1,7 @@
 package com.developersam.web.view.tags.scheduler;
 
+import com.developersam.web.devsuit.tags.components.button.LinkButtonTag;
+import com.developersam.web.devsuit.tags.components.card.CardActionsTag;
 import com.developersam.web.devsuit.tags.components.card.CardTag;
 import com.developersam.web.devsuit.tags.components.card.CardTextBorderedTag;
 import com.developersam.web.model.scheduler.SchedulerItem;
@@ -33,10 +35,13 @@ public class SchedulerItemCardTag extends CardTag {
         }else {
             setTitleColor("mdl-color--green-400");
         }
+        if (schedulerItem.isCompleted()) {
+            addAdditionalAttributeString(" style='opacity: 0.5'"); // completed vs uncompleted
+        }
     }
 
     /**
-     * Print the deadline and description of the scheduler item in a nice manner.
+     * Print the deadline of the scheduler item in a nice manner.
      * @throws JspException error
      * @throws IOException error
      */
@@ -51,9 +56,39 @@ public class SchedulerItemCardTag extends CardTag {
         cardTextTagForDaysLeft.doTag();
     }
 
+    /**
+     * Print the buttons of the scheduler items.
+     * @throws JspException error
+     * @throws IOException error
+     */
+    private void printActions() throws JspException, IOException {
+        CardActionsTag cardActionsTag = new CardActionsTag();
+        cardActionsTag.setParent(this);
+        LinkButtonTag linkButtonDeleteTag = new LinkButtonTag();
+        linkButtonDeleteTag.setHref("#");
+        linkButtonDeleteTag.setOpenInNewTab(false);
+        linkButtonDeleteTag.setOnClick("Controller.deleteItem('" + schedulerItem.getKeyString() + "');");
+        linkButtonDeleteTag.setBodyContent("Delete");
+        cardActionsTag.addChildrenTag(linkButtonDeleteTag);
+        LinkButtonTag linkButtonMarkTag = new LinkButtonTag();
+        linkButtonMarkTag.setHref("#");
+        linkButtonMarkTag.setOpenInNewTab(false);
+        boolean completed = schedulerItem.isCompleted();
+        String key = schedulerItem.getKeyString();
+        linkButtonMarkTag.setOnClick("Controller.changeCompletionStatusOfAnItem('" + key + "', " + !completed + ");");
+        if (completed) {
+            linkButtonMarkTag.setBodyContent("Mark as uncompleted");
+        }else {
+            linkButtonMarkTag.setBodyContent("Mark as completed");
+        }
+        cardActionsTag.addChildrenTag(linkButtonMarkTag);
+        cardActionsTag.doTag();
+    }
+
     @Override
     protected void printBodyContent() throws JspException, IOException {
         printTitle();
         printSchedulerItemContent();
+        printActions();
     }
 }

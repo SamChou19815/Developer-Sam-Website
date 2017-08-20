@@ -10,12 +10,17 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * An individual item in the scheduler.
+ * It consists of description, deadline, and a completion status.
+ */
 public class SchedulerItem extends DataStoreObject {
 
     private Key key;
 
     private String description;
     private Date deadline;
+    private boolean completed;
 
     /**
      * Used when fetching a new entity.
@@ -26,6 +31,7 @@ public class SchedulerItem extends DataStoreObject {
         this.key = projectEntity.getKey();
         this.description = (String) projectEntity.getProperty("description");
         this.deadline = (Date) projectEntity.getProperty("deadline");
+        this.completed = (boolean) projectEntity.getProperty("completed");
     }
 
     /**
@@ -42,6 +48,8 @@ public class SchedulerItem extends DataStoreObject {
         itemEntity.setProperty("description", description);
         this.deadline = deadline;
         itemEntity.setProperty("deadline", deadline);
+        this.completed = false;
+        itemEntity.setProperty("completed", false);
         putIntoDatabase(itemEntity);
     }
 
@@ -75,16 +83,8 @@ public class SchedulerItem extends DataStoreObject {
         return (int) TimeUnit.MILLISECONDS.toDays(diff);
     }
 
-    /**
-     * Change the deadline of a project item.
-     * This will also change the entity in the database.
-     * @param deadline new deadline
-     */
-    public void setDeadline(Date deadline) {
-        this.deadline = deadline;
-        Entity existingItemEntity = getEntityByKey(key);
-        existingItemEntity.setProperty("deadline", deadline);
-        putIntoDatabase(existingItemEntity);
+    public boolean isCompleted() {
+        return completed;
     }
 
     @Override
@@ -93,4 +93,39 @@ public class SchedulerItem extends DataStoreObject {
         formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
         return formatter;
     }
+
+    /**
+     * Delete the item from scheduler database.
+     */
+    public void delete() {
+        removeFromDatabase(key);
+    }
+
+    /**
+     * A helper method to change the complete status for an item.
+     * It will directly read the complete status from this object.
+     */
+    private void changeCompleteStatus() {
+        Entity existingItemEntity = getEntityByKey(key);
+        existingItemEntity.setProperty("completed", completed);
+        putIntoDatabase(existingItemEntity);
+    }
+
+    /**
+     * Mark the item as completed.
+     */
+    public void markAsCompleted() {
+        completed = true;
+        changeCompleteStatus();
+    }
+
+    /**
+     * Mark the item as uncompleted.
+     */
+    public void markAsUncompleted() {
+        this.completed = false;
+        changeCompleteStatus();
+    }
+
+
 }

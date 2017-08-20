@@ -2,7 +2,6 @@ package com.developersam.web.view.tags.scheduler;
 
 import com.developersam.web.devsuit.tags.components.card.CardTag;
 import com.developersam.web.devsuit.tags.components.card.CardTextBorderedTag;
-import com.developersam.web.devsuit.tags.components.card.CardTextTag;
 import com.developersam.web.model.scheduler.SchedulerItem;
 
 import javax.servlet.jsp.JspException;
@@ -36,6 +35,10 @@ public class SchedulerItemCardTag extends CardTag {
         cardTextTagForDeadline.setParent(this);
         cardTextTagForDeadline.setBodyContent("Deadline: " + schedulerItem.getDeadline());
         cardTextTagForDeadline.doTag();
+        CardTextBorderedTag cardTextTagForDaysLeft = new CardTextBorderedTag();
+        cardTextTagForDaysLeft.setParent(this);
+        cardTextTagForDaysLeft.setBodyContent("Days Left: " + schedulerItem.getDaysLeft());
+        cardTextTagForDaysLeft.doTag();
     }
 
     @Override

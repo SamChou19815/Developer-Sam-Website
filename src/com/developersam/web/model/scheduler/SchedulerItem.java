@@ -8,6 +8,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 public class SchedulerItem extends DataStoreObject {
 
@@ -62,6 +63,16 @@ public class SchedulerItem extends DataStoreObject {
      */
     public String getDeadline() {
         return dateFormatter(deadline);
+    }
+
+    /**
+     * Calculate and obtain how many days left for the deadline.
+     * @return days left
+     */
+    public int getDaysLeft() {
+        Date timeNow = new Date();
+        long diff = deadline.getTime() - timeNow.getTime();
+        return (int) TimeUnit.MILLISECONDS.toDays(diff);
     }
 
     /**

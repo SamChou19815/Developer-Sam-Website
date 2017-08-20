@@ -30,7 +30,7 @@ public class Scheduler extends DataStoreObject {
         Filter filterUser = new FilterPredicate("username", FilterOperator.EQUAL, username);
         Filter filterDeadline = new FilterPredicate("deadline", FilterOperator.GREATER_THAN, new Date());
         Filter filter = CompositeFilterOperator.and(filterUser, filterDeadline);
-        Query q = getQuery().addSort("deadline", SortDirection.DESCENDING).setFilter(filter);
+        Query q = getQuery().addSort("deadline", SortDirection.ASCENDING).setFilter(filter);
         PreparedQuery pq = getPreparedQuery(q);
         for (Entity itemEntity: pq.asIterable()) {
             SchedulerItem schedulerItem = new SchedulerItem(itemEntity);

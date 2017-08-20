@@ -91,6 +91,14 @@ public abstract class BlockTag extends CustomTag {
     }
 
     /**
+     * Set additional attributes string for the tag.
+     * @param additionalAttributeString additional attributes
+     */
+    public void setAdditionalAttributeString(String additionalAttributeString) {
+        this.additionalAttributeString = additionalAttributeString;
+    }
+
+    /**
      * Set the body content of the tag.
      * It is used only when the body content is dynamically calculated by JSP EL.
      * @param bodyContent body content in string

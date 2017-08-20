@@ -29,9 +29,10 @@ public class HeaderTag extends TemplateTag {
      *  1: Blog
      *  2: Projects
      *  3: Store
-     *  4: TEN
-     *  5: Bots Civ
-     *  6: Shield
+     *  4: Scheduler
+     *  5: TEN
+     *  6: Bots Civ
+     *  7: Shield
      * @param selected module id
      */
     public void setSelected(int selected) {
@@ -87,9 +88,10 @@ public class HeaderTag extends TemplateTag {
         printNavLink("Blog", "/blog", selected == 1);
         printNavLink("Projects", "/projects", selected == 2);
         printNavLink("Store", "/store", selected == 3);
-        printNavLink("TEN", "/apps/ten/", selected == 4);
-        printNavLink("Bots Civ", "/apps/botsciv/", selected == 5);
-        printNavLink("Shield", "/apps/shield/", selected == 6);
+        printNavLink("Scheduler", "/apps/scheduler/", selected == 4);
+        printNavLink("TEN", "/apps/ten/", selected == 5);
+        printNavLink("Bots Civ", "/apps/botsciv/", selected == 6);
+        printNavLink("Shield", "/apps/shield/", selected == 7);
         printContent("<a href=\"https://github.com/SamChou19815/Developer-Sam-Website\"");
         printContent(" class=\"mdl-navigation__link\" target=_blank>Open Source</a>");
         printContent("</nav>");

@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-tabs">
-    <t:Header title="Shield - Developer Sam Apps" selected="6"/>
+    <t:Header title="Shield - Developer Sam Apps" selected="7"/>
     <main class="mdl-layout__content app">
         <div id="input_area">
             <t:Card title="Input Area">

@@ -55,7 +55,7 @@
 </head>
 <body>
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-tabs">
-    <t:Header title="Bots Civ - Developer Sam Apps" selected="5"/>
+    <t:Header title="Bots Civ - Developer Sam Apps" selected="6"/>
     <main class="mdl-layout__content app">
         <div class="mdl-card mdl-shadow--2dp" id="gameCard">
             <div class="mdl-card__title">

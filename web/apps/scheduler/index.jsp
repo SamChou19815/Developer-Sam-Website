@@ -11,10 +11,10 @@
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-tabs">
     <t:Header title="Scheduler - Developer Sam Apps" selected="4"/>
     <main class="mdl-layout__content app">
-        <schedulerT:SchedulerAddItemCard/>
         <c:forEach items="${requestScope.schedulerItems}" var="schedulerItem">
             <schedulerT:SchedulerItemCard schedulerItem="${schedulerItem}" />
         </c:forEach>
+        <schedulerT:SchedulerAddItemCard/>
     </main>
 </div>
 </body>
@@ -25,11 +25,24 @@
             var description = $("#item-description").val(), deadline = $("#item-deadline").val();
             $.post("add", {description: description, deadline: deadline}, function (data) {
                 if (data === "true") {
-                    alert("You have successfully added a new scheduler item. The page is going to reload.");
+                    alert("You have successfully added a new scheduler item. The page is going to be reloaded.");
                     location.reload();
                 }else {
                     alert("You have not given the description OR the date you've given is illegal.");
                 }
+            })
+        },
+        deleteItem: function(key) {
+            $.get("delete", {key: key}, function (data) {
+                alert("You have successfully deleted the scheduler item. The page is going to be reloaded.");
+                location.reload();
+            })
+        },
+        changeCompletionStatusOfAnItem: function (key, completed) {
+            $.get("changeCompletionStatus", {key: key, completed: completed}, function (data) {
+                alert("You have successfully change the completion status of the scheduler item. " +
+                    "The page is going to be reloaded.");
+                location.reload();
             })
         }
     }

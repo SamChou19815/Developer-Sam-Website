@@ -59,7 +59,7 @@ public class CardTag extends BlockTag {
         }
         if (titleColorCSS != null) {
             cardTitleTag.setCustomClasses(titleColorCSS);
-            cardTitleTag.setAdditionalAttributeString(" style='color:white'");
+            cardTitleTag.addAdditionalAttributeString(" style='color:white'");
         }
         cardTitleTag.setParent(this);
         cardTitleTag.doTag();

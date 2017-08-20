@@ -91,11 +91,11 @@ public abstract class BlockTag extends CustomTag {
     }
 
     /**
-     * Set additional attributes string for the tag.
+     * add additional attributes string for the tag.
      * @param additionalAttributeString additional attributes
      */
-    public void setAdditionalAttributeString(String additionalAttributeString) {
-        this.additionalAttributeString = additionalAttributeString;
+    public void addAdditionalAttributeString(String additionalAttributeString) {
+        this.additionalAttributeString += additionalAttributeString;
     }
 
     /**

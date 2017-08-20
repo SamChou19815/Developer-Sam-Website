@@ -23,6 +23,16 @@ public class SchedulerItemCardTag extends CardTag {
         this.schedulerItem = schedulerItem;
         setId("scheduler-item-"+schedulerItem.getKeyString());
         setTitle(schedulerItem.getDescription());
+        int daysLeft = schedulerItem.getDaysLeft();
+        if (daysLeft == 0) {
+            setTitleColor("mdl-color--red-400");
+        }else if (daysLeft < 2) {
+            setTitleColor("mdl-color--deep-orange-400");
+        }else if (daysLeft < 5) {
+            setTitleColor("mdl-color--orange-400");
+        }else {
+            setTitleColor("mdl-color--green-400");
+        }
     }
 
     /**

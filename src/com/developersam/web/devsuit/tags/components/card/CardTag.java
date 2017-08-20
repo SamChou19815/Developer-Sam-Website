@@ -17,6 +17,7 @@ public class CardTag extends BlockTag {
 
     private String title;
     private String titleID;
+    private String titleColorCSS;
 
     /**
      * Set title of the card.
@@ -37,6 +38,15 @@ public class CardTag extends BlockTag {
     }
 
     /**
+     * Set the color for CSS, useful for customization.
+     * Only used for customization.
+     * @param colorClass color css for title
+     */
+    protected void setTitleColor(String colorClass) {
+        titleColorCSS = colorClass;
+    }
+
+    /**
      * Print the title card
      * @throws JspException jsp exception
      * @throws IOException io exception
@@ -46,6 +56,10 @@ public class CardTag extends BlockTag {
         cardTitleTag.setTitle(title);
         if (titleID != null) {
             cardTitleTag.setId(titleID);
+        }
+        if (titleColorCSS != null) {
+            cardTitleTag.setCustomClasses(titleColorCSS);
+            cardTitleTag.setAdditionalAttributeString(" style='color:white'");
         }
         cardTitleTag.setParent(this);
         cardTitleTag.doTag();

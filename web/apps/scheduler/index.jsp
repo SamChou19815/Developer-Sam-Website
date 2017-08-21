@@ -15,6 +15,7 @@
             <schedulerT:SchedulerItemCard schedulerItem="${schedulerItem}" />
         </c:forEach>
         <schedulerT:SchedulerAddItemCard/>
+        <schedulerT:SchedulerSettingsCard schedulerUser="${requestScope.schedulerUser}"/>
     </main>
 </div>
 </body>
@@ -40,7 +41,14 @@
         },
         changeCompletionStatusOfAnItem: function (key, completed) {
             $.get("changeCompletionStatus", {key: key, completed: completed}, function (data) {
-                alert("You have successfully change the completion status of the scheduler item. " +
+                alert("You have successfully changed the completion status of the scheduler item. " +
+                    "The page is going to be reloaded.");
+                location.reload();
+            })
+        },
+        setEmailNotificationSwitch: function(enabled) {
+            $.get("changeEmailNotificationSetting", {emailNotificationEnabled: enabled}, function(data) {
+                alert("You have successfully changed your email notification settings. " +
                     "The page is going to be reloaded.");
                 location.reload();
             })

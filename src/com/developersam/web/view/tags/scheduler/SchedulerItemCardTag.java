@@ -58,8 +58,8 @@ public class SchedulerItemCardTag extends CardTag {
 
     /**
      * Print the buttons of the scheduler items.
-     * @throws JspException error
-     * @throws IOException error
+     * @throws JspException jsp exception
+     * @throws IOException io exception
      */
     private void printActions() throws JspException, IOException {
         CardActionsTag cardActionsTag = new CardActionsTag();

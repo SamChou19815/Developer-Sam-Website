@@ -36,14 +36,14 @@ public class SchedulerItem extends DataStoreObject {
 
     /**
      * Used when adding a new item record into database.
-     * @param username the user who owns the item
+     * @param userEmail the email of the user who owns the item
      * @param description description of the item
      * @param deadline deadline of the item
      */
-    SchedulerItem(String username, String description, Date deadline) {
+    SchedulerItem(String userEmail, String description, Date deadline) {
         super("SchedulerItem");
         Entity itemEntity = getNewEntity();
-        itemEntity.setProperty("username", username);
+        itemEntity.setProperty("userEmail", userEmail);
         this.description = description;
         itemEntity.setProperty("description", description);
         this.deadline = deadline;
@@ -114,7 +114,7 @@ public class SchedulerItem extends DataStoreObject {
     /**
      * Mark the item as completed.
      */
-    public void markAsCompleted() {
+    void markAsCompleted() {
         completed = true;
         changeCompleteStatus();
     }
@@ -122,7 +122,7 @@ public class SchedulerItem extends DataStoreObject {
     /**
      * Mark the item as uncompleted.
      */
-    public void markAsUncompleted() {
+    void markAsUncompleted() {
         this.completed = false;
         changeCompleteStatus();
     }

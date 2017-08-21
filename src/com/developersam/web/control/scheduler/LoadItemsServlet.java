@@ -1,6 +1,7 @@
 package com.developersam.web.control.scheduler;
 
 import com.developersam.web.model.scheduler.Scheduler;
+import com.developersam.web.model.scheduler.SchedulerUser;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,6 +20,7 @@ public class LoadItemsServlet extends HttpServlet {
             throws ServletException, IOException {
         Scheduler scheduler = new Scheduler();
         request.setAttribute("schedulerItems", scheduler.getAllSchedulerItems());
+        request.setAttribute("schedulerUser", new SchedulerUser());
         request.getRequestDispatcher("/apps/scheduler/index.jsp").forward(request, response);
     }
 

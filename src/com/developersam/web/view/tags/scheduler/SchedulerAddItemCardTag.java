@@ -11,6 +11,9 @@ import com.developersam.web.devsuit.tags.components.loading.ProgressBarIntermedi
 import javax.servlet.jsp.JspException;
 import java.io.IOException;
 
+/**
+ * A card to add new scheduler items into database.
+ */
 public class SchedulerAddItemCardTag extends CardTag {
 
     public SchedulerAddItemCardTag() {

@@ -14,7 +14,7 @@ import javax.servlet.jsp.JspException;
 import java.io.IOException;
 
 /**
- * A card to add comment or to login to do so
+ * A card to add comment or to login to do so.
  */
 public class BlogAddCommentCardTag extends CardTag {
 

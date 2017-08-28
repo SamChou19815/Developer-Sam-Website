@@ -80,7 +80,7 @@ public class SchedulerItem extends DataStoreObject {
     public int getDaysLeft() {
         Date timeNow = new Date();
         long diff = deadline.getTime() - timeNow.getTime();
-        return (int) TimeUnit.MILLISECONDS.toDays(diff);
+        return (int) TimeUnit.MILLISECONDS.toDays(diff) + 1;
     }
 
     public boolean isCompleted() {

@@ -26,11 +26,11 @@ public class SchedulerItemCardTag extends CardTag {
         setId("scheduler-item-"+schedulerItem.getKeyString());
         setTitle(schedulerItem.getDescription());
         int daysLeft = schedulerItem.getDaysLeft();
-        if (daysLeft == 0) {
+        if (daysLeft == 1) {
             setTitleColor("mdl-color--red-400");
-        }else if (daysLeft < 2) {
+        }else if (daysLeft <= 3) {
             setTitleColor("mdl-color--deep-orange-400");
-        }else if (daysLeft < 5) {
+        }else if (daysLeft <= 6) {
             setTitleColor("mdl-color--orange-400");
         }else {
             setTitleColor("mdl-color--green-400");

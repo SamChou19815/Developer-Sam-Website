@@ -21,7 +21,7 @@
         <t:Card title="Know more about Sam">
             <t:CardText>Specialized in machine learning and web development.</t:CardText>
             <t:CardActions>
-                <t:LinkButton href="resource/papers/Resume.pdf" openInNewTab="true">My Resume</t:LinkButton>
+                <t:LinkButton href="resource/docs/Resume.pdf" openInNewTab="true">My Resume</t:LinkButton>
             </t:CardActions>
         </t:Card>
     </main>

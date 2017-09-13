@@ -6,6 +6,6 @@ package com.developersam.web.devsuit.tags.components.card;
 public class CardTextBorderedTag extends CardTextTag {
 
     public CardTextBorderedTag() {
-        preDefinedClasses = "mdl-card__supporting-text mdl-card--border";
+        setPreDefinedClasses("mdl-card__supporting-text mdl-card--border");
     }
 }

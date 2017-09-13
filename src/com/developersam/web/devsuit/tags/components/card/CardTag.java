@@ -12,7 +12,7 @@ import java.io.IOException;
 public class CardTag extends BlockTag {
 
     public CardTag() {
-        preDefinedClasses = "mdl-card mdl-shadow--2dp";
+        setPreDefinedClasses("mdl-card mdl-shadow--2dp");
     }
 
     private String title;

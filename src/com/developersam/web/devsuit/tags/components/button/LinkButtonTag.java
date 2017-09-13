@@ -8,8 +8,8 @@ import com.developersam.web.devsuit.tags.basis.BlockTag;
 public class LinkButtonTag extends BlockTag {
 
     public LinkButtonTag() {
-        tagName = "a";
-        preDefinedClasses = "mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect";
+        setTagName("a");
+        setPreDefinedClasses("mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect");
     }
 
     private String hrefString;
@@ -38,6 +38,6 @@ public class LinkButtonTag extends BlockTag {
 
     @Override
     protected void initialize() {
-        additionalAttributeString = hrefString + openInNewTabString;
+        addAdditionalAttributeString(hrefString + openInNewTabString);
     }
 }

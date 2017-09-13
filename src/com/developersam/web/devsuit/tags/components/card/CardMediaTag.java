@@ -11,7 +11,7 @@ import java.io.IOException;
 public class CardMediaTag extends BlockTag {
 
     public CardMediaTag() {
-        preDefinedClasses = "mdl-card__media";
+        setPreDefinedClasses("mdl-card__media");
     }
 
     private String src;

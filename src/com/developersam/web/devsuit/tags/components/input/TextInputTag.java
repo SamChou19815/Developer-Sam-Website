@@ -6,7 +6,7 @@ import java.io.IOException;
 public abstract class TextInputTag extends InputTag {
 
     public TextInputTag() {
-        preDefinedClasses = "mdl-textfield mdl-js-textfield";
+        setPreDefinedClasses("mdl-textfield mdl-js-textfield");
     }
 
     @Override

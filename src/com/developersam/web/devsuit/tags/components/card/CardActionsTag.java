@@ -8,7 +8,7 @@ import com.developersam.web.devsuit.tags.basis.BlockTag;
 public class CardActionsTag extends BlockTag {
 
     public CardActionsTag() {
-        preDefinedClasses = "mdl-card__actions mdl-card--border";
+        setPreDefinedClasses("mdl-card__actions mdl-card--border");
     }
 
 }

@@ -8,7 +8,7 @@ import com.developersam.web.devsuit.tags.basis.BlockTag;
 public class CardTextTag extends BlockTag {
 
     public CardTextTag() {
-        preDefinedClasses = "mdl-card__supporting-text";
+        setPreDefinedClasses("mdl-card__supporting-text");
     }
 
 }

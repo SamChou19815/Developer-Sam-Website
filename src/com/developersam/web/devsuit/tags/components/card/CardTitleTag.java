@@ -11,7 +11,7 @@ import java.io.IOException;
 public class CardTitleTag extends BlockTag {
 
     public CardTitleTag() {
-        preDefinedClasses = "mdl-card__title mdl-card--border";
+        setPreDefinedClasses("mdl-card__title mdl-card--border");
     }
 
     protected String title;

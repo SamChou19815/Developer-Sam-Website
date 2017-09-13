@@ -8,8 +8,8 @@ import com.developersam.web.devsuit.tags.basis.BlockTag;
 public class ProgressBarIntermediateTag extends BlockTag {
 
     public ProgressBarIntermediateTag() {
-        preDefinedClasses = "mdl-progress mdl-js-progress mdl-progress__indeterminate";
-        additionalAttributeString = " style=\"display:none\"";
+        setPreDefinedClasses("mdl-progress mdl-js-progress mdl-progress__indeterminate");
+        addAdditionalAttributeString(" style=\"display:none\"");
     }
 
     /**

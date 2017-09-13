@@ -19,12 +19,12 @@ public abstract class BlockTag extends CustomTag {
     private List<CustomTag> childrenTag = new ArrayList<>();
 
     // Variables that supports common tag attributes and info
-    protected String tagName = "div"; // default value of tag name, usually does not need to be overridden.
+    private String tagName = "div"; // default value of tag name, usually does not need to be changed
     private String idString = "";
-    protected String preDefinedClasses; // It is ensured that every block tag override this in constructor.
+    private String preDefinedClasses; // Every direct subclass of block tag sets up this in constructor.
     private String customClassesString = "";
     private String onClickString = "";
-    protected String additionalAttributeString = "";
+    private String additionalAttributeString = "";
     private String bodyContent;
 
     /**
@@ -64,7 +64,18 @@ public abstract class BlockTag extends CustomTag {
     }
 
     /**
+     * Set the tag name for the tag. If subclasses are not using the default value of div,
+     * they should change it via this method in constructor.
+     * This method is made protected to only let all subclass call it.
+     * @param tagName a new tag name other than div.
+     */
+    protected void setTagName(String tagName) {
+        this.tagName = tagName;
+    }
+
+    /**
      * Set id of the tag. The id can therefore be used by Javascript code to perform further actions.
+     * This method is made public to make all custom tags support declaring id in web pages.
      * @param id id of the html tag
      */
     public void setId(String id) {
@@ -72,9 +83,19 @@ public abstract class BlockTag extends CustomTag {
     }
 
     /**
+     * Set the pre-defined classes for the tag. Every direct subclass should call this method.
+     * This method is made protected to only let all subclass call it.
+     * @param preDefinedClasses pre-defined css classes for the item.
+     */
+    protected void setPreDefinedClasses(String preDefinedClasses) {
+        this.preDefinedClasses = preDefinedClasses;
+    }
+
+    /**
      * Set additional css classes.
      * It enables the extension of the same block tag to satisfy different needs.
      * It is recommended to use only in jsp, not in nested block tag handler to separate design with structure.
+     * This method is made public to make all custom tags support adding custom classes in web pages.
      * @param customClasses additional css classes.
      */
     public void setCustomClasses(String customClasses) {
@@ -84,6 +105,7 @@ public abstract class BlockTag extends CustomTag {
     /**
      * Set onclick of the tag.
      * It enables the interaction between custom tag library and Javascript.
+     * This method is made public to make all custom tags support specifying actions when clicked.
      * @param onClick String form of Javascript code
      */
     public void setOnClick(String onClick) {
@@ -91,8 +113,9 @@ public abstract class BlockTag extends CustomTag {
     }
 
     /**
-     * add additional attributes string for the tag.
-     * @param additionalAttributeString additional attributes
+     * Add additional attributes string for the tag.
+     * This method is made public to make all custom tags support additional attributes in web pages.
+     * @param additionalAttributeString additional attributes.
      */
     public void addAdditionalAttributeString(String additionalAttributeString) {
         this.additionalAttributeString += additionalAttributeString;
@@ -101,7 +124,8 @@ public abstract class BlockTag extends CustomTag {
     /**
      * Set the body content of the tag.
      * It is used only when the body content is dynamically calculated by JSP EL.
-     * @param bodyContent body content in string
+     * This method is made public to make all custom tags support using custom body content.
+     * @param bodyContent body content in string.
      */
     public void setBodyContent(String bodyContent) {
         this.bodyContent = bodyContent;
@@ -116,9 +140,9 @@ public abstract class BlockTag extends CustomTag {
     /**
      * Print content to jsp.
      * If the tag has a parent tag, it uses its parent's JspWriter.
-     * @param content content in html
-     * @throws JspException jsp exception
-     * @throws IOException io exception
+     * @param content content in html.
+     * @throws JspException jsp exception.
+     * @throws IOException io exception.
      */
     protected void printContent(String content) throws JspException, IOException {
         if (getParent() == null) {
@@ -137,8 +161,8 @@ public abstract class BlockTag extends CustomTag {
      *  The program fetches the content and prints it.
      * Case 2: Body content is dynamically calculated by JSP EL and passed into custom tags.
      *  The program prints the calculated body content.
-     * @throws JspException jsp exception
-     * @throws IOException io exception
+     * @throws JspException jsp exception.
+     * @throws IOException io exception.
      */
     protected void printBodyContent() throws JspException, IOException {
         if (childrenTag.size() != 0) {
@@ -165,8 +189,8 @@ public abstract class BlockTag extends CustomTag {
      * It prints the start of the wrapper around the body content.
      * The default implementation prints the outer most wrapper start.
      * Subclass must override this method if it has more than one wrapper.
-     * @throws JspException jsp exception
-     * @throws IOException io exception
+     * @throws JspException jsp exception.
+     * @throws IOException io exception.
      */
     protected void printWrapperStart() throws JspException, IOException {
         StringBuilder sb = new StringBuilder();
@@ -180,8 +204,8 @@ public abstract class BlockTag extends CustomTag {
      * It prints the end of the wrapper around the body content.
      * The default implementation prints the outer most wrapper end.
      * Subclass must override this method if it has more than one wrapper.
-     * @throws JspException jsp exception
-     * @throws IOException io exception
+     * @throws JspException jsp exception.
+     * @throws IOException io exception.
      */
     protected void printWrapperEnd() throws JspException, IOException {
         printContent("</" + tagName + ">");
@@ -194,8 +218,8 @@ public abstract class BlockTag extends CustomTag {
      * Instead they should override its constituents to have a same effect but with a cleaner structure.
      * It must be ensured that doTag only outputs content through printContent,
      * so that nested custom tags can be well supported.
-     * @throws JspException jsp exception
-     * @throws IOException io exception
+     * @throws JspException jsp exception.
+     * @throws IOException io exception.
      */
     @Override
     public void doTag() throws JspException, IOException {

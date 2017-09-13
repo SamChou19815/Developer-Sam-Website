@@ -10,8 +10,8 @@ import java.io.IOException;
 public class CheckboxInputTag extends InputTag {
 
     public CheckboxInputTag() {
-        tagName = "label";
-        preDefinedClasses = "mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect";
+        setTagName("label");
+        setPreDefinedClasses("mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect");
     }
 
     @Override
@@ -34,6 +34,6 @@ public class CheckboxInputTag extends InputTag {
 
     @Override
     protected void initialize() {
-        additionalAttributeString = forString;
+        addAdditionalAttributeString(forString);
     }
 }

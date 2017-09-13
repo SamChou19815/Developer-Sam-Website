@@ -12,7 +12,7 @@ import java.util.TimeZone;
  * A superclass designed to bind closely with DataStore operations.
  * Its subclass must be a logical object related to both a DataStore entity and a Java bean like object.
  */
-public class DataStoreObject {
+public abstract class DataStoreObject {
 
     private Key parentKey;
     private String dataStoreTableName;

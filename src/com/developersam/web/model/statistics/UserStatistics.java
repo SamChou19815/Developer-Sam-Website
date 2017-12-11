@@ -9,6 +9,8 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.User;
 import com.developersam.web.model.datastore.DataStoreObject;
 
+import java.util.stream.StreamSupport;
+
 import static com.google.appengine.api.datastore.Query.FilterOperator.EQUAL;
 
 /**
@@ -21,6 +23,10 @@ public class UserStatistics extends DataStoreObject {
      * The name of the app.
      */
     private final String appName;
+    /**
+     * The filter to filter out other apps.
+     */
+    private final Filter filterAppName;
     
     /**
      * Construct a UserStatistics object by app name.
@@ -31,6 +37,8 @@ public class UserStatistics extends DataStoreObject {
     public UserStatistics(String appName) {
         super("UserStatistics");
         this.appName = appName;
+        this.filterAppName = new FilterPredicate(
+                "appName", EQUAL, appName);
     }
     
     /**
@@ -39,8 +47,6 @@ public class UserStatistics extends DataStoreObject {
      * @param user a google user.
      */
     public void usagePlusOne(User user) {
-        Filter filterAppName = new FilterPredicate(
-                "appName", EQUAL, appName);
         Filter filterUser = new FilterPredicate(
                 "user", EQUAL, user.getNickname());
         Filter filter = CompositeFilterOperator.and(filterAppName, filterUser);
@@ -58,6 +64,21 @@ public class UserStatistics extends DataStoreObject {
             userUsageEntity.setProperty("frequency", frequency);
         }
         putIntoDatabase(userUsageEntity);
+    }
+    
+    /**
+     * Obtain the total number of usages of the app.
+     *
+     * @return the total number of usages of the app.
+     */
+    public long getTotalUsage() {
+        Filter filterAppName = new FilterPredicate(
+                "appName", EQUAL, appName);
+        Query query = getQuery().setFilter(filterAppName);
+        PreparedQuery pq = getPreparedQuery(query);
+        return StreamSupport.stream(pq.asIterable().spliterator(), false)
+                .mapToLong(entity -> (long) entity.getProperty("frequency"))
+                .sum();
     }
     
 }

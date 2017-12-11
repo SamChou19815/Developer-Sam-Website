@@ -25,7 +25,7 @@ public class GameResponseServlet extends HttpServlet {
         String responseMove = String.valueOf(move[0]) + "," +
                 String.valueOf(move[1]) + "," + String.valueOf(move[2])
                 + "," + String.valueOf(move[3] + "," + String.valueOf(move[4]));
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/plain;charset=UTF-8");
         response.getWriter().print(responseMove);
         response.setCharacterEncoding("UTF-8");
     }

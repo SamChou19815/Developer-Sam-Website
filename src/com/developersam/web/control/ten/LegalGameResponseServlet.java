@@ -13,7 +13,8 @@ import java.io.IOException;
  * A servlet that returns AI's response to human's move in board game TEN.
  * This servlet assumes human moves are legal and already on the board.
  */
-@WebServlet(name = "GameResponseServlet", value = "/apps/ten/response")
+@WebServlet(name = "LegalGameResponseServlet",
+        value = "/apps/ten/responseLegal")
 public class LegalGameResponseServlet extends HttpServlet {
     
     @Override
@@ -22,9 +23,8 @@ public class LegalGameResponseServlet extends HttpServlet {
             throws ServletException, IOException {
         String clientInfo = request.getParameter("clientInfo");
         int[] move = Controller.respondToLegalHumanMove(clientInfo);
-        String responseMove = String.valueOf(move[0]) + "," +
-                String.valueOf(move[1]) + "," + String.valueOf(move[2]);
-        response.setContentType("text/html;charset=UTF-8");
+        String responseMove = String.format("%d,%d", move[0], move[1]);
+        response.setContentType("text/plain;charset=UTF-8");
         response.getWriter().print(responseMove);
         response.setCharacterEncoding("UTF-8");
     }

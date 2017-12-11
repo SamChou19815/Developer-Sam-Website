@@ -13,15 +13,18 @@ import java.io.IOException;
  * A servlet that delete an scheduler item.
  */
 @WebServlet(name = "ChangeEmailNotificationSettingServlet",
-        value="/apps/scheduler/changeEmailNotificationSetting")
+        value = "/apps/scheduler/changeEmailNotificationSetting")
 public class ChangeEmailNotificationSettingServlet extends HttpServlet {
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    
+    @Override
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
             throws ServletException, IOException {
-        String enabledStr = request.getParameter("emailNotificationEnabled");
+        String enabledStr = request.getParameter(
+                "emailNotificationEnabled");
         boolean enabled = enabledStr.equals("true");
         SchedulerUser schedulerUser = new SchedulerUser();
         schedulerUser.setEmailNotificationEnabled(enabled);
     }
-
+    
 }

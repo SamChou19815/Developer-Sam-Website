@@ -10,14 +10,18 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * A servlet that sends daily report for scheduler users who signed for email notification.
+ * A servlet that sends daily report for scheduler users who signed for
+ * email notification.
  */
-@WebServlet(name = "SendDailyReportServlet", value="/apps/scheduler/sendDailyReport")
+@WebServlet(name = "SendDailyReportServlet",
+        value = "/apps/scheduler/sendDailyReport")
 public class SendDailyReportServlet extends HttpServlet {
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    
+    @Override
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
             throws ServletException, IOException {
-        new SchedulerUsers().sendEmailNotifications();
+        SchedulerUsers.sendEmailNotifications();
     }
-
+    
 }

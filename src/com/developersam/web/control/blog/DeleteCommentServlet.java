@@ -16,10 +16,12 @@ import java.io.IOException;
 /**
  * A servlet that processes user's request to delete a comment.
  */
-@WebServlet(name = "DeleteCommentServlet", value="/apps/blog/deleteComment")
+@WebServlet(name = "DeleteCommentServlet", value = "/apps/blog/deleteComment")
 public class DeleteCommentServlet extends HttpServlet {
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    
+    @Override
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
             throws ServletException, IOException {
         String url = request.getParameter("url");
         String key = request.getParameter("key");
@@ -37,5 +39,5 @@ public class DeleteCommentServlet extends HttpServlet {
         response.getWriter().print(output);
         response.setCharacterEncoding("UTF-8");
     }
-
+    
 }

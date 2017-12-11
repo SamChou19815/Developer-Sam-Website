@@ -12,15 +12,19 @@ import java.io.IOException;
 /**
  * A servlet that delete an scheduler item.
  */
-@WebServlet(name = "ChangeCompletionStatusServlet", value="/apps/scheduler/changeCompletionStatus")
+@WebServlet(name = "ChangeCompletionStatusServlet",
+        value = "/apps/scheduler/changeCompletionStatus")
 public class ChangeCompletionStatusServlet extends HttpServlet {
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    
+    @Override
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
             throws ServletException, IOException {
         Scheduler scheduler = new Scheduler();
         String key = request.getParameter("key");
-        boolean completed = Boolean.parseBoolean(request.getParameter("completed"));
+        boolean completed = Boolean.parseBoolean(
+                request.getParameter("completed"));
         scheduler.changeCompletionStatus(key, completed);
     }
-
+    
 }

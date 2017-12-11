@@ -12,10 +12,12 @@ import java.io.IOException;
 /**
  * A servlet that add a new item to the database.
  */
-@WebServlet(name = "AddItemServlet", value="/apps/scheduler/add")
+@WebServlet(name = "AddItemServlet", value = "/apps/scheduler/add")
 public class AddItemServlet extends HttpServlet {
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    
+    @Override
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
             throws ServletException, IOException {
         Scheduler scheduler = new Scheduler();
         String description = request.getParameter("description");
@@ -24,5 +26,5 @@ public class AddItemServlet extends HttpServlet {
         response.getWriter().print(success);
         response.setCharacterEncoding("UTF-8");
     }
-
+    
 }

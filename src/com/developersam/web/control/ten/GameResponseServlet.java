@@ -12,18 +12,22 @@ import javax.servlet.ServletException;
 /**
  * A servlet that returns AI's response to human's move in board game TEN
  */
-@WebServlet(name = "GameResponseServlet", value="/apps/ten/response")
+@WebServlet(name = "GameResponseServlet", value = "/apps/ten/response")
 public class GameResponseServlet extends HttpServlet {
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    
+    @Override
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
             throws ServletException, IOException {
-
+        
         String clientInfo = request.getParameter("clientInfo");
         int[] move = Controller.respondToHumanMove(clientInfo);
-        String responseMove = String.valueOf(move[0]) + "," + String.valueOf(move[1]) + ","
-                + String.valueOf(move[2]) + "," + String.valueOf(move[3] + "," + String.valueOf(move[4]));
+        String responseMove = String.valueOf(move[0]) + "," +
+                String.valueOf(move[1]) + "," + String.valueOf(move[2])
+                + "," + String.valueOf(move[3] + "," + String.valueOf(move[4]));
         response.setContentType("text/html;charset=UTF-8");
         response.getWriter().print(responseMove);
         response.setCharacterEncoding("UTF-8");
     }
+    
 }

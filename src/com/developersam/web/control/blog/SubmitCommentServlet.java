@@ -16,13 +16,16 @@ import java.io.IOException;
 /**
  * A servlet to process user's request to add a comment.
  */
-@WebServlet(name = "SubmitCommentServlet", value="/apps/blog/submitComment")
+@WebServlet(name = "SubmitCommentServlet", value = "/apps/blog/submitComment")
 public class SubmitCommentServlet extends HttpServlet {
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    
+    @Override
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
             throws ServletException, IOException {
         String url = request.getParameter("url");
-        boolean anonymous = Boolean.parseBoolean(request.getParameter("anonymous"));
+        boolean anonymous = Boolean.parseBoolean(
+                request.getParameter("anonymous"));
         String content = request.getParameter("comment");
         UserService userService = UserServiceFactory.getUserService();
         String output;

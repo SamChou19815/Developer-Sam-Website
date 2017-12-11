@@ -11,14 +11,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 /**
- * A servlet that parses user programs, uses them, and sends back the entire game process for game Bots Civ.
+ * A servlet that parses user programs, uses them, and sends back the entire
+ * game process for game Bots Civ.
  */
-@WebServlet(name = "LoadEntireGameServlet", value="/apps/botsciv/loadEntireGame")
+@WebServlet(name = "LoadEntireGameServlet",
+        value = "/apps/botsciv/loadEntireGame")
 public class LoadEntireGameServlet extends HttpServlet {
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    
+    @Override
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
             throws ServletException, IOException {
-
+        
         response.setContentType("text/html;charset=UTF-8");
         String blackProgram = request.getParameter("blackProgram");
         String whiteProgram = request.getParameter("whiteProgram");
@@ -26,7 +30,7 @@ public class LoadEntireGameServlet extends HttpServlet {
         try {
             world.addPrograms(blackProgram, whiteProgram);
             response.getWriter().print(world.execute().toString());
-        }catch (ProgramSyntaxError e) {
+        } catch (ProgramSyntaxError e) {
             response.getWriter().print("Syntax Error in your Programs!");
         }
         response.setCharacterEncoding("UTF-8");

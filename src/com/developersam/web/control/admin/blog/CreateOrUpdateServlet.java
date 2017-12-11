@@ -13,10 +13,13 @@ import java.io.IOException;
 /**
  * A servlet to process admin's request to add or update a blog article
  */
-@WebServlet(name = "CreateOrUpdateServlet", value="/apps/admin/blog/createOrUpdate")
+@WebServlet(name = "CreateOrUpdateServlet",
+        value = "/apps/admin/blog/createOrUpdate")
 public class CreateOrUpdateServlet extends HttpServlet {
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    
+    @Override
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
             throws ServletException, IOException {
         String path = getServletContext().getRealPath("/");
         String url = request.getParameter("url");
@@ -24,10 +27,10 @@ public class CreateOrUpdateServlet extends HttpServlet {
         try {
             new BlogArticle(url, title, path);
             response.getWriter().print("Success!");
-        }catch (BlogContentNotFetchedException e) {
+        } catch (BlogContentNotFetchedException e) {
             response.getWriter().print("Blog content not fetched!");
         }
         response.setCharacterEncoding("UTF-8");
     }
-
+    
 }

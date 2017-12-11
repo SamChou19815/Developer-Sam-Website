@@ -87,13 +87,6 @@ public class SchedulerItem extends DataStoreObject {
         return completed;
     }
 
-    @Override
-    protected SimpleDateFormat getDateFormatter() {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
-        return formatter;
-    }
-
     /**
      * Delete the item from scheduler database.
      */

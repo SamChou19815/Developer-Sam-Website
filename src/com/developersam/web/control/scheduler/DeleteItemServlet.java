@@ -12,13 +12,15 @@ import java.io.IOException;
 /**
  * A servlet that delete an scheduler item.
  */
-@WebServlet(name = "DeleteItemServlet", value="/apps/scheduler/delete")
+@WebServlet(name = "DeleteItemServlet", value = "/apps/scheduler/delete")
 public class DeleteItemServlet extends HttpServlet {
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    
+    @Override
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
             throws ServletException, IOException {
         Scheduler scheduler = new Scheduler();
         scheduler.delete(request.getParameter("key"));
     }
-
+    
 }

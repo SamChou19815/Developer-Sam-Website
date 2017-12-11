@@ -1,6 +1,14 @@
 package com.developersam.web.model.datastore;
 
-import com.google.appengine.api.datastore.*;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,8 +40,14 @@ public abstract class DataStoreObject {
     /**
      * A consistently used date formatter.
      */
-    protected static final SimpleDateFormat DATE_FORMAT =
+    private static final SimpleDateFormat DATE_FORMAT =
             new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    
+    static {
+        // Statically initialize the time zone.
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+    }
+    
     /**
      * A calender used to find time.
      */
@@ -43,15 +57,14 @@ public abstract class DataStoreObject {
      * The default constructor is used when dataStore does not need to be
      * initialized.
      */
-    protected DataStoreObject() {
-        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("America/New_York"));
-    }
+    protected DataStoreObject() {}
     
     /**
      * This constructor is used when dataStore object must be initialized to
      * support db operations.
+     *
      * @param dataStoreTableName DataStore table name, which specifies for the
-     *                           entire class which kind of object to fetch.
+     * entire class which kind of object to fetch.
      */
     protected DataStoreObject(String dataStoreTableName) {
         this.dataStoreTableName = dataStoreTableName;
@@ -61,6 +74,7 @@ public abstract class DataStoreObject {
      * Bind a parent key to the object, so that entity generation and query can
      * be associated with its parent.
      * The method does NOT need to be called for all situations.
+     *
      * @param parentKey key of parent entity.
      */
     protected void setParentKey(Key parentKey) {
@@ -70,12 +84,13 @@ public abstract class DataStoreObject {
     /**
      * Obtain the query associated with the entity name (and parent key
      * sometimes).
+     *
      * @return query object that can be further modified by filters.
      */
     protected Query getQuery() {
         if (parentKey == null) {
             return new Query(dataStoreTableName);
-        }else {
+        } else {
             return new Query(dataStoreTableName).setAncestor(parentKey);
         }
     }
@@ -83,18 +98,20 @@ public abstract class DataStoreObject {
     /**
      * Obtain a new entity associated with the entity name  (and parent key
      * sometimes).
+     *
      * @return a new entity to be modified and added to database.
      */
     protected Entity getNewEntity() {
         if (parentKey == null) {
             return new Entity(dataStoreTableName);
-        }else {
+        } else {
             return new Entity(dataStoreTableName, parentKey);
         }
     }
     
     /**
      * A helper method to obtain an entity by a string form of key.
+     *
      * @param key key in string.
      * @return entity with given key.
      */
@@ -104,19 +121,21 @@ public abstract class DataStoreObject {
     
     /**
      * A helper method to obtain an entity by key.
+     *
      * @param key key of entity.
      * @return entity with given key.
      */
     protected Entity getEntityByKey(Key key) {
         try {
             return DATASTORE.get(key);
-        }catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             return null;
         }
     }
     
     /**
      * A helper method to put an entity into database.
+     *
      * @param entity entity to be put into database
      */
     protected void putIntoDatabase(Entity entity) {
@@ -125,6 +144,7 @@ public abstract class DataStoreObject {
     
     /**
      * A helper method to remove an entity from database by its key
+     *
      * @param key key of to-be-removed entity
      */
     protected void removeFromDatabase(Key key) {
@@ -133,6 +153,7 @@ public abstract class DataStoreObject {
     
     /**
      * A helper method to obtain prepared query by given a final query
+     *
      * @param q final query.
      * @return a prepared query ready to deliver results.
      */
@@ -143,13 +164,14 @@ public abstract class DataStoreObject {
     /**
      * A helper method to convert long text to string.
      * It returns null if the text is null.
+     *
      * @param text text object from app engine DataStore.
      * @return string form of text.
      */
     private static String textToString(Text text) {
         if (text == null) {
             return null;
-        }else {
+        } else {
             return text.getValue();
         }
     }
@@ -157,6 +179,7 @@ public abstract class DataStoreObject {
     /**
      * A helper method to convert long text to string.
      * It returns null if the text is null.
+     *
      * @param o it must be text object from app engine DataStore.
      * @return string form of text.
      */
@@ -166,6 +189,7 @@ public abstract class DataStoreObject {
     
     /**
      * format a date object to yyyy-MM-dd hh:mm in EST.
+     *
      * @param date date object
      * @return a string representation of time in EST (US New York)
      */
@@ -176,6 +200,7 @@ public abstract class DataStoreObject {
     
     /**
      * format date string like yyyy-MM-dd hh:mm in EST to a date object.
+     *
      * @param date string representation of the day
      * @return a date object
      * @throws ParseException error of parsing

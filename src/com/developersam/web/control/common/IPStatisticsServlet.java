@@ -4,7 +4,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * A helpful servlet super class that helps to retrieve the real ip address to help ip statistics
+ * A helpful servlet super class that helps to retrieve the real ip address to
+ * help ip statistics.
  */
 public class IPStatisticsServlet extends HttpServlet {
 

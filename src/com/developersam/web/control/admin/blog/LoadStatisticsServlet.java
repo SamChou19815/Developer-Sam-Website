@@ -13,17 +13,20 @@ import java.io.IOException;
 /**
  * A servlet to process admin's request to load statistics of blog articles.
  */
-@WebServlet(name = "LoadStatisticsServlet", value="/apps/admin/blog/loadStatistics")
+@WebServlet(name = "LoadStatisticsServlet",
+        value = "/apps/admin/blog/loadStatistics")
 public class LoadStatisticsServlet extends HttpServlet {
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    
+    @Override
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
             throws ServletException, IOException {
         BlogArticles blogArticles = new BlogArticles();
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         sb.append("\"main\",");
         sb.append(blogArticles.getNumberOfVisitors());
-        for (BlogArticle blogArticle: blogArticles.getArticles()) {
+        for (BlogArticle blogArticle : blogArticles.getArticles()) {
             String title = blogArticle.getTitle();
             if (title.length() > 30) {
                 title = title.substring(0, 30) + "...";
@@ -39,5 +42,5 @@ public class LoadStatisticsServlet extends HttpServlet {
         response.getWriter().print(sb.toString());
         response.setCharacterEncoding("UTF-8");
     }
-
+    
 }

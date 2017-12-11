@@ -13,30 +13,34 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * A servlet that loads blog article object and some of its info onto blogArticle.jsp.
+ * A servlet that loads blog article object and some of its info onto
+ * blogArticle.jsp.
  */
-@WebServlet(name = "BlogArticleServlet", value="/blogArticle")
+@WebServlet(name = "BlogArticleServlet", value = "/blogArticle")
 public class BlogArticleServlet extends IPStatisticsServlet {
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    
+    @Override
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
             throws ServletException, IOException {
         String url = request.getParameter("url");
         BlogArticle blogArticle;
         List<BlogComment> blogComments;
         String title;
-        try{
+        try {
             blogArticle = new BlogArticle(url);
             blogArticle.frequencyPlusOne(getIPAddress(request));
             title = blogArticle.getTitle();
             blogComments = blogArticle.getComments();
-        }catch (BlogArticleNotFoundException e) {
+        } catch (BlogArticleNotFoundException e) {
             response.sendRedirect("/errors/404.jsp");
             return;
         }
         request.setAttribute("title", title);
         request.setAttribute("article", blogArticle);
         request.setAttribute("comments", blogComments);
-        request.getRequestDispatcher("/blogArticle.jsp").forward(request, response);
+        request.getRequestDispatcher("/blogArticle.jsp")
+                .forward(request, response);
     }
-
+    
 }

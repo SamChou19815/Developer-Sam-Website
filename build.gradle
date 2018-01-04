@@ -1,0 +1,73 @@
+buildscript {
+    repositories {
+        jcenter() // Bintray's repository - a fast Maven Central mirror & more
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.cloud.tools:appengine-gradle-plugin:+'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'war' // standard Web Archive plugin
+apply plugin: 'com.google.cloud.tools.appengine' // App Engine tasks
+
+jar {
+    baseName = 'gs-serving-web-content'
+    version =  '0.1.0'
+}
+
+repositories {
+    maven {
+        url 'https://maven-central.storage.googleapis.com'
+        // Google's mirror of Maven Central
+    }
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.google.guava:guava:23.5-jre'
+    testCompile("junit:junit:+")
+    providedCompile group: 'javax.servlet', name: 'javax.servlet-api',
+            version: '3.1.0'
+    compile 'com.google.appengine:appengine:+'
+    compile 'com.google.appengine:appengine-api-1.0-sdk:+'
+    compile group: 'javax.servlet.jsp', name: 'jsp-api', version: '2.2'
+    compile group: 'javax.servlet', name: 'jstl', version: '1.2'
+    // Add your dependencies here.
+    // GSON, for parsing and generating JSON
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.2'
+    // Extra GSON library
+    compile group: 'org.danilopianini', name: 'gson-extras', version: '0.2.1'
+    // Parsing HTML Content
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.11.2'
+    // Spring Framework
+    compile("org.springframework:spring-context:+")
+    compile("org.springframework:spring-webmvc:+")
+    compile("org.aspectj:aspectjrt:+")
+    // Local Jars
+    compile fileTree(dir: 'libs', include: '*.jar')
+}
+
+appengine {
+    // App Engine tasks configuration
+    run {
+        // local (dev_appserver) configuration (standard environments only)
+        port = 8080 // default
+        jvmFlags = ["-Dappengine.fullscan.seconds=5"]
+    }
+
+    deploy {   // deploy configuration
+        stopPreviousVersion = true  // default - stop the current version
+        promote = true              // default - & make this the current version
+    }
+}
+
+group 'com.developersam.web'
+version '3.0.0'
+
+sourceCompatibility = 1.8  // App Engine Standard uses Java 8
+targetCompatibility = 1.8  // App Engine Standard uses Java 8

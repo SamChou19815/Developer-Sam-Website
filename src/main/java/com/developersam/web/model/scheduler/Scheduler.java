@@ -26,9 +26,14 @@ import static com.google.appengine.api.datastore.Query.FilterOperator.GREATER_TH
 public class Scheduler extends DataStoreObject {
     
     /**
-     * A default no-arg constructor.
+     * The only instance of itself.
      */
-    public Scheduler() {
+    public static final Scheduler INSTANCE = new Scheduler();
+    
+    /**
+     * A private default no-arg constructor.
+     */
+    private Scheduler() {
         super("SchedulerItem");
     }
     

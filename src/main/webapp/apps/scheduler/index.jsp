@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-tabs">
-    <t:Header title="Scheduler - Developer Sam Apps" selected="3"/>
+    <t:Header title="Scheduler - Developer Sam Apps" selected="2"/>
     <main class="mdl-layout__content app">
         <c:forEach items="${requestScope.schedulerItems}" var="schedulerItem">
             <schedulerT:SchedulerItemCard schedulerItem="${schedulerItem}"/>

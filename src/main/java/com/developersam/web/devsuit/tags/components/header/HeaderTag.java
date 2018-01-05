@@ -28,10 +28,9 @@ public class HeaderTag extends TemplateTag {
      * The id describes the position of that module in drawer.
      * Currently, the list is:
      * 0: Home
-     * 1: Blog
-     * 2: Projects
-     * 3: Scheduler
-     * 4: TEN
+     * 1: Projects
+     * 2: Scheduler
+     * 3: TEN
      *
      * @param selected module id.
      */

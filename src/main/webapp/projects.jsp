@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-    <t:Header title="Projects - Developer Sam" selected="2"/>
+    <t:Header title="Projects - Developer Sam" selected="1"/>
     <main class="mdl-layout__content">
         <t:Card title="DevSALON">
             <t:CardMedia src="resource/icon/devsalon.png" alt="DevSALON"/>

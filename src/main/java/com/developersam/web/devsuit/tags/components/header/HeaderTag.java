@@ -88,12 +88,14 @@ public class HeaderTag extends TemplateTag {
         printContent("<span class=\"mdl-layout-title\">Developer Sam</span>");
         printContent("<nav class=\"mdl-navigation\">");
         printNavLink("Home", "/", selected == 0);
-        printNavLink("Blog", "/blog", selected == 1);
-        printNavLink("Projects", "/projects", selected == 2);
-        printNavLink("Scheduler", "/apps/scheduler/", selected == 3);
-        printNavLink("TEN", "/apps/ten/", selected == 4);
-        printContent("<a href=\"https://github.com/SamChou19815/Developer-Sam-Website\"");
-        printContent(" class=\"mdl-navigation__link\" target=_blank>Open Source</a>");
+        printContent("<a href=\"https://blog.developersam.com\" " +
+                "class=\"mdl-navigation__link\" target=_blank>Blog</a>");
+        printNavLink("Projects", "/projects", selected == 1);
+        printNavLink("Scheduler", "/apps/scheduler/", selected == 2);
+        printNavLink("TEN", "/apps/ten/", selected == 3);
+        printContent("<a href=\"https://github.com/SamChou19815/" +
+                "Developer-Sam-Website\" class=\"mdl-navigation__link\" " +
+                "target=_blank>Open Source</a>");
         printContent("</nav>");
         printContent("</div>");
     }

@@ -15,8 +15,7 @@ public class DeleteItemServlet extends HttpServlet {
     
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        Scheduler scheduler = new Scheduler();
-        scheduler.delete(req.getParameter("key"));
+        Scheduler.INSTANCE.delete(req.getParameter("key"));
     }
     
 }

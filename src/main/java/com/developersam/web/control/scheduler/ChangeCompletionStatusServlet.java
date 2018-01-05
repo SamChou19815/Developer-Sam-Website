@@ -16,11 +16,10 @@ public class ChangeCompletionStatusServlet extends HttpServlet {
     
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        Scheduler scheduler = new Scheduler();
         String key = req.getParameter("key");
         boolean completed = Boolean.parseBoolean(
                 req.getParameter("completed"));
-        scheduler.changeCompletionStatus(key, completed);
+        Scheduler.INSTANCE.changeCompletionStatus(key, completed);
     }
     
 }

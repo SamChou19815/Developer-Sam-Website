@@ -17,10 +17,9 @@ public class AddItemServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        Scheduler scheduler = new Scheduler();
         String description = req.getParameter("description");
         String deadline = req.getParameter("deadline");
-        boolean success = scheduler.addItem(description, deadline);
+        boolean success = Scheduler.INSTANCE.addItem(description, deadline);
         resp.getWriter().print(success);
         resp.setCharacterEncoding("UTF-8");
     }

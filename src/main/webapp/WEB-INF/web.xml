@@ -14,15 +14,6 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>Store</servlet-name>
-        <jsp-file>/store.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Store</servlet-name>
-        <url-pattern>/store</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
         <servlet-name>Blog Admin</servlet-name>
         <jsp-file>/apps/admin/blog/index.jsp</jsp-file>
     </servlet>

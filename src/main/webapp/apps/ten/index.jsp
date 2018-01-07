@@ -1,15 +1,5 @@
-<%@ page import="com.google.appengine.api.users.UserService" %>
-<%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.google.appengine.api.users.User" %>
-<%@ page import="com.developersam.web.model.statistics.UserStatistics" %>
-<%
-    // Add usage userStatistics to database.
-    UserService userService = UserServiceFactory.getUserService();
-    User currentUser = userService.getCurrentUser();
-    UserStatistics userStatistics = new UserStatistics("ten");
-    userStatistics.usagePlusOne(currentUser);
-%>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8" %>
 <%@ taglib uri="/WEB-INF/custom.tld" prefix="t" %>
 <!DOCTYPE HTML>
 <html>
@@ -88,7 +78,8 @@
             </div>
             <div class="mdl-card__title">
                 <h2 class="mdl-card__title-text">
-                    AI Winning Probability:&nbsp;<span id="aiWinningProbability">50</span>%
+                    AI Winning Probability:&nbsp;<span
+                        id="aiWinningProbability">50</span>%
                 </h2>
             </div>
             <div class="mdl-card__supporting-text" id="game">
@@ -99,7 +90,8 @@
                                 int a = (i / 3) * 3 + (j / 3), b = i % 3 * 3 + j % 3;
                                 String sID = "square-" + a + "-" + b;
                     %>
-                    <div class="square" id="<%= sID %>" onclick="submit(<%=a %>, <%= b %>)"></div>
+                    <div class="square" id="<%= sID %>"
+                         onclick="submit(<%=a %>, <%= b %>)"></div>
                     <%
                             }
                         }
@@ -112,11 +104,13 @@
                 <div id="controllers">
                     <h6 style="margin: 1em auto;">New Game</h6>
                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                            style="margin:1em auto" onclick="Controller.selectSide(1)">
+                            style="margin:1em auto"
+                            onclick="Controller.selectSide(1)">
                         Black
                     </button>
                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                            style="margin:1em auto" onclick="Controller.selectSide(-1)">
+                            style="margin:1em auto"
+                            onclick="Controller.selectSide(-1)">
                         White
                     </button>
                 </div>
@@ -151,7 +145,8 @@
         $.post("response", {clientInfo: clientInfo}, function (data) {
             data = data.split(",");
             var aiA = parseInt(data[0]), aiB = parseInt(data[1]),
-                currentBigSqrLegalPos = parseInt(data[2]), info = parseInt(data[3]),
+                currentBigSqrLegalPos = parseInt(data[2]),
+                info = parseInt(data[3]),
                 aiWinningProbability = parseInt(data[4]);
             if (info === 1) {
                 // Black wins
@@ -182,7 +177,8 @@
                 // keep track of legal big square position
                 board[aiA][aiB] = currentPlayerIdentity * (-1);
                 viewer.renderBoard();
-                $('#square-' + aiA + "-" + aiB).css("border", "1px solid red"); // highlight AI's move
+                $('#square-' + aiA + "-" + aiB).css("border", "1px solid red");
+                // highlight AI's move
                 Viewer.message("Select your next move.");
                 Viewer.updateAIWinningProbability(aiWinningProbability);
             }

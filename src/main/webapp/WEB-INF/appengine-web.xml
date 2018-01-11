@@ -3,6 +3,8 @@
     <application>dev-sam</application>
     <version>3</version>
     <runtime>java8</runtime>
+    <automatic-scaling/>
+    <instance-class>F4</instance-class>
     <threadsafe>true</threadsafe>
 
     <system-properties>
@@ -10,13 +12,13 @@
     </system-properties>
 
     <static-files>
-        <include path="/**.png" />
-        <include path="/**.jpg" />
-        <include path="/**.html" />
-        <include path="/**.js" />
-        <include path="/**.ico" />
-        <include path="/**.gif" />
-        <include path="/**.css" />
+        <include path="/**.png" expiration="7d 23h" />
+        <include path="/**.jpg" expiration="7d 23h" />
+        <include path="/**.ico" expiration="7d 23h" />
+        <include path="/**.gif" expiration="4d 23h" />
+        <include path="/**.css" expiration="7d 23h" />
+        <include path="/**.js" expiration="7d 23h" />
+        <include path="/**.html" expiration="1h" />
         <include path="/**.zip" />
         <include path="/**.pdf" />
     </static-files>

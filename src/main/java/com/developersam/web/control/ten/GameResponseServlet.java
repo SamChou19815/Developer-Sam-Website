@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * A servlet that returns AI's response to human's move in board game TEN.
  */
-@WebServlet(name = "GameResponseServlet", value = "/apps/ten/response")
+@WebServlet(name = "GameResponseServlet", value = "/apis/ten/response")
 public class GameResponseServlet extends HttpServlet {
     
     @Override

@@ -5,36 +5,45 @@
                              http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
-    <servlet>
-        <servlet-name>Projects</servlet-name>
-        <jsp-file>/projects.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Projects</servlet-name>
-        <url-pattern>/projects</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>Apps - TEN</servlet-name>
-        <jsp-file>/apps/ten/index.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Apps - TEN</servlet-name>
-        <url-pattern>/apps/ten/</url-pattern>
-    </servlet-mapping>
-
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Google User Only Apps</web-resource-name>
-            <url-pattern>/apps/scheduler/*</url-pattern>
+            <url-pattern>/apis/scheduler/delete</url-pattern>
+        </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>Google User Only Apps</web-resource-name>
+            <url-pattern>/apis/scheduler/changeCompletionStatus</url-pattern>
+        </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>Google User Only Apps</web-resource-name>
+            <url-pattern>/apis/scheduler/add</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>*</role-name>
         </auth-constraint>
     </security-constraint>
 
+    <filter>
+        <filter-name>DirectToIndexFilter</filter-name>
+        <filter-class>com.developersam.web.control.filter.DirectToIndexFilter
+        </filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>DirectToIndexFilter</filter-name>
+        <url-pattern>/projects</url-pattern>
+        <url-pattern>/ten</url-pattern>
+        <url-pattern>/scheduler</url-pattern>
+    </filter-mapping>
+
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+
+    <error-page>
+        <!-- Missing resource -->
+        <error-code>404</error-code>
+        <location>/index.html</location>
+    </error-page>
 
 </web-app>

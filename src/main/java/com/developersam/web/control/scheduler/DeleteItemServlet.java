@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * A servlet that delete an scheduler item.
  */
-@WebServlet(name = "DeleteItemServlet", value = "/apps/scheduler/delete")
+@WebServlet(name = "DeleteItemServlet", value = "/apis/scheduler/delete")
 public class DeleteItemServlet extends HttpServlet {
     
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
         Scheduler.INSTANCE.delete(req.getParameter("key"));
     }
     

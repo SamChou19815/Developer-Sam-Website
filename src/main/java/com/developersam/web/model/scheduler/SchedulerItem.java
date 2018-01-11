@@ -1,10 +1,12 @@
 package com.developersam.web.model.scheduler;
 
-import com.developersam.web.model.datastore.DataStoreObject;
+import com.developersam.web.util.DataStoreObject;
+import com.developersam.web.util.DateUtil;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.common.base.MoreObjects;
 
+import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -14,43 +16,60 @@ import java.util.concurrent.TimeUnit;
  */
 public class SchedulerItem extends DataStoreObject {
     
-    private Key key;
-    
-    private String description;
-    private Date deadline;
-    private boolean completed;
+    /**
+     * The datastore entity of the item.
+     */
+    private transient final Entity entity;
+    /**
+     * The key string of the entity.
+     */
+    private final String keyString;
+    /**
+     * Description of the item.
+     */
+    private final String description;
+    /**
+     * Deadline of the item.
+     */
+    private final Date deadline;
+    /**
+     * Compute days left.
+     */
+    private final int daysLeft;
+    /**
+     * Whether the item has been completed.
+     */
+    private final boolean completed;
     
     /**
-     * Used when fetching a new entity.
+     * Construct itself from an entity fetched from database.
      *
      * @param projectEntity a project entity.
      */
     SchedulerItem(Entity projectEntity) {
         super("SchedulerItem");
-        this.key = projectEntity.getKey();
-        this.description = (String) projectEntity.getProperty("description");
-        this.deadline = (Date) projectEntity.getProperty("deadline");
-        this.completed = (boolean) projectEntity.getProperty("completed");
+        entity = projectEntity;
+        keyString = KeyFactory.keyToString(projectEntity.getKey());
+        description = (String) projectEntity.getProperty("description");
+        deadline = (Date) projectEntity.getProperty("deadline");
+        daysLeft = calculateDaysLeft(deadline);
+        completed = (boolean) projectEntity.getProperty("completed");
     }
     
     /**
-     * Used when adding a new item record into database.
+     * Construct a scheduler item from a unique key string.
      *
-     * @param userEmail the email of the user who owns the item.
-     * @param description description of the item.
-     * @param deadline deadline of the item.
+     * @param keyString a unique key string.
+     * @return the constructed scheduler item, which can be null if the key
+     * given is invalid.
      */
-    SchedulerItem(String userEmail, String description, Date deadline) {
-        super("SchedulerItem");
-        Entity itemEntity = getNewEntity();
-        itemEntity.setProperty("userEmail", userEmail);
-        this.description = description;
-        itemEntity.setProperty("description", description);
-        this.deadline = deadline;
-        itemEntity.setProperty("deadline", deadline);
-        this.completed = false;
-        itemEntity.setProperty("completed", false);
-        putIntoDatabase(itemEntity);
+    @Nullable
+    static SchedulerItem from(String keyString) {
+        Entity entity = getEntityByKey(keyString);
+        if (entity == null) {
+            return null;
+        }
+        return new SchedulerItem(entity);
     }
     
     /**
@@ -59,7 +78,7 @@ public class SchedulerItem extends DataStoreObject {
      * @return key string.
      */
     public String getKeyString() {
-        return KeyFactory.keyToString(key);
+        return keyString;
     }
     
     /**
@@ -77,18 +96,27 @@ public class SchedulerItem extends DataStoreObject {
      * @return deadline for the scheduler item
      */
     public String getDeadline() {
-        return dateFormatter(deadline);
+        return DateUtil.dateToString(deadline);
     }
     
     /**
      * Calculate and obtain how many days left for the deadline.
      *
-     * @return days left
+     * @param deadline deadline date.
+     * @return days left.
+     */
+    private static int calculateDaysLeft(Date deadline) {
+        long diff = deadline.getTime() - new Date().getTime();
+        return (int) TimeUnit.MILLISECONDS.toDays(diff) + 1;
+    }
+    
+    /**
+     * Calculate and obtain how many days left for the deadline.
+     *
+     * @return days left.
      */
     public int getDaysLeft() {
-        Date timeNow = new Date();
-        long diff = deadline.getTime() - timeNow.getTime();
-        return (int) TimeUnit.MILLISECONDS.toDays(diff) + 1;
+        return daysLeft;
     }
     
     /**
@@ -104,34 +132,29 @@ public class SchedulerItem extends DataStoreObject {
      * Delete the item from scheduler database.
      */
     public void delete() {
-        removeFromDatabase(key);
+        removeFromDatabase(entity.getKey());
     }
     
     /**
-     * A helper method to change the complete status for an item.
-     * It will directly read the complete status from this object.
+     * Mark the item as completed or not.
+     *
+     * @param completed whether the item should be marked as completed or not.
      */
-    private void changeCompleteStatus() {
-        Entity existingItemEntity = getEntityByKey(key);
-        existingItemEntity.setProperty("completed", completed);
-        putIntoDatabase(existingItemEntity);
+    void markAs(boolean completed) {
+        entity.setProperty("completed", completed);
+        putIntoDatabase(entity);
     }
     
-    /**
-     * Mark the item as completed.
-     */
-    void markAsCompleted() {
-        completed = true;
-        changeCompleteStatus();
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("entity", entity)
+                .add("keyString", keyString)
+                .add("description", description)
+                .add("deadline", deadline)
+                .add("daysLeft", daysLeft)
+                .add("completed", completed)
+                .toString();
     }
-    
-    /**
-     * Mark the item as uncompleted.
-     */
-    void markAsUncompleted() {
-        this.completed = false;
-        changeCompleteStatus();
-    }
-    
     
 }

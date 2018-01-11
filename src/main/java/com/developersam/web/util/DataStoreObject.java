@@ -1,4 +1,4 @@
-package com.developersam.web.model.datastore;
+package com.developersam.web.util;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -10,11 +10,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Text;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import javax.annotation.Nullable;
 
 /**
  * A superclass designed to bind closely with DataStore operations.
@@ -30,33 +26,13 @@ public abstract class DataStoreObject {
     /**
      * Name of the data store table.
      */
-    private String dataStoreTableName;
+    private final String dataStoreTableName;
     
     /**
      * A data store service that are used by all data store object.
      */
     private static final DatastoreService DATASTORE =
             DatastoreServiceFactory.getDatastoreService();
-    /**
-     * A consistently used date formatter.
-     */
-    private static final SimpleDateFormat DATE_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd hh:mm");
-    /**
-     * A calender used to find time.
-     */
-    private static final Calendar CALENDAR = Calendar.getInstance();
-    
-    static {
-        // Statically initialize the time zone.
-        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("America/New_York"));
-    }
-    
-    /**
-     * The default constructor is used when dataStore does not need to be
-     * initialized.
-     */
-    protected DataStoreObject() {}
     
     /**
      * This constructor is used when dataStore object must be initialized to
@@ -114,7 +90,8 @@ public abstract class DataStoreObject {
      * @param key key in string.
      * @return entity with given key.
      */
-    protected Entity getEntityByKey(String key) {
+    @Nullable
+    protected static Entity getEntityByKey(String key) {
         return getEntityByKey(KeyFactory.stringToKey(key));
     }
     
@@ -124,7 +101,8 @@ public abstract class DataStoreObject {
      * @param key key of entity.
      * @return entity with given key.
      */
-    protected Entity getEntityByKey(Key key) {
+    @Nullable
+    protected static Entity getEntityByKey(Key key) {
         try {
             return DATASTORE.get(key);
         } catch (EntityNotFoundException e) {
@@ -137,7 +115,7 @@ public abstract class DataStoreObject {
      *
      * @param entity entity to be put into database
      */
-    protected void putIntoDatabase(Entity entity) {
+    protected static void putIntoDatabase(Entity entity) {
         DATASTORE.put(entity);
     }
     
@@ -146,7 +124,7 @@ public abstract class DataStoreObject {
      *
      * @param key key of to-be-removed entity
      */
-    protected void removeFromDatabase(Key key) {
+    protected static void removeFromDatabase(Key key) {
         DATASTORE.delete(key);
     }
     
@@ -156,7 +134,7 @@ public abstract class DataStoreObject {
      * @param q final query.
      * @return a prepared query ready to deliver results.
      */
-    protected PreparedQuery getPreparedQuery(Query q) {
+    protected static PreparedQuery getPreparedQuery(Query q) {
         return DATASTORE.prepare(q);
     }
     
@@ -184,28 +162,6 @@ public abstract class DataStoreObject {
      */
     protected static String textToString(Object o) {
         return textToString((Text) o);
-    }
-    
-    /**
-     * Format a date object to yyyy-MM-dd hh:mm in EST.
-     *
-     * @param date date object
-     * @return a string representation of time in EST (US New York)
-     */
-    protected String dateFormatter(Date date) {
-        CALENDAR.setTime(date);
-        return DATE_FORMAT.format(CALENDAR.getTime());
-    }
-    
-    /**
-     * Format date string like yyyy-MM-dd hh:mm in EST to a date object.
-     *
-     * @param date string representation of the day
-     * @return a date object
-     * @throws ParseException error of parsing
-     */
-    protected Date dateFormatter(String date) throws ParseException {
-        return DATE_FORMAT.parse(date);
     }
     
 }

@@ -27,10 +27,8 @@ public final class Controller {
             status = board.getGameStatus();
             board.switchIdentity();
             System.out.println("Move " + moveCounter + " finished.");
-            String winningProbPrt = String.format(
-                    "Winning Probability for %s is %d.%%",
-                    (moveCounter % 2 == 0? "White": "Black"), move[2]);
-            System.out.println(winningProbPrt);
+            System.out.format("Winning Probability for %s is %d%%.\n",
+                    moveCounter % 2 == 0? "White": "Black", move[2]);
             moveCounter++;
         }
         board.print();

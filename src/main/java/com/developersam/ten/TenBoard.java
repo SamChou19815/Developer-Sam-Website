@@ -2,6 +2,7 @@ package com.developersam.ten;
 
 import com.developersam.mcts.Board;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,6 +31,14 @@ final class TenBoard implements Board {
      * The identity of the current player.
      */
     private int currentPlayerIdentity;
+    /**
+     * Pre-computed initial legal moves for AI.
+     */
+    private static final int[][] INITIAL_LEGAL_MOVE_FOR_AI = new int[][]{
+        {0, 0}, {0, 1}, {0, 2}, {0, 4}, {0, 5}, {0, 8},
+        {1, 0}, {1, 1}, {1, 3}, {1, 4}, {1, 6}, {1, 7},
+        {4, 0}, {4, 1}, {4, 4}
+    };
     
     /**
      * Construct an starting ten board.
@@ -61,6 +70,25 @@ final class TenBoard implements Board {
         this.currentPlayerIdentity = currentPlayerIdentity;
     }
     
+    /**
+     * Initialize the board from an old board.
+     *
+     * @param oldBoard the old board.
+     */
+    private TenBoard(TenBoard oldBoard) {
+        board = new int[9][0];
+        bigSquaresStatus = new int[9];
+        for (int i = 0; i < 9; i++) {
+            // Copy to maintain value safety.
+            board[i] = Arrays.copyOf(oldBoard.board[i], 9);
+            // Just copy value to speed up without another around of
+            // calculation.
+            bigSquaresStatus[i] = oldBoard.bigSquaresStatus[i];
+        }
+        currentBigSquareLegalPosition = oldBoard.currentBigSquareLegalPosition;
+        currentPlayerIdentity = oldBoard.currentPlayerIdentity;
+    }
+    
     @Override
     public int getCurrentPlayerIdentity() {
         return currentPlayerIdentity;
@@ -89,18 +117,7 @@ final class TenBoard implements Board {
      */
     @Override
     public TenBoard getCopy() {
-        TenBoard newBoard = new TenBoard();
-        for (int i = 0; i < 9; i++) {
-            // Copy to maintain value safety.
-            System.arraycopy(board[i], 0,
-                    newBoard.board[i], 0, 9);
-            // Just copy value to speed up without another around of
-            // calculation.
-            newBoard.bigSquaresStatus[i] = bigSquaresStatus[i];
-        }
-        newBoard.currentBigSquareLegalPosition = currentBigSquareLegalPosition;
-        newBoard.currentPlayerIdentity = currentPlayerIdentity;
-        return newBoard;
+        return new TenBoard(this);
     }
     
     /**
@@ -145,27 +162,34 @@ final class TenBoard implements Board {
     }
     
     /**
+     * Check whether a move is legal, where move is given by [a, b]
+     *
+     * @param a a.
+     * @param b b.
+     * @return legality of a move.
+     */
+    private boolean isLegalMove(int a, int b) {
+        if (a < 0 || a > 8 || b < 0 || b > 8) {
+            // out of boundary values
+            return false;
+        }
+        if (currentBigSquareLegalPosition != -1
+                && currentBigSquareLegalPosition != a) {
+            // in the wrong big square when it cannot have a free move
+            return false;
+        }
+        // not in the occupied big square and on an empty tile
+        return bigSquaresStatus[a] == 0 && board[a][b] == 0;
+    }
+    
+    /**
      * Check whether a move is legal.
      *
      * @param move a move represented by [a, b].
      * @return legality of a move.
      */
     private boolean isLegalMove(int[] move) {
-        if (move[0] < 0 || move[0] > 8 || move[1] < 0 || move[1] > 8) {
-            // out of boundary values
-            return false;
-        }
-        if (currentBigSquareLegalPosition != -1
-                && currentBigSquareLegalPosition != move[0]) {
-            // in the wrong big square when it cannot have a free move
-            return false;
-        }
-        if (bigSquaresStatus[move[0]] != 0) {
-            // in the occupied big square
-            return false;
-        }
-        int tileStatus = board[move[0]][move[1]];
-        return tileStatus == 0; // if it is an empty tile
+        return isLegalMove(move[0], move[1]);
     }
     
     @Override
@@ -199,19 +223,14 @@ final class TenBoard implements Board {
         int[][] template = new int[0][0];
         if (isEmpty()) {
             // for symmetry
-            return new int[][]{
-                    {0, 0}, {0, 1}, {0, 2}, {0, 4}, {0, 5}, {0, 8},
-                    {1, 0}, {1, 1}, {1, 3}, {1, 4}, {1, 6}, {1, 7},
-                    {4, 0}, {4, 1}, {4, 4}
-            };
+            return INITIAL_LEGAL_MOVE_FOR_AI;
         }
         if (currentBigSquareLegalPosition == -1) {
             for (int i = 0; i < 9; i++) {
                 if (bigSquaresStatus[i] == 0) {
                     for (int j = 0; j < 9; j++) {
-                        int[] move = new int[]{i, j};
-                        if (isLegalMove(move)) {
-                            list.add(move);
+                        if (isLegalMove(i, j)) {
+                            list.add(new int[]{i, j});
                         }
                     }
                 }
@@ -219,9 +238,8 @@ final class TenBoard implements Board {
             return list.toArray(template);
         }
         for (int j = 0; j < 9; j++) {
-            int[] move = new int[]{currentBigSquareLegalPosition, j};
-            if (isLegalMove(move)) {
-                list.add(move);
+            if (isLegalMove(currentBigSquareLegalPosition, j)) {
+                list.add(new int[]{currentBigSquareLegalPosition, j});
             }
         }
         return list.toArray(template);
@@ -254,12 +272,8 @@ final class TenBoard implements Board {
      * @return status
      */
     private int getSimpleStatusFromSquare(int[] square) {
-        if (playerSimplyWinSquare(square, 1)) {
-            return 1;
-        } else if (playerSimplyWinSquare(square, -1)) {
-            return -1;
-        }
-        return 0; // inconclusive
+        return playerSimplyWinSquare(square, 1) ? 1
+                : ((playerSimplyWinSquare(square, -1))? -1: 0);
     }
     
     /**

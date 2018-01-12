@@ -105,21 +105,17 @@ final class Node {
      * @return upper confidence bound
      */
     double getUpperConfidenceBound(boolean isPlayer) {
-        try {
-            double lnt = Math.log(parent.winningProbability[1]);
-            double winningProb = isPlayer? getWinningProbability():
-                    (1 - getWinningProbability());
-            double c = 1.0;
-            return winningProb + Math.sqrt(2 * lnt / winningProbability[1]) * c;
-        } catch (Exception e) {
-            return Double.MAX_VALUE;
-        }
+        double lnt = Math.log(parent.winningProbability[1]);
+        double winningProb = isPlayer? getWinningProbability():
+                (1 - getWinningProbability());
+        double c = 1.0;
+        return winningProb + Math.sqrt(2 * lnt / winningProbability[1]) * c;
     }
     
     /**
      * Remove the board from the node to allow it to be garbage collected.
      */
-    void deferenceBoard() {
+    void dereferenceBoard() {
         this.board = null;
     }
     

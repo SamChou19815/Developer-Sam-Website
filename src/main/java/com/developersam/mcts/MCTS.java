@@ -68,15 +68,24 @@ public final class MCTS {
         Node root = tree;
         boolean isPlayer = true;
         while (root.getNumberOfLegalMoves() > 0) {
-            boolean finalIsPlayer = isPlayer;
             // Find optimal move and loop down.
-            root = Arrays.stream(root.children)
-                    .parallel()
-                    .unordered()
-                    .max(Comparator.comparingDouble(
-                            o -> o.getUpperConfidenceBound(finalIsPlayer)))
-                    .orElseThrow(NoLegalMoveException::new);
+            Node[] children = root.children;
+            int len = children.length;
+            if (len == 0) {
+                throw new NoLegalMoveException();
+            }
+            Node n = children[0];
+            double max = n.getUpperConfidenceBound(isPlayer);
+            for (int i = 1; i < len; i++) {
+                Node node = children[i];
+                double ucb = node.getUpperConfidenceBound(isPlayer);
+                if (ucb > max) {
+                    max = ucb;
+                    n = node;
+                }
+            }
             isPlayer = !isPlayer; // switch player identity
+            root = n;
         }
         return root;
     }
@@ -88,21 +97,20 @@ public final class MCTS {
         Board b = nodeToBeExpanded.getBoard();
         // Get all legal moves from a current board
         int[][] allLegalMoves = b.getAllLegalMovesForAI();
-        if (allLegalMoves.length > 0) {
+        int len = allLegalMoves.length;
+        if (len > 0) {
             // board no longer needed at parent level.
-            nodeToBeExpanded.deferenceBoard();
+            nodeToBeExpanded.dereferenceBoard();
         }
-        nodeToBeExpanded.children = Arrays.stream(allLegalMoves)
-                .parallel()
-                .unordered()
-                .map(move -> {
-                    // Add a child for each possible move,
-                    // copying the board to wait for later simulation.
-                    Board b1 = b.getCopy();
-                    b1.makeMoveWithoutCheck(move);
-                    b1.switchIdentity();
-                    return new Node(nodeToBeExpanded, move, b1);
-                }).toArray(Node[]::new);
+        Node[] newNodes = new Node[len];
+        for (int i = 0; i < len; i++) {
+            int[] move = allLegalMoves[i];
+            Board b1 = b.getCopy();
+            b1.makeMoveWithoutCheck(move);
+            b1.switchIdentity();
+            newNodes[i] = new Node(nodeToBeExpanded, move, b1);
+        }
+        nodeToBeExpanded.children = newNodes;
     }
     
     /**
@@ -117,9 +125,6 @@ public final class MCTS {
         int status = b1.getGameStatus();
         while (status == 0) {
             int[][] moves = b1.getAllLegalMovesForAI();
-            if (moves.length == 0) {
-                throw new NoLegalMoveException();
-            }
             int[] move = moves[(int) (Math.random() * moves.length)];
             b1.makeMoveWithoutCheck(move);
             status = b1.getGameStatus();
@@ -144,7 +149,9 @@ public final class MCTS {
         while (System.currentTimeMillis() - tStart < timeLimitInMS) {
             Node selectedNode = selection();
             expansion(selectedNode);
-            Arrays.stream(selectedNode.children).parallel().unordered()
+            Arrays.stream(selectedNode.children)
+                    .parallel()
+                    .unordered()
                     .forEach(n -> n.winningStatisticsPlusOne(simulation(n)));
             simulationCounter += selectedNode.children.length;
         }
@@ -160,14 +167,21 @@ public final class MCTS {
      */
     public int[] selectMove() {
         think();
-        if (tree.children.length == 0) {
+        Node[] children = tree.children;
+        int len = children.length;
+        if (len == 0) {
             throw new NoLegalMoveException();
         }
-        Node nodeToBeReturned = Arrays.stream(tree.children)
-                .parallel()
-                .unordered()
-                .max(Comparator.comparingDouble(Node::getWinningProbability))
-                .orElseThrow(NoLegalMoveException::new);
+        Node nodeToBeReturned = children[0];
+        double max = nodeToBeReturned.getWinningProbability();
+        for (int i = 1; i < len; i++) {
+            Node n = children[i];
+            double value = n.getWinningProbability();
+            if (value > max) {
+                max = value;
+                nodeToBeReturned = n;
+            }
+        }
         int[] move = nodeToBeReturned.getMove();
         int winningProbPercentage =
                 nodeToBeReturned.getWinningProbabilityInPercentage();

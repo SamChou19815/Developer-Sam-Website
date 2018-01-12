@@ -20,15 +20,16 @@ public final class Controller {
         int moveCounter = 1;
         int status = 0;
         while (status == 0) {
-            board.print();
+            //board.print();
             MCTS decision = new MCTS(board, 1500, true);
             int[] move = decision.selectMove();
             board.makeMoveWithoutCheck(move);
             status = board.getGameStatus();
             board.switchIdentity();
+            /*
             System.out.println("Move " + moveCounter + " finished.");
             System.out.format("Winning Probability for %s is %d%%.\n",
-                    moveCounter % 2 == 0? "White": "Black", move[2]);
+                    moveCounter % 2 == 0? "White": "Black", move[2]);*/
             moveCounter++;
         }
         board.print();

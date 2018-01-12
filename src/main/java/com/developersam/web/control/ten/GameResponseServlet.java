@@ -1,6 +1,6 @@
 package com.developersam.web.control.ten;
 
-import com.developersam.ten.game.Controller;
+import com.developersam.ten.Controller;
 
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;

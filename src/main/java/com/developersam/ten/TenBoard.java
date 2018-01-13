@@ -19,14 +19,14 @@ final class TenBoard implements Board {
     private final int[][] board;
     /**
      * keep track of winning progress on big squares
-     * 1, -1, 0, 2 mean black wins, white wins, inconclusive, and all occupied
+     * 1, -1, 0, 2 mean black wins, white wins, inconclusive, and all occupied.
      */
     private final int[] bigSquaresStatus;
     /**
      * The current legal big square to pick as next move. If it's value is -1,
      * that means the user can place the move everywhere.
      */
-    public int currentBigSquareLegalPosition;
+    private int currentBigSquareLegalPosition;
     /**
      * The identity of the current player.
      */
@@ -34,14 +34,14 @@ final class TenBoard implements Board {
     /**
      * Pre-computed initial legal moves for AI.
      */
-    private static final int[][] INITIAL_LEGAL_MOVE_FOR_AI = new int[][]{
-        {0, 0}, {0, 1}, {0, 2}, {0, 4}, {0, 5}, {0, 8},
-        {1, 0}, {1, 1}, {1, 3}, {1, 4}, {1, 6}, {1, 7},
-        {4, 0}, {4, 1}, {4, 4}
+    private static final int[][] INITIAL_AI_LEGAL_MOVES = new int[][]{
+            {0, 0}, {0, 1}, {0, 2}, {0, 4}, {0, 5}, {0, 8},
+            {1, 0}, {1, 1}, {1, 3}, {1, 4}, {1, 6}, {1, 7},
+            {4, 0}, {4, 1}, {4, 4}
     };
     
     /**
-     * Construct an starting ten board.
+     * Construct a fresh new TEN board.
      */
     TenBoard() {
         board = new int[9][9];
@@ -53,21 +53,20 @@ final class TenBoard implements Board {
     }
     
     /**
-     * Initialize the board from a known board with raw inputs.
+     * Initialize the board from a data class with all the necessary info.
      *
-     * @param newBoard the new board.
-     * @param currentBigSquareLegalPosition current legal square legal position.
-     * @param currentPlayerIdentity current player identity.
+     * @param data the data that holds all the necessary info to reestablish the
+     * game, but leaving out the big square legal positions out for server side
+     * computation.
      */
-    TenBoard(int[][] newBoard, int currentBigSquareLegalPosition,
-             int currentPlayerIdentity) {
-        board = newBoard;
+    TenBoard(TenBoardData data) {
+        board = data.board;
         bigSquaresStatus = new int[9];
         for (int i = 0; i < 9; i++) {
             updateBigSquareStatus(i);
         }
-        this.currentBigSquareLegalPosition = currentBigSquareLegalPosition;
-        this.currentPlayerIdentity = currentPlayerIdentity;
+        this.currentBigSquareLegalPosition = data.currentBigSquareLegalPosition;
+        this.currentPlayerIdentity = data.currentPlayerIdentity;
     }
     
     /**
@@ -92,6 +91,17 @@ final class TenBoard implements Board {
     @Override
     public int getCurrentPlayerIdentity() {
         return currentPlayerIdentity;
+    }
+    
+    /**
+     * Obtain the current big square legal position.
+     * This method is necessary for maintaining a stateless game between server
+     * and client.
+     *
+     * @return the current big square legal position.
+     */
+    int getCurrentBigSquareLegalPosition() {
+        return currentBigSquareLegalPosition;
     }
     
     /**
@@ -223,7 +233,7 @@ final class TenBoard implements Board {
         int[][] template = new int[0][0];
         if (isEmpty()) {
             // for symmetry
-            return INITIAL_LEGAL_MOVE_FOR_AI;
+            return INITIAL_AI_LEGAL_MOVES;
         }
         if (currentBigSquareLegalPosition == -1) {
             for (int i = 0; i < 9; i++) {
@@ -272,7 +282,7 @@ final class TenBoard implements Board {
      * @return status
      */
     private int getSimpleStatusFromSquare(int[] square) {
-        return playerSimplyWinSquare(square, 1) ? 1
+        return playerSimplyWinSquare(square, 1)? 1
                 : ((playerSimplyWinSquare(square, -1))? -1: 0);
     }
     
@@ -333,6 +343,5 @@ final class TenBoard implements Board {
     public void switchIdentity() {
         currentPlayerIdentity = ~currentPlayerIdentity + 1;
     }
-    
     
 }

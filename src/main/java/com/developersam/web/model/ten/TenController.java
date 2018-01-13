@@ -5,12 +5,12 @@ import com.developersam.web.framework.mcts.MCTS;
 /**
  * Controls the game.
  */
-public final class Controller {
+public final class TenController {
     
     /**
      * So that nobody can create a controller instance.
      */
-    private Controller() {}
+    private TenController() {}
     
     /**
      * A game between two AIs.

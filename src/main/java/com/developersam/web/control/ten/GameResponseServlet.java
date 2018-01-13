@@ -1,7 +1,7 @@
 package com.developersam.web.control.ten;
 
 import com.developersam.web.model.ten.TenClientMove;
-import com.developersam.web.model.ten.Controller;
+import com.developersam.web.model.ten.TenController;
 import com.developersam.web.model.ten.TenServerResponse;
 import com.developersam.web.util.GsonUtil;
 import com.google.gson.Gson;
@@ -24,7 +24,7 @@ public class GameResponseServlet extends HttpServlet {
         Gson gson = GsonUtil.GSON;
         TenClientMove clientMove =
                 gson.fromJson(req.getReader(), TenClientMove.class);
-        TenServerResponse response = Controller.respond(clientMove);
+        TenServerResponse response = TenController.respond(clientMove);
         gson.toJson(response, resp.getWriter());
         /*
         String responseMove = String.valueOf(move[0]) + "," +

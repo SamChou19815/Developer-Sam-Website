@@ -1,6 +1,7 @@
 package com.developersam.web.framework.mcts;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 /**
  * The name stands for Monte Carlo tree search.
@@ -25,7 +26,7 @@ public final class MCTS {
     private final double drawValue;
     /**
      * The tree has the following structure described in the format of:
-     * <node type>: <children>, <move>.
+     * [node type]: [children], [move].
      * normal node: normal node, normal move.
      * last level node: empty, move.
      * root node: normal node, null.
@@ -90,29 +91,6 @@ public final class MCTS {
     }
     
     /**
-     * Expand the selected move with all possible legal moves.
-     */
-    private void expansion(Node nodeToBeExpanded) {
-        Board b = nodeToBeExpanded.getBoard();
-        // Get all legal moves from a current board
-        int[][] allLegalMoves = b.getAllLegalMovesForAI();
-        int len = allLegalMoves.length;
-        if (len > 0) {
-            // board no longer needed at parent level.
-            nodeToBeExpanded.dereferenceBoard();
-        }
-        Node[] newNodes = new Node[len];
-        for (int i = 0; i < len; i++) {
-            int[] move = allLegalMoves[i];
-            Board b1 = b.getCopy();
-            b1.makeMoveWithoutCheck(move);
-            b1.switchIdentity();
-            newNodes[i] = new Node(nodeToBeExpanded, move, b1);
-        }
-        nodeToBeExpanded.children = newNodes;
-    }
-    
-    /**
      * Perform simulation for a specific node.
      *
      * @param nodeToBeSimulated the node to be simulated.
@@ -147,11 +125,29 @@ public final class MCTS {
         int simulationCounter = 0;
         while (System.currentTimeMillis() - tStart < timeLimitInMS) {
             Node selectedNode = selection();
-            expansion(selectedNode);
-            Arrays.stream(selectedNode.children)
+            Board b = selectedNode.getBoard();
+            // Expansion: Get all legal moves from a current board
+            int[][] allLegalMoves = b.getAllLegalMovesForAI();
+            int len = allLegalMoves.length;
+            if (len > 0) {
+                // board no longer needed at parent level.
+                selectedNode.dereferenceBoard();
+            }
+            Node[] newNodes = new Node[len];
+            IntStream.range(0, len)
                     .parallel()
                     .unordered()
-                    .forEach(n -> n.winningStatisticsPlusOne(simulation(n)));
+                    .forEach(i -> {
+                        // Simulation Setup
+                        int[] move = allLegalMoves[i];
+                        Board b1 = b.getCopy();
+                        b1.makeMoveWithoutCheck(move);
+                        b1.switchIdentity();
+                        Node n = newNodes[i] = new Node(selectedNode, move, b1);
+                        // Simulate and back propagate.
+                        n.winningStatisticsPlusOne(simulation(n));
+                    });
+            selectedNode.children = newNodes;
             simulationCounter += selectedNode.children.length;
         }
         if (shouldPrintNumberOfSimulations) {

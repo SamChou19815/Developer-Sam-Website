@@ -1,6 +1,6 @@
-package com.developersam.ten;
+package com.developersam.web.model.ten;
 
-import com.developersam.mcts.MCTS;
+import com.developersam.web.framework.mcts.MCTS;
 
 /**
  * Controls the game.

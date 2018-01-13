@@ -1,7 +1,6 @@
-package com.developersam.mcts;
+package com.developersam.web.framework.mcts;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 /**
  * The name stands for Monte Carlo tree search.

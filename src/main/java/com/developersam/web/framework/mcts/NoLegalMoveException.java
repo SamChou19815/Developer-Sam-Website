@@ -1,4 +1,4 @@
-package com.developersam.mcts;
+package com.developersam.web.framework.mcts;
 
 /**
  * An exception indicating that a method gives back no legal moves when some

@@ -1,4 +1,4 @@
-package com.developersam.ten;
+package com.developersam.web.model.ten;
 
 /**
  * A data class that represents a client move.

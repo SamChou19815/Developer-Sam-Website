@@ -1,6 +1,6 @@
-package com.developersam.ten;
+package com.developersam.web.model.ten;
 
-import com.developersam.mcts.Board;
+import com.developersam.web.framework.mcts.Board;
 
 import java.util.Arrays;
 import java.util.LinkedList;

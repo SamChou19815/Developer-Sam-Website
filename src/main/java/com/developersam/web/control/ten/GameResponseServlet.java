@@ -1,8 +1,8 @@
 package com.developersam.web.control.ten;
 
-import com.developersam.ten.TenClientMove;
-import com.developersam.ten.Controller;
-import com.developersam.ten.TenServerResponse;
+import com.developersam.web.model.ten.TenClientMove;
+import com.developersam.web.model.ten.Controller;
+import com.developersam.web.model.ten.TenServerResponse;
 import com.developersam.web.util.GsonUtil;
 import com.google.gson.Gson;
 

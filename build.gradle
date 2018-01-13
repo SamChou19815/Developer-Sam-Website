@@ -29,27 +29,23 @@ repositories {
 }
 
 dependencies {
-    compile 'com.google.guava:guava:23.5-jre'
     testCompile("junit:junit:+")
+    // JSP and Servlet Support
     providedCompile group: 'javax.servlet', name: 'javax.servlet-api',
             version: '3.1.0'
-    compile 'com.google.appengine:appengine:+'
-    compile 'com.google.appengine:appengine-api-1.0-sdk:+'
     compile group: 'javax.servlet.jsp', name: 'jsp-api', version: '2.2'
     compile group: 'javax.servlet', name: 'jstl', version: '1.2'
+    // App Engine API
+    compile 'com.google.appengine:appengine:+'
+    compile 'com.google.appengine:appengine-api-1.0-sdk:+'
+    // App Engine ML API
+    compile 'com.google.cloud:google-cloud-language:+'
     // Add your dependencies here.
+    // Google's Java Library
+    compile 'com.google.guava:guava:23.5-jre'
     // GSON, for parsing and generating JSON
     compile group: 'com.google.code.gson', name: 'gson', version: '2.8.2'
-    // Extra GSON library
     compile group: 'org.danilopianini', name: 'gson-extras', version: '0.2.1'
-    // Parsing HTML Content
-    compile group: 'org.jsoup', name: 'jsoup', version: '1.11.2'
-    // Spring Framework
-    compile("org.springframework:spring-context:+")
-    compile("org.springframework:spring-webmvc:+")
-    compile("org.aspectj:aspectjrt:+")
-    // Local Jars
-    compile fileTree(dir: 'libs', include: '*.jar')
 }
 
 appengine {

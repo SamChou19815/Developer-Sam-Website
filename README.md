@@ -6,17 +6,12 @@ This repository now only contains the backend logic. The frontend is now
 developed with Angular 5 and moved
 [here](https://github.com/SamChou19815/Developer-Sam-Frontend).
 
+Previously independently hosted MCTS and TEN-Board-Game has now been moved
+into this repository for better integration with my website.
+
 Open Source Acknowledgement
 ---------------------------
 It is impossible for this website to run without 
 
-* [Jsoup](https://jsoup.org/)
-* [MCTS](https://github.com/SamChou19815/MCTS)
-* [TEN](https://github.com/SamChou19815/TEN-Board-Game)
-
-Documentation
--------------
-See [here](https://github.com/SamChou19815/Developer-Sam-Website/wiki).
-
-Besides the documentation above, you can also generate javadoc for the 
-`com.developersam.web` package.
+* [Guava (Apache 2.0)](https://github.com/google/guava)
+* [GSON (Apache 2.0)](https://github.com/google/gson)

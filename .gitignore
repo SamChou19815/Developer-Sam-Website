@@ -3,6 +3,7 @@
 /.gradle/*
 /.idea/*
 /lib/*
+/kdoc/*
 developersam.iml
 /src/main/webapp/resource/docs/*
 /src/main/webapp/resource/papers/*

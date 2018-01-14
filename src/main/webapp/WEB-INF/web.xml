@@ -12,7 +12,7 @@
         </web-resource-collection>
         <web-resource-collection>
             <web-resource-name>Google User Only Apps</web-resource-name>
-            <url-pattern>/apis/scheduler/changeCompletionStatus</url-pattern>
+            <url-pattern>/apis/scheduler/markAs</url-pattern>
         </web-resource-collection>
         <web-resource-collection>
             <web-resource-name>Google User Only Apps</web-resource-name>
@@ -25,7 +25,7 @@
 
     <filter>
         <filter-name>DirectToIndexFilter</filter-name>
-        <filter-class>com.developersam.web.control.filter.DirectToIndexFilter
+        <filter-class>com.developersam.web.controller.filter.DirectToIndexFilter
         </filter-class>
     </filter>
 

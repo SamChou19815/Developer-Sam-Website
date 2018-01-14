@@ -37,9 +37,10 @@ fun DatastoreService.getEntityByKey(key: String): Entity?
  * The abstract class is initialized by a [kind] and an optional [parent] [Key]
  * used to fetch its parent.
  */
-abstract class DataStoreObject
-protected constructor(private val kind: String,
-                      private val parent: Key? = null) {
+abstract class DataStoreObject protected constructor(
+        private val kind: String,
+        private val parent: Key? = null
+) {
 
     /**
      * Obtain the query associated with the entity name (and parent key

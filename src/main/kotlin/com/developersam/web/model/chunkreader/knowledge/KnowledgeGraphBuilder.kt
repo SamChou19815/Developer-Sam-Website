@@ -9,7 +9,7 @@ import com.google.appengine.api.datastore.Key
  * It will extract useful information from the API and store them into the
  * database.
  */
-internal class KnowledgeGraphBuilder : ChunkReaderProcessor {
+class KnowledgeGraphBuilder : ChunkReaderProcessor {
     override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
         TODO("not implemented")
     }

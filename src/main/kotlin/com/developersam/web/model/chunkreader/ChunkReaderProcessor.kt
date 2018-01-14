@@ -7,7 +7,7 @@ import com.google.appengine.api.datastore.Key
  * analyzed and stored into the database.
  */
 @FunctionalInterface
-internal interface ChunkReaderProcessor {
+interface ChunkReaderProcessor {
 
     /**
      * Further analyze the API result from the [NLPAPIAnalyzer] and put the

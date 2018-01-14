@@ -1,6 +1,7 @@
 package com.developersam.web.model.chunkreader
 
 import com.google.appengine.api.ThreadManager
+import com.google.cloud.language.v1beta2.AnalyzeSyntaxResponse
 import com.google.cloud.language.v1beta2.ClassificationCategory
 import com.google.cloud.language.v1beta2.Document
 import com.google.cloud.language.v1beta2.Document.Type
@@ -19,8 +20,7 @@ import java.util.concurrent.CountDownLatch
  *
  * It should be constructed from the text needed to analyze.
  */
-internal class NLPAPIAnalyzer
-private constructor(text: String) {
+class NLPAPIAnalyzer private constructor(text: String) {
 
     /**
      * Sentiment of the entire document.
@@ -45,11 +45,12 @@ private constructor(text: String) {
      */
     lateinit internal var categories: List<ClassificationCategory>
         private set
-
     /**
-     * The size of all entities.
+     * Number of tokens in the sentence.
      */
-    internal val entitySize: Int = entities.size
+    @Volatile
+    internal var tokenCount: Int = 0
+        private set
 
     init {
         LanguageServiceClient.create().use { client ->
@@ -69,22 +70,23 @@ private constructor(text: String) {
                 latch.countDown()
             })
             service.submit({
-                sentences = client.analyzeSyntax(doc, UTF16).sentencesList
+                val r: AnalyzeSyntaxResponse = client.analyzeSyntax(doc, UTF16)
+                tokenCount = r.tokensCount
+                sentences = r.sentencesList
                 latch.countDown()
             })
             latch.await()
             // Analyze Categories
-            categories = if (entitySize > 20) {
+            categories = if (tokenCount > 25) {
                 // Google's limitation
                 client.classifyText(doc).categoriesList
             } else {
-                emptyList<ClassificationCategory>()
+                emptyList()
             }
         }
     }
 
     companion object Factory {
-
         /**
          * Obtain an analyzer that has already analyzed the text.
          *

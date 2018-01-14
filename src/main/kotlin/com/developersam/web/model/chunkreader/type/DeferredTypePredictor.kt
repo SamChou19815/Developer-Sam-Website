@@ -14,7 +14,7 @@ import java.lang.RuntimeException
  * into database, deferring the prediction at query time. This structure
  * allows flexible interpretation of data.
  */
-internal object DeferredTypePredictor : ChunkReaderProcessor {
+object DeferredTypePredictor : ChunkReaderProcessor {
 
     private fun getTextType(sentiment: Sentiment): TextType {
         val scoreThreshold = 0.2
@@ -46,7 +46,7 @@ internal object DeferredTypePredictor : ChunkReaderProcessor {
                 ?: throw RuntimeException("Text Entity is not in the database!")
         entity.setProperty("sentiment_score", sentiment.score)
         entity.setProperty("sentiment_magnitude", sentiment.score)
-        entity.setProperty("entity_size", analyzer.entitySize)
+        entity.setProperty("token_count", analyzer.tokenCount)
         dataStore.put(entity)
     }
 

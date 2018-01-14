@@ -16,8 +16,9 @@ import java.util.concurrent.TimeUnit
  * Construct itself from an [entity] fetched from database.
  */
 class SchedulerItem
-internal constructor(@field:Transient private val entity: Entity) :
-        DataStoreObject(kind = "SchedulerItem") {
+internal constructor(@field:Transient private val entity: Entity)
+    : DataStoreObject(kind = "SchedulerItem") {
+
     /**
      * The key string of the entity.
      */

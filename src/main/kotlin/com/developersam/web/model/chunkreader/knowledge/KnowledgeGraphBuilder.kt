@@ -10,7 +10,12 @@ import com.google.appengine.api.datastore.Key
  * database.
  */
 class KnowledgeGraphBuilder : ChunkReaderProcessor {
+
     override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
-        TODO("not implemented")
+        analyzer.entities.parallelStream()
+                .map({ entity -> KnowledgePoint.from(textKey, entity) })
+                .distinct()
+                .forEach({ it.writeToDatabase() })
     }
+
 }

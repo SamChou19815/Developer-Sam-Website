@@ -1,8 +1,9 @@
 package com.developersam.web.model.scheduler
 
-import com.developersam.web.util.DataStoreObject
-import com.developersam.web.util.dataStore
-import com.developersam.web.util.getEntityByKey
+import com.developersam.web.util.datastore.DataStoreObject
+import com.developersam.web.util.datastore.Deletable
+import com.developersam.web.util.datastore.dataStore
+import com.developersam.web.util.datastore.getEntityByKey
 import com.google.appengine.api.datastore.Entity
 import com.google.appengine.api.datastore.KeyFactory
 import com.google.common.base.MoreObjects
@@ -16,8 +17,9 @@ import java.util.concurrent.TimeUnit
  * Construct itself from an [entity] fetched from database.
  */
 class SchedulerItem
-internal constructor(@field:Transient private val entity: Entity)
-    : DataStoreObject(kind = "SchedulerItem") {
+internal constructor(@field:Transient private val entity: Entity) :
+        DataStoreObject(kind = "SchedulerItem"),
+        Deletable {
 
     /**
      * The key string of the entity.
@@ -42,11 +44,9 @@ internal constructor(@field:Transient private val entity: Entity)
     private val isCompleted: Boolean =
             entity.getProperty("completed") as Boolean
 
-    /**
-     * Delete the item from scheduler database.
-     */
-    fun delete() {
+    override fun deleteFromDatabase(): Boolean {
         dataStore.delete(entity.key)
+        return true
     }
 
     /**

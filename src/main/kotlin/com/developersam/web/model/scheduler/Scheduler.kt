@@ -1,8 +1,8 @@
 package com.developersam.web.model.scheduler
 
-import com.developersam.web.util.DataStoreObject
+import com.developersam.web.util.datastore.DataStoreObject
 import com.developersam.web.util.DateUtil
-import com.developersam.web.util.dataStore
+import com.developersam.web.util.datastore.dataStore
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator
 import com.google.appengine.api.datastore.Query.FilterOperator
 import com.google.appengine.api.datastore.Query.FilterPredicate
@@ -51,7 +51,7 @@ object Scheduler : DataStoreObject(kind = "SchedulerItem") {
      */
     fun delete(key: String) {
         val item = SchedulerItem.from(key)
-        item?.delete()
+        item?.deleteFromDatabase()
     }
 
     /**

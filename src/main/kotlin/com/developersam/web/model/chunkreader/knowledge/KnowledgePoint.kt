@@ -1,6 +1,6 @@
 package com.developersam.web.model.chunkreader.knowledge
 
-import com.developersam.web.util.DataStoreObject
+import com.developersam.web.util.datastore.DataStoreObject
 import com.google.appengine.api.datastore.Key
 import com.google.cloud.language.v1beta2.Entity
 

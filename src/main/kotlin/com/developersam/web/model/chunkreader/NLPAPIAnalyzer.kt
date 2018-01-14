@@ -14,6 +14,8 @@ import java.util.concurrent.Executors
 
 import com.google.cloud.language.v1beta2.EncodingType.UTF16
 import java.util.Collections.emptyList
+import java.util.concurrent.CountDownLatch
+import java.util.function.Consumer
 
 /**
  * A [NLPAPIAnalyzer] using Google Cloud NLP API directly.
@@ -27,24 +29,24 @@ private constructor(text: String) {
      * Sentiment of the entire document.
      */
     @Volatile
-    var sentiment: Sentiment? = null
+    lateinit internal var sentiment: Sentiment
         private set
     /**
      * List of entities extracted from the text.
      */
     @Volatile
-    var entities: List<Entity>? = null
+    lateinit internal var entities: List<Entity>
         private set
     /**
      * List of sentences extracted from the text.
      */
     @Volatile
-    var sentences: List<Sentence>? = null
+    lateinit internal var sentences: List<Sentence>
         private set
     /**
      * List of categories extracted from the text.
      */
-    var categories: List<ClassificationCategory>? = null
+    lateinit internal var categories: List<ClassificationCategory>
         private set
 
     init {
@@ -54,24 +56,23 @@ private constructor(text: String) {
                     .setType(Type.PLAIN_TEXT).build()
             val service = Executors.newFixedThreadPool(
                     3, ThreadManager.currentRequestThreadFactory())
-            val list = Arrays.asList(Callable<Void> {
-                this.sentiment = client.analyzeSentiment(doc).documentSentiment
-                null
-            }, Callable<Void> {
-                this.entities = client
-                        .analyzeEntitySentiment(doc, UTF16).entitiesList
-                null
-            }, Callable<Void> {
-                this.sentences = client.analyzeSyntax(doc, UTF16).sentencesList
-                null
+            val latch = CountDownLatch(3)
+            service.submit({
+                sentiment = client.analyzeSentiment(doc).documentSentiment
+                latch.countDown()
             })
-            service.invokeAll(list)
-            // TODO remove these statement when finished debugging.
-            println(sentiment)
-            println(entities)
-            println(sentences)
+            service.submit({
+                entities =
+                        client.analyzeEntitySentiment(doc, UTF16).entitiesList
+                latch.countDown()
+            })
+            service.submit({
+                sentences = client.analyzeSyntax(doc, UTF16).sentencesList
+                latch.countDown()
+            })
+            latch.await()
             // Analyze Categories
-            categories = if (entities!!.size > 20) {
+            categories = if (entities.size > 20) {
                 // Google's limitation
                 client.classifyText(doc).categoriesList
             } else {

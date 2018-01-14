@@ -1,8 +1,6 @@
 package com.developersam.web.controller.chunkreader
 
-import com.google.cloud.language.v1beta2.Document
-import com.google.cloud.language.v1beta2.Document.Type
-import com.google.cloud.language.v1beta2.LanguageServiceClient
+import com.developersam.web.model.chunkreader.NLPAPIAnalyzer
 
 import javax.servlet.annotation.WebServlet
 import javax.servlet.http.HttpServlet
@@ -16,24 +14,12 @@ import javax.servlet.http.HttpServletResponse
 class TestServlet : HttpServlet() {
 
     override fun doGet(req: HttpServletRequest, resp: HttpServletResponse) {
-        val client = LanguageServiceClient.create()
-        try {
-            client.use { language ->
-                // The text to analyze
-                val doc = Document.newBuilder()
-                        .setContent("Hello, world!")
-                        .setType(Type.PLAIN_TEXT)
-                        .build()
-                // Detects the sentiment of the text
-                val sentiment = language.analyzeSentiment(doc).documentSentiment
-                resp.writer.printf("%d %d",
-                        sentiment.score, sentiment.magnitude)
-            }
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        } finally {
-            client.close()
-        }
+        val analyzer = NLPAPIAnalyzer.analyze("Four score and seven " +
+                "years ago, I created the matrix")
+        resp.writer.println(analyzer?.sentiment)
+        resp.writer.println(analyzer?.entities)
+        resp.writer.println(analyzer?.sentences)
+        resp.writer.println(analyzer?.categories)
     }
 
 }

@@ -18,7 +18,7 @@ val dataStore: DatastoreService = DatastoreServiceFactory.getDatastoreService()
  */
 fun DatastoreService.getEntityByKey(key: Key): Entity? {
     return try {
-        dataStore.get(key)
+        dataStore[key]
     } catch (e: EntityNotFoundException) {
         null
     }
@@ -34,22 +34,22 @@ fun DatastoreService.getEntityByKey(key: String): Entity?
  * A superclass designed to bind closely with DataStore operations.
  * Its subclass must be a logical object related to both a DataStore entity and
  * a Java bean like object.
- * The abstract class is initialized by a [dataStoreTableName] and an optional
- * [parentKey] used to fetch its parent.
+ * The abstract class is initialized by a [kind] and an optional [parent] [Key]
+ * used to fetch its parent.
  */
 abstract class DataStoreObject
-protected constructor(private val dataStoreTableName: String,
-                      private val parentKey: Key? = null) {
+protected constructor(private val kind: String,
+                      private val parent: Key? = null) {
 
     /**
      * Obtain the query associated with the entity name (and parent key
      * sometimes).
      */
     protected val query: Query
-        get() = if (parentKey == null) {
-            Query(dataStoreTableName)
+        get() = if (parent == null) {
+            Query(kind)
         } else {
-            Query(dataStoreTableName).setAncestor(parentKey)
+            Query(kind).setAncestor(parent)
         }
 
     /**
@@ -57,10 +57,10 @@ protected constructor(private val dataStoreTableName: String,
      * if it exists).
      */
     protected val newEntity: Entity
-        get() = if (parentKey == null) {
-            Entity(dataStoreTableName)
+        get() = if (parent == null) {
+            Entity(kind)
         } else {
-            Entity(dataStoreTableName, parentKey)
+            Entity(kind, parent)
         }
 
 }

@@ -8,14 +8,11 @@ import com.google.cloud.language.v1beta2.Entity
 import com.google.cloud.language.v1beta2.LanguageServiceClient
 import com.google.cloud.language.v1beta2.Sentence
 import com.google.cloud.language.v1beta2.Sentiment
-import java.util.Arrays
-import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 
 import com.google.cloud.language.v1beta2.EncodingType.UTF16
 import java.util.Collections.emptyList
 import java.util.concurrent.CountDownLatch
-import java.util.function.Consumer
 
 /**
  * A [NLPAPIAnalyzer] using Google Cloud NLP API directly.
@@ -49,6 +46,11 @@ private constructor(text: String) {
     lateinit internal var categories: List<ClassificationCategory>
         private set
 
+    /**
+     * The size of all entities.
+     */
+    internal val entitySize: Int = entities.size
+
     init {
         LanguageServiceClient.create().use { client ->
             val doc = Document.newBuilder()
@@ -72,7 +74,7 @@ private constructor(text: String) {
             })
             latch.await()
             // Analyze Categories
-            categories = if (entities.size > 20) {
+            categories = if (entitySize > 20) {
                 // Google's limitation
                 client.classifyText(doc).categoriesList
             } else {

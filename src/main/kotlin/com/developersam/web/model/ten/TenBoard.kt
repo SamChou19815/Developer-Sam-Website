@@ -1,6 +1,7 @@
 package com.developersam.web.model.ten
 
 import com.developersam.web.framework.mcts.Board
+import com.developersam.web.framework.mcts.MCTS
 
 import java.util.Arrays
 import java.util.LinkedList
@@ -9,7 +10,7 @@ import java.util.LinkedList
  * The board of the game ten. It implements the [Board] interface from the MCTS
  * framework so that there is an AI for it.
  */
-internal class TenBoard : Board {
+class TenBoard : Board {
 
     /**
      * In variable names, a big square refers to a 3*3 square;
@@ -297,6 +298,33 @@ internal class TenBoard : Board {
                 intArrayOf(1, 0), intArrayOf(1, 1), intArrayOf(1, 3),
                 intArrayOf(1, 4), intArrayOf(1, 6), intArrayOf(1, 7),
                 intArrayOf(4, 0), intArrayOf(4, 1), intArrayOf(4, 4))
+
+        /**
+         * Respond to a [clientMove] represented by a [TenClientMove] object and
+         * gives back the formatted [TenServerResponse].
+         */
+        fun respond(clientMove: TenClientMove): TenServerResponse {
+            val board = TenBoard(clientMove.boardBeforeHumanMove)
+            board.switchIdentity()
+            if (!board.makeMove(clientMove.humanMove)) {
+                // Stop illegal move from corrupting game data.
+                return TenServerResponse.illegalMoveResponse
+            }
+            var status = board.gameStatus
+            when (status) {
+                1, -1 -> // Black/White wins before AI move
+                    return TenServerResponse.whenPlayerWin(status)
+                else -> board.switchIdentity()
+            }
+            // Let AI think
+            val decision = MCTS(board, 1500)
+            val aiMove = decision.selectMove()
+            board.makeMove(aiMove)
+            status = board.gameStatus
+            // A full response.
+            return TenServerResponse(intArrayOf(aiMove[0], aiMove[1]),
+                    board.currentBigSquareLegalPosition, status, aiMove[2])
+        }
     }
 
 }

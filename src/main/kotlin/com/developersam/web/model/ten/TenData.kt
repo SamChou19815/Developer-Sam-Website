@@ -5,8 +5,8 @@ package com.developersam.web.model.ten
  * - [boardBeforeHumanMove] specifies the board before the human move.
  * - [humanMove] completes the picture by providing human's move in a tuple.
  */
-internal class TenClientMove(internal val boardBeforeHumanMove: TenBoardData,
-                             internal val humanMove: IntArray)
+class TenClientMove(internal val boardBeforeHumanMove: TenBoardData,
+                    internal val humanMove: IntArray)
 
 /**
  * A class that is responsible for holding the simplified version of the TEN
@@ -17,9 +17,9 @@ internal class TenClientMove(internal val boardBeforeHumanMove: TenBoardData,
  * status.
  * - [currentPlayerIdentity] is used to determine the identity of AI.
  */
-internal class TenBoardData(internal val board: Array<IntArray>,
-                            internal val currentBigSquareLegalPosition: Int,
-                            internal val currentPlayerIdentity: Int)
+class TenBoardData(internal val board: Array<IntArray>,
+                   internal val currentBigSquareLegalPosition: Int,
+                   internal val currentPlayerIdentity: Int)
 
 /**
  * A data class that represents a server response to the client move.
@@ -32,10 +32,10 @@ internal class TenBoardData(internal val board: Array<IntArray>,
  * - [status] specifies the status of the game after the move.
  * - [aiWinningProbability] specifies the winning probability of AI.
  */
-internal class TenServerResponse(private var aiMove: IntArray,
-                                 private var currentBigSquareLegalPosition: Int,
-                                 private var status: Int,
-                                 private var aiWinningProbability: Int) {
+class TenServerResponse(private var aiMove: IntArray,
+                        private var currentBigSquareLegalPosition: Int,
+                        private var status: Int,
+                        private var aiWinningProbability: Int) {
 
     companion object Factory {
         /**

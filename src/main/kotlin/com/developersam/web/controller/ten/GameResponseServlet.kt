@@ -1,5 +1,6 @@
 package com.developersam.web.controller.ten
 
+import com.developersam.web.model.ten.TenBoard
 import com.developersam.web.model.ten.TenClientMove
 import com.developersam.web.util.GsonUtil
 
@@ -17,7 +18,7 @@ class GameResponseServlet : HttpServlet() {
     override fun doPost(req: HttpServletRequest, resp: HttpServletResponse) {
         val gson = GsonUtil.GSON
         val clientMove = gson.fromJson(req.reader, TenClientMove::class.java)
-        val response = TenController.respond(clientMove = clientMove)
+        val response = TenBoard.respond(clientMove = clientMove)
         gson.toJson(response, resp.writer)
     }
 

@@ -15,7 +15,7 @@ import java.util.stream.StreamSupport
 /**
  * Represent the scheduler app.
  */
-object Scheduler : DataStoreObject(dataStoreTableName = "SchedulerItem") {
+object Scheduler : DataStoreObject(kind = "SchedulerItem") {
 
     /**
      * Obtain a list of [allSchedulerItems] for a signed-in user.

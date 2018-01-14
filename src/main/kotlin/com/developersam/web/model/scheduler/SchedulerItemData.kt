@@ -13,7 +13,7 @@ import java.util.Date
  * database. It is also a simplified object for JSON transmission.
  */
 class SchedulerItemData
-private constructor() : DataStoreObject(dataStoreTableName = "SchedulerItem") {
+private constructor() : DataStoreObject(kind = "SchedulerItem") {
 
     /**
      * An optional field that that essentially tells the difference between

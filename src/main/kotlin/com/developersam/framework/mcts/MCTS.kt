@@ -166,19 +166,19 @@ private class Node(private val parent: Node?, internal val move: IntArray?,
     /**
      * Obtain the [board] associated with the node.
      */
-    internal val board: Board? get() = _board
+    val board: Board? get() = _board
 
     /**
      * Get number of legal moves.
      *
      * @return number of legal moves
      */
-    internal val numberOfLegalMoves: Int get() = children?.size ?: 0
+    val numberOfLegalMoves: Int get() = children?.size ?: 0
 
     /**
      * Obtain winning probability in percentage.
      */
-    internal val winningProbabilityInPercentage: Int
+    val winningProbabilityInPercentage: Int
         get() = (winningProbability * 100).toInt()
 
     /**
@@ -188,7 +188,7 @@ private class Node(private val parent: Node?, internal val move: IntArray?,
      *
      * @param board the starting board.
      */
-    internal constructor(board: Board) : this(null, null, board)
+    constructor(board: Board) : this(null, null, board)
 
     init {
         this._board = board
@@ -197,14 +197,14 @@ private class Node(private val parent: Node?, internal val move: IntArray?,
     /**
      * Obtain [winningProbability] between 0 and 1.
      */
-    internal val winningProbability: Double
+    val winningProbability: Double
         get() = winningProbArray[0] / winningProbArray[1]
 
     /**
      * Plus one for winning probability denominator and plus the [winValue] for
      * the numerator. This method does this iteratively until reaching the root.
      */
-    internal fun winningStatisticsPlusOne(winValue: Double) {
+    fun winningStatisticsPlusOne(winValue: Double) {
         var n: Node? = this
         while (n != null) {
             n.winningProbArray[0] += winValue
@@ -217,7 +217,7 @@ private class Node(private val parent: Node?, internal val move: IntArray?,
      * Get upper confidence bound in MCTS, which needs a [isPlayer] parameter
      * to tell whether to calculate in favor or against the player.
      */
-    internal fun getUpperConfidenceBound(isPlayer: Boolean): Double {
+    fun getUpperConfidenceBound(isPlayer: Boolean): Double {
         val lnt = Math.log(parent!!.winningProbArray[1])
         val winningProb =
                 if (isPlayer) winningProbability else 1 - winningProbability
@@ -228,7 +228,7 @@ private class Node(private val parent: Node?, internal val move: IntArray?,
     /**
      * Remove the board from the node to allow it to be garbage collected.
      */
-    internal fun dereferenceBoard() {
+    fun dereferenceBoard() {
         this._board = null
     }
 

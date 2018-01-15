@@ -120,7 +120,7 @@ class TenBoard : Board {
      * is not presented because it can be computed at the server side without
      * extra information.
      */
-    internal constructor(data: TenBoardData) {
+    constructor(data: TenBoardData) {
         board = data.board
         bigSquaresStatus = IntArray(9)
         for (i in 0..8) {
@@ -162,7 +162,7 @@ class TenBoard : Board {
     /**
      * Print the board.
      */
-    fun print() {
+    private fun print() {
         println("Current Player: " +
                 if (currentPlayerIdentity == 1) "Black" else "White")
         println("Printing the board:")
@@ -226,7 +226,7 @@ class TenBoard : Board {
      * Make a move [move] with legality check and tells whether the move is
      * legal/successful.
      */
-    internal fun makeMove(move: IntArray): Boolean {
+    fun makeMove(move: IntArray): Boolean {
         if (!isLegalMove(move)) {
             return false
         }
@@ -324,6 +324,40 @@ class TenBoard : Board {
             // A full response.
             return TenServerResponse(intArrayOf(aiMove[0], aiMove[1]),
                     board.currentBigSquareLegalPosition, status, aiMove[2])
+        }
+
+        /**
+         * Run a game between two AI.
+         * The AI is given as a function [aiMoveSupplier] with takes a [Board]
+         * and gives back a move that contains AI winning probability at index
+         * 2.
+         * The user of the method can specify whether to print game status out
+         * by [printGameStatus], which defaults to true.
+         */
+        fun runAGameBetweenTwoAIs(aiMoveSupplier: (TenBoard) -> IntArray,
+                                  printGameStatus: Boolean = true) {
+            val board = TenBoard()
+            var moveCounter = 1
+            var status = 0
+            while (status == 0) {
+                if (printGameStatus) {
+                    board.print()
+                }
+                val move = aiMoveSupplier(board)
+                board.makeMoveWithoutCheck(move)
+                status = board.gameStatus
+                board.switchIdentity()
+                if (printGameStatus) {
+                    println("Move $moveCounter finished.")
+                    val player = if (moveCounter % 2 == 0) "White" else "Black"
+                    println("Winning Probability for $player is ${move[2]}%.")
+                }
+                moveCounter++
+            }
+            if (printGameStatus) {
+                board.print()
+                println((if (status == 1) "Black" else "White") + " wins.")
+            }
         }
     }
 

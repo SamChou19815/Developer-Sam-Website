@@ -4,6 +4,9 @@ import com.developersam.testcommon.NUM_TESTS
 import org.junit.Assert.*
 import org.junit.Test
 
+/**
+ * Run tests on the TEN board to test its legality.
+ */
 class TenBoardTest {
 
     @Test

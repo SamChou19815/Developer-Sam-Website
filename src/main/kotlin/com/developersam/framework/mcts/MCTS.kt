@@ -8,6 +8,7 @@ import java.util.stream.IntStream
  * It's constructed with a initial [board] and the [timeLimit] in milliseconds.
  */
 class MCTS(private val board: Board, private val timeLimit: Int) {
+
     /**
      * The value of a draw of the game, should be between 0 and 1.
      */
@@ -80,7 +81,8 @@ class MCTS(private val board: Board, private val timeLimit: Int) {
             val selectedNode = selection()
             val b = selectedNode.board
             // Expansion: Get all legal moves from a current board
-            val allLegalMoves = b!!.allLegalMovesForAI
+            val allLegalMoves = b?.allLegalMovesForAI
+                    ?: throw NoLegalMoveException()
             val len = allLegalMoves.size
             if (len > 0) {
                 // board no longer needed at parent level.

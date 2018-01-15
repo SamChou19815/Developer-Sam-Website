@@ -14,7 +14,7 @@ import java.util.Arrays
  * It will use the processed data from the API to help further analyze
  * the importance of each sentence.
  */
-abstract class SentenceSalienceMarker : ChunkReaderProcessor {
+object SentenceSalienceMarker : ChunkReaderProcessor {
 
     /**
      * A list of [AnnotatedSentence] to be written into database.
@@ -131,7 +131,7 @@ abstract class SentenceSalienceMarker : ChunkReaderProcessor {
         TODO("Not implemented!")
     }
 
-    override final fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
+    override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
         initSentenceGraph(analyzer = analyzer, textKey = textKey)
         randomVisit()
         annotatedSentences.parallelStream().forEach { it.writeToDatabase() }

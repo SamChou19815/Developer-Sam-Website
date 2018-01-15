@@ -73,16 +73,16 @@ class NLPAPIAnalyzer private constructor(text: String) {
                 val r: AnalyzeSyntaxResponse = client.analyzeSyntax(doc, UTF16)
                 tokenCount = r.tokensCount
                 sentences = r.sentencesList
+                // Analyze Categories
+                categories = if (tokenCount > 25) {
+                    // Google's limitation
+                    client.classifyText(doc).categoriesList
+                } else {
+                    emptyList()
+                }
                 latch.countDown()
             })
             latch.await()
-            // Analyze Categories
-            categories = if (tokenCount > 25) {
-                // Google's limitation
-                client.classifyText(doc).categoriesList
-            } else {
-                emptyList()
-            }
         }
     }
 

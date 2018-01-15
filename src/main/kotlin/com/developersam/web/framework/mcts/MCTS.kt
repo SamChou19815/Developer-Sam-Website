@@ -86,18 +86,16 @@ class MCTS(private val board: Board, private val timeLimit: Int) {
                 // board no longer needed at parent level.
                 selectedNode.dereferenceBoard()
             }
-            val newNodes = arrayOfNulls<Node>(len)
             selectedNode.children = IntStream.range(0, len)
                     .parallel()
                     .unordered()
-                    .mapToObj { i ->
+                    .mapToObj {
                         // Simulation Setup
-                        val move = allLegalMoves[i]
+                        val move = allLegalMoves[it]
                         val b1 = b.copy
                         b1.makeMoveWithoutCheck(move)
                         b1.switchIdentity()
                         val n = Node(selectedNode, move, b1)
-                        newNodes[i] = n
                         // Simulate and back propagate.
                         val winValue = simulation(n)
                         synchronized(tree) {
@@ -105,7 +103,7 @@ class MCTS(private val board: Board, private val timeLimit: Int) {
                         }
                         n
                     }.toArray({ size -> arrayOfNulls<Node>(size) })
-            simulationCounter += selectedNode.children!!.size
+            simulationCounter += len
         }
         Logger.getGlobal().info("# of simulations: " + simulationCounter)
     }
@@ -148,7 +146,7 @@ class MCTS(private val board: Board, private val timeLimit: Int) {
  * [board] bind on the node.
  */
 private class Node(private val parent: Node?, internal val move: IntArray?,
-                    board: Board) {
+                   board: Board) {
     /**
      * Children node, which will be initialized later.
      */

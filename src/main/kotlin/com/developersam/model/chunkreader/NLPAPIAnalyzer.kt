@@ -65,18 +65,18 @@ class NLPAPIAnalyzer private constructor(text: String) {
                 latch.countDown()
             })
             service.submit({
-                entities =
-                        client.analyzeEntitySentiment(doc, UTF16).entitiesList
+                entities = ArrayList(
+                        client.analyzeEntitySentiment(doc, UTF16).entitiesList)
                 latch.countDown()
             })
             service.submit({
                 val r: AnalyzeSyntaxResponse = client.analyzeSyntax(doc, UTF16)
                 tokenCount = r.tokensCount
-                sentences = r.sentencesList
+                sentences = ArrayList(r.sentencesList)
                 // Analyze Categories
                 categories = if (tokenCount > 25) {
                     // Google's limitation
-                    client.classifyText(doc).categoriesList
+                    ArrayList(client.classifyText(doc).categoriesList)
                 } else {
                     emptyList()
                 }

@@ -5,11 +5,11 @@ import com.developersam.model.chunkreader.NLPAPIAnalyzer
 import com.google.appengine.api.datastore.Key
 
 /**
- * The class used to help build a knowledge graph.
+ * The object used to help build a knowledge graph.
  * It will extract useful information from the API and store them into the
  * database.
  */
-class KnowledgeGraphBuilder : ChunkReaderProcessor {
+object KnowledgeGraphBuilder : ChunkReaderProcessor {
 
     override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
         analyzer.entities.parallelStream()

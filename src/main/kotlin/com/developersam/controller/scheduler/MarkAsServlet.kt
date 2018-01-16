@@ -14,8 +14,9 @@ import javax.servlet.http.HttpServletResponse
 class MarkAsServlet : HttpServlet() {
 
     override fun doPost(req: HttpServletRequest, resp: HttpServletResponse) {
-        val key = req.getParameter("key")
-        val completed = req.getParameter("completed").toBoolean()
+        val key = req.getParameter("key") ?: return
+        val completed =
+                req.getParameter("completed")?.toBoolean() ?: return
         Scheduler.markAs(key = key, completionStatus = completed)
     }
 

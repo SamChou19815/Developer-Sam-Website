@@ -17,7 +17,7 @@ import kotlin.system.measureTimeMillis
  * [ChunkReaderMainProcessor] calls all the other sub-processors to complete
  * the chunk reader pre-processing.
  */
-object ChunkReaderMainProcessor : DataStoreObject("ChunkReaderText") {
+object ChunkReaderMainProcessor : DataStoreObject(kind = "ChunkReaderText") {
 
     /**
      * Process a given [article] and use [Boolean] return to report whether

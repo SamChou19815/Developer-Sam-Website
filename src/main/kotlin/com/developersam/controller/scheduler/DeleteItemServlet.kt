@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletResponse
 class DeleteItemServlet : HttpServlet() {
 
     override fun doDelete(req: HttpServletRequest, resp: HttpServletResponse) {
-        Scheduler.delete(key = req.getParameter("key"))
+        val key = req.getParameter("key") ?: return
+        Scheduler.delete(key = key)
     }
 
 }

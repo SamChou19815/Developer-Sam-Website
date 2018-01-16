@@ -2,8 +2,10 @@ package com.developersam.model.chunkreader.summary
 
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.dataStore
+import com.developersam.webcore.datastore.getEntityByKey
 import com.google.appengine.api.datastore.FetchOptions
 import com.google.appengine.api.datastore.Key
+import com.google.appengine.api.datastore.KeyFactory
 import com.google.appengine.api.datastore.Query
 import com.google.appengine.api.datastore.Query.SortDirection.DESCENDING
 
@@ -31,5 +33,19 @@ class RetrievedSummaries(textKey: Key, private val limit: Int = 5) :
                     .sortedBy { it.beginOffset }
                     .toList()
         }
+
+    companion object {
+
+        /**
+         * Construct a [RetrievedSummaries] from a [SummaryRequest], which may
+         * fail and return `null` due to bad key value.
+         */
+        fun from(summaryRequest: SummaryRequest): RetrievedSummaries? {
+            val keyString = summaryRequest.keyString ?: return null
+            val key = KeyFactory.stringToKey(keyString)
+            return RetrievedSummaries(
+                    textKey = key, limit = summaryRequest.limit)
+        }
+    }
 
 }

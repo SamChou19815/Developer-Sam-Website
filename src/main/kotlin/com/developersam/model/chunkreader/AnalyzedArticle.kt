@@ -4,6 +4,8 @@ import com.developersam.model.chunkreader.category.RetrievedCategories
 import com.developersam.model.chunkreader.knowledge.RetrievedKnowledgeMap
 import com.developersam.model.chunkreader.summary.RetrievedSummaries
 import com.developersam.model.chunkreader.type.TextType
+import com.developersam.webcore.datastore.dataStore
+import com.developersam.webcore.datastore.getEntityByKey
 import com.google.appengine.api.datastore.Entity
 import com.google.appengine.api.datastore.Key
 import com.google.appengine.api.datastore.Text
@@ -122,6 +124,15 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
             }
         }
 
+        /**
+         * Create a [AnalyzedArticle] with full detail from a [keyString],
+         * which may not be created due to a wrong key.
+         */
+        fun from(keyString: String): AnalyzedArticle? {
+            val entity = dataStore.getEntityByKey(key = keyString)
+                    ?: return null
+            return AnalyzedArticle(entity = entity, fullDetail = true)
+        }
     }
 
 }

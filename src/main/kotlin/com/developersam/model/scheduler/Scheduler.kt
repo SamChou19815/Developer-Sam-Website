@@ -1,14 +1,13 @@
 package com.developersam.model.scheduler
 
 import com.developersam.util.datastore.DataStoreObject
-import com.developersam.util.DateUtil
 import com.developersam.util.datastore.dataStore
+import com.developersam.util.yesterday
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator
 import com.google.appengine.api.datastore.Query.FilterOperator
 import com.google.appengine.api.datastore.Query.FilterPredicate
 import com.google.appengine.api.datastore.Query.SortDirection
 import com.google.appengine.api.users.UserServiceFactory
-
 import java.util.ArrayList
 import java.util.stream.StreamSupport
 
@@ -27,7 +26,7 @@ object Scheduler : DataStoreObject(kind = "SchedulerItem") {
             val filterUser = FilterPredicate("userEmail",
                     FilterOperator.EQUAL, userEmail)
             val filterDeadline = FilterPredicate("deadline",
-                    FilterOperator.GREATER_THAN_OR_EQUAL, DateUtil.yesterday)
+                    FilterOperator.GREATER_THAN_OR_EQUAL, yesterday)
             val trueAndFalse = ArrayList<Boolean>(2)
             trueAndFalse.add(true)
             trueAndFalse.add(false)

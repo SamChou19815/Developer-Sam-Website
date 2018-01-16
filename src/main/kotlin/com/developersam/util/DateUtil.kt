@@ -1,3 +1,5 @@
+@file:JvmName(name = "DateUtil")
+
 package com.developersam.util
 
 import java.text.ParseException
@@ -7,65 +9,56 @@ import java.util.Date
 import java.util.TimeZone
 
 /**
- * Operations related to date.
+ * The commonly used date format throughout the application.
  */
-object DateUtil {
+@JvmField
+val commonDateFormat = "yyyy-MM-dd"
 
-    /**
-     * The commonly used date format throughout the application.
-     */
-    @JvmField internal val DATE_FORMAT = "yyyy-MM-dd"
-    /**
-     * A consistently used date formatter.
-     */
-    private val DATE_FORMATTER = SimpleDateFormat(DATE_FORMAT)
-    /**
-     * A calender used to find time.
-     */
-    private val CALENDAR = Calendar.getInstance()
-
-    /**
-     * A helper method to obtain yesterday.
-     *
-     * @return yesterday.
-     */
-    val yesterday: Date
-        get() {
-            val calendar = Calendar.getInstance()
-            calendar.add(Calendar.DATE, -1)
-            return calendar.time
-        }
-
-    init {
-        // Statically initialize the time zone.
-        DATE_FORMATTER.timeZone = TimeZone.getTimeZone("America/New_York")
-    }
-
-    /**
-     * Convert a date object to string in format yyyy-MM-dd in EST.
-     *
-     * @param date date object
-     * @return a string representation of time in EST (US New York)
-     */
-    fun dateToString(date: Date): String {
-        synchronized(CALENDAR) {
-            CALENDAR.time = date
-            return DATE_FORMATTER.format(CALENDAR.time)
-        }
-    }
-
-    /**
-     * Convert a date string of format yyyy-MM-dd to a date object in EST.
-     *
-     * @param date string representation of the day
-     * @return a date object, or `null` if the string cannot be parsed.
-     */
-    fun stringToDate(date: String): Date? {
-        return try {
-            DATE_FORMATTER.parse(date)
-        } catch (e: ParseException) {
-            null
-        }
-    }
-
+/**
+ * A helper method to initialize the data with consistent time zone.
+ */
+private fun initializedDateFormatter(): SimpleDateFormat {
+    val formatter = SimpleDateFormat(commonDateFormat)
+    formatter.timeZone = TimeZone.getTimeZone("America/New_York")
+    return formatter
 }
+
+/**
+ * A consistently used date formatter.
+ */
+private val dateFormatter = initializedDateFormatter()
+/**
+ * A calendar used to find time.
+ */
+private val calendar = Calendar.getInstance()
+
+/**
+ * Convert a [Date] object to [String] in format yyyy-MM-dd in EST.
+ */
+fun dateToString(date: Date): String {
+    synchronized(calendar) {
+        calendar.time = date
+        return dateFormatter.format(calendar.time)
+    }
+}
+
+/**
+ * Convert a date [String] of format yyyy-MM-dd to a [Date] object in EST.
+ */
+fun stringToDate(date: String): Date? {
+    return try {
+        dateFormatter.parse(date)
+    } catch (e: ParseException) {
+        null
+    }
+}
+
+/**
+ * A helper method to obtain a [yesterday] [Date] object.
+ */
+val yesterday: Date
+    get() {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DATE, -1)
+        return calendar.time
+    }

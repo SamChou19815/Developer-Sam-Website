@@ -1,10 +1,10 @@
 package com.developersam.model.scheduler
 
 import com.developersam.util.datastore.DataStoreObject
-import com.developersam.util.DateUtil
 import com.developersam.util.datastore.Writable
 import com.developersam.util.datastore.dataStore
 import com.developersam.util.datastore.getEntityByKey
+import com.developersam.util.yesterday
 import com.google.appengine.api.datastore.Entity
 import com.google.appengine.api.users.UserServiceFactory
 import java.util.Date
@@ -37,8 +37,8 @@ class SchedulerItemData private constructor() :
      */
     private fun sanityCheck(): Entity? {
         if (description == null || deadline == null
-                || description.trim { it <= ' ' } == ""
-                || deadline < DateUtil.yesterday) {
+                || description.trim().isEmpty()
+                || deadline < yesterday) {
             return null
         }
         return if (keyString == null) {

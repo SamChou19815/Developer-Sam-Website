@@ -1,29 +1,19 @@
+@file:JvmName(name = "GsonUtil")
+
 package com.developersam.util
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
 /**
- * All Gson related operation helper class.
+ * Create a [GsonBuilder] of system global configuration.
  */
-object GsonUtil {
-
-    /**
-     * A default gson from Google as a reference.
-     */
-    @JvmField val DEFAULT_GSON: Gson = Gson()
-    /**
-     * A default gson for the app.
-     */
-    @JvmField val GSON: Gson = defaultBuild().create()
-
-    /**
-     * Create a `GsonBuilder` of default configuration.
-     *
-     * @return a default `GsonBuilder`.
-     */
-    private fun defaultBuild(): GsonBuilder {
-        return GsonBuilder().setDateFormat(DateUtil.DATE_FORMAT)
-    }
-
+private fun globalGsonBuilder(): GsonBuilder {
+    return GsonBuilder().setDateFormat(commonDateFormat)
 }
+
+/**
+ * A default global [Gson] for the entire app.
+ */
+@JvmField
+val gson: Gson = globalGsonBuilder().create()

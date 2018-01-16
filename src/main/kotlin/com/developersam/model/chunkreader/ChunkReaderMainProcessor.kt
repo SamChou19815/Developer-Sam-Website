@@ -20,16 +20,19 @@ import kotlin.system.measureTimeMillis
 object ChunkReaderMainProcessor : DataStoreObject("ChunkReaderText") {
 
     /**
-     * Process a given [text] and use [Boolean] return to report whether
+     * Process a given [article] and use [Boolean] return to report whether
      * the processing has succeeded without error.
      */
-    fun process(text: String): Boolean {
+    fun process(article: RawArticle): Boolean {
+        val title = article.title ?: return false
+        val content = article.content ?: return false
         val logger = Logger.getGlobal()
         val startTime = System.currentTimeMillis()
-        logger.info("Text to be analyzed:\n" + text)
-        val analyzer = NLPAPIAnalyzer.analyze(text) ?: return false
+        logger.info("Text to be analyzed:\n" + content)
+        val analyzer = NLPAPIAnalyzer.analyze(content) ?: return false
         val endTime = System.currentTimeMillis()
-        logger.info("NLP API Analyzer finished in ${endTime - startTime}ms.")
+        logger.info(
+                "NLP API Analyzer finished in ${endTime - startTime}ms.")
         val processingTaskArray: Array<ChunkReaderSubProcessor> = arrayOf(
                 DeferredTypePredictor,
                 KnowledgeGraphBuilder,
@@ -39,8 +42,9 @@ object ChunkReaderMainProcessor : DataStoreObject("ChunkReaderText") {
         val entity = newEntity
         entity.setProperty("userEmail",
                 UserServiceFactory.getUserService().currentUser.email)
-        entity.setProperty("text", Text(text))
         entity.setProperty("date", Date())
+        entity.setProperty("title", title)
+        entity.setProperty("content", Text(content))
         dataStore.put(entity)
         val textKey = entity.key
         Arrays.stream(processingTaskArray).parallel().forEach {

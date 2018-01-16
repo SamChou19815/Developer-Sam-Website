@@ -73,13 +73,10 @@ internal constructor(@field:Transient private val entity: Entity) :
     companion object {
 
         /**
-         * Construct a scheduler item from a unique key string.
-         *
-         * @param keyString a unique key string.
-         * @return the constructed scheduler item, which can be null if the key
-         * given is invalid.
+         * Construct a scheduler item from a unique [keyString], which may fail
+         * due to invalid keep and return a `null`.
          */
-        internal fun from(keyString: String): SchedulerItem? {
+        fun from(keyString: String): SchedulerItem? {
             val entity = dataStore.getEntityByKey(keyString) ?: return null
             return SchedulerItem(entity)
         }

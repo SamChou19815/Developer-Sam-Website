@@ -61,7 +61,7 @@ object SentenceSalienceMarker : ChunkReaderProcessor {
         // Obtain the inversion point from API
         return insertionPoint - 1
     }
-    
+
     /**
      * Calculate the similarity of two sentences, specified by their IDs
      * ([sentence1], [sentence2]) as a [Double].

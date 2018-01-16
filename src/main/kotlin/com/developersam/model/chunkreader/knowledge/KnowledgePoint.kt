@@ -15,7 +15,7 @@ class KnowledgePoint private constructor(
         val name: String,
         val type: KnowledgeType,
         val url: String,
-        val salience: Float
+        val salience: Double
 ) : DataStoreObject("ChunkReaderKnowledgeGraph", parent = textKey),
         Writable {
 
@@ -43,14 +43,18 @@ class KnowledgePoint private constructor(
     companion object Factory {
         /**
          * Create a [KnowledgePoint] object from a [textKey] that links to the
-         * original text and the [entity]. The new object may or may not be
-         * created (due to missing information).
+         * original text and the [entity].
          */
         internal fun from(textKey: Key, entity: Entity): KnowledgePoint {
             val type: KnowledgeType = KnowledgeType.from(entity.type)
             val url: String = entity.metadataMap["wikipedia_url"] ?: ""
-            return KnowledgePoint(textKey = textKey, name = entity.name,
-                    type = type, url = url, salience = entity.salience)
+            return KnowledgePoint(
+                    textKey = textKey,
+                    name = entity.name,
+                    type = type,
+                    url = url,
+                    salience = entity.salience.toDouble()
+            )
         }
     }
 

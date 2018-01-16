@@ -10,7 +10,10 @@ import com.google.appengine.api.datastore.Key
 object CategoryClassifier : ChunkReaderProcessor {
 
     override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
-        TODO("not implemented")
+        analyzer.categories.forEach { classificationCategory ->
+            Category.from(textKey = textKey, category = classificationCategory)
+                    .writeToDatabase()
+        }
     }
 
 }

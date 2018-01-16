@@ -17,7 +17,11 @@ val dataStore: DatastoreService = DatastoreServiceFactory.getDatastoreService()
  * Obtain an [Entity] by [key] from the [dataStore].
  */
 fun DatastoreService.getEntityByKey(key: Key): Entity? {
-    return try { dataStore[key] } catch (e: EntityNotFoundException) { null }
+    return try {
+        dataStore[key]
+    } catch (e: EntityNotFoundException) {
+        null
+    }
 }
 
 /**
@@ -34,8 +38,8 @@ fun DatastoreService.getEntityByKey(key: String): Entity?
  * used to fetch its parent.
  */
 abstract class DataStoreObject protected constructor(
-        private val kind: String,
-        private val parent: Key? = null
+        @field:Transient private val kind: String,
+        @field:Transient private val parent: Key? = null
 ) {
 
     /**

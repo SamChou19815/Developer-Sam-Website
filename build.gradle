@@ -39,8 +39,6 @@ dependencies {
     // JSP and Servlet Support
     providedCompile group: 'javax.servlet', name: 'javax.servlet-api',
             version: '3.1.0'
-    compile group: 'javax.servlet.jsp', name: 'jsp-api', version: '2.2'
-    compile group: 'javax.servlet', name: 'jstl', version: '1.2'
     // App Engine API
     compile 'com.google.appengine:appengine:+'
     compile 'com.google.appengine:appengine-api-1.0-sdk:+'
@@ -93,7 +91,7 @@ group 'com.developersam.web'
 version '3.0.0'
 
 sourceCompatibility = 1.8  // App Engine Standard uses Java 8
-targetCompatibility = 1.8
+targetCompatibility = 1.8  // App Engine Standard uses Java 8
 
 compileKotlin {
     kotlinOptions {
@@ -104,4 +102,4 @@ compileTestKotlin {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-}  // App Engine Standard uses Java 8
+}

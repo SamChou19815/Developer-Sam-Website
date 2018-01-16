@@ -1,3 +1,5 @@
 rootProject.name = 'DeveloperSamWebsite'
 include 'developersam-web-core'
+include 'developersam-mcts'
+include 'developersam-ten'
 

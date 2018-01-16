@@ -1,7 +1,7 @@
-package com.developersam.model.ten
+package com.developersam.ten
 
-import com.developersam.framework.mcts.Board
-import com.developersam.framework.mcts.MCTS
+import com.developersam.mcts.Board
+import com.developersam.mcts.MCTS
 
 import java.util.Arrays
 import java.util.LinkedList
@@ -327,14 +327,12 @@ class TenBoard : Board {
         }
 
         /**
-         * Run a game between two AI.
-         * The AI is given as a function [aiMoveSupplier] with takes a [Board]
-         * and gives back a move that contains AI winning probability at index
-         * 2.
+         * Run a game between two AI with a specified [aiThinkingTime] in
+         * milliseconds.
          * The user of the method can specify whether to print game status out
          * by [printGameStatus], which defaults to true.
          */
-        fun runAGameBetweenTwoAIs(aiMoveSupplier: (TenBoard) -> IntArray,
+        fun runAGameBetweenTwoAIs(aiThinkingTime: Int,
                                   printGameStatus: Boolean = true) {
             val board = TenBoard()
             var moveCounter = 1
@@ -343,7 +341,8 @@ class TenBoard : Board {
                 if (printGameStatus) {
                     board.print()
                 }
-                val move = aiMoveSupplier(board)
+                val move = MCTS(board = board, timeLimit = aiThinkingTime)
+                        .selectMove()
                 board.makeMoveWithoutCheck(move)
                 status = board.gameStatus
                 board.switchIdentity()

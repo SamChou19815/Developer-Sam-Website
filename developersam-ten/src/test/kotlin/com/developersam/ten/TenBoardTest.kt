@@ -1,7 +1,6 @@
-package com.developersam.model.ten
+package com.developersam.ten
 
-import com.developersam.testcommon.NUM_TESTS
-import org.junit.Assert.*
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
@@ -11,7 +10,7 @@ class TenBoardTest {
 
     @Test
     fun legalityTest() {
-        for (i in 0 until NUM_TESTS) {
+        for (i in 0 until (1 shl 16)) {
             val board = TenBoard()
             while (board.gameStatus == 0) {
                 val legalMoves = board.allLegalMovesForAI

@@ -1,4 +1,4 @@
-package com.developersam.framework.mcts
+package com.developersam.mcts
 
 /**
  * A node in the simulation tree.

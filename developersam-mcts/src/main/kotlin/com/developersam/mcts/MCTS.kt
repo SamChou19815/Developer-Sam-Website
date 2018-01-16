@@ -1,4 +1,4 @@
-package com.developersam.framework.mcts
+package com.developersam.mcts
 
 import java.util.logging.Logger
 import java.util.stream.IntStream

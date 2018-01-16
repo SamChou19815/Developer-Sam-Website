@@ -1,29 +1,4 @@
-package com.developersam.model.ten
-
-/**
- * A data class that represents a client move.
- * - [boardBeforeHumanMove] specifies the board before the human move.
- * - [humanMove] completes the picture by providing human's move in a tuple.
- */
-class TenClientMove(
-        internal val boardBeforeHumanMove: TenBoardData,
-        internal val humanMove: IntArray
-)
-
-/**
- * A class that is responsible for holding the simplified version of the TEN
- * board, without tracking extra game status. The class is designed as
- * a transmission object.
- * - [board] describes the 9x9 board.
- * - [currentBigSquareLegalPosition] is used to determine the current game
- * status.
- * - [currentPlayerIdentity] is used to determine the identity of AI.
- */
-class TenBoardData(
-        internal val board: Array<IntArray>,
-        internal val currentBigSquareLegalPosition: Int,
-        internal val currentPlayerIdentity: Int
-)
+package com.developersam.ten
 
 /**
  * A data class that represents a server response to the client move.

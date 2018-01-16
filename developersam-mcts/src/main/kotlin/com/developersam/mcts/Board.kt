@@ -1,4 +1,4 @@
-package com.developersam.framework.mcts
+package com.developersam.mcts
 
 /**
  * This interface represents any game board that supports MCTS AI framework.

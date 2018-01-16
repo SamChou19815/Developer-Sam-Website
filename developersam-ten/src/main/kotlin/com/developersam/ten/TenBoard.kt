@@ -58,15 +58,15 @@ class TenBoard : Board {
             }
             val list = LinkedList<IntArray>()
             if (currentBigSquareLegalPosition == -1) {
-                for (i in 0..8) {
-                    for (j in 0..8) {
+                for (i in 0 until 9) {
+                    for (j in 0 until 9) {
                         if (isLegalMove(i, j)) {
                             list.add(intArrayOf(i, j))
                         }
                     }
                 }
             } else {
-                for (j in 0..8) {
+                for (j in 0 until 9) {
                     if (isLegalMove(currentBigSquareLegalPosition, j)) {
                         list.add(intArrayOf(currentBigSquareLegalPosition, j))
                     }
@@ -77,21 +77,21 @@ class TenBoard : Board {
 
     override val gameStatus: Int
         get() {
-            for (i in 0..8) {
+            for (i in 0 until 9) {
                 updateBigSquareStatus(i)
             }
             val simpleStatus = getSimpleStatusFromSquare(bigSquaresStatus)
             if (simpleStatus == 1 || simpleStatus == -1) {
                 return simpleStatus
             }
-            for (i in 0..8) {
+            for (i in 0 until 9) {
                 if (bigSquaresStatus[i] == 0) {
                     return 0
                 }
             }
             var blackBigSquareCounter = 0
             var whiteBigSquareCounter = 0
-            for (i in 0..8) {
+            for (i in 0 until 9) {
                 val status = bigSquaresStatus[i]
                 if (status == 1) {
                     blackBigSquareCounter++
@@ -106,8 +106,8 @@ class TenBoard : Board {
      * Construct a fresh new TEN board.
      */
     constructor() {
-        board = Array(9) { IntArray(9) }
-        bigSquaresStatus = IntArray(9)
+        board = Array(size = 9) { IntArray(size = 9) }
+        bigSquaresStatus = IntArray(size = 9)
         // Black can choose any position initially
         currentBigSquareLegalPosition = -1
         // Black plays first.
@@ -123,7 +123,7 @@ class TenBoard : Board {
     constructor(data: TenBoardData) {
         board = data.board
         bigSquaresStatus = IntArray(9)
-        for (i in 0..8) {
+        for (i in 0 until 9) {
             updateBigSquareStatus(i)
         }
         currentBigSquareLegalPosition = data.currentBigSquareLegalPosition
@@ -136,7 +136,7 @@ class TenBoard : Board {
     private constructor(oldBoard: TenBoard) {
         board = Array(9) { IntArray(0) }
         bigSquaresStatus = IntArray(9)
-        for (i in 0..8) {
+        for (i in 0 until 9) {
             // Copy to maintain value safety.
             board[i] = Arrays.copyOf(oldBoard.board[i], 9)
             // Just copy value to speed up without another around of
@@ -235,29 +235,30 @@ class TenBoard : Board {
     }
 
     /**
+     * Perform a naive check on the square [s] about whether the player with
+     * identity [id] win the square. It only checks according to the
+     * primitive tic-tac-toe rule.
+     */
+    private fun playerSimplyWinSquare(s: IntArray, id: Int): Boolean {
+        return s[0] == id && s[1] == id && s[2] == id
+                || s[3] == id && s[4] == id && s[5] == id
+                || s[6] == id && s[7] == id && s[8] == id
+                || s[0] == id && s[3] == id && s[6] == id
+                || s[1] == id && s[4] == id && s[7] == id
+                || s[2] == id && s[5] == id && s[8] == id
+                || s[0] == id && s[4] == id && s[8] == id
+                || s[2] == id && s[4] == id && s[6] == id
+    }
+
+    /**
      * A function that helps to determine whether a square [square] belongs
      * to black (1) or white (-1).
      * If there is no direct victory, it will return 0.
      */
     private fun getSimpleStatusFromSquare(square: IntArray): Int {
-        /**
-         * Perform a naive check on the square [s] about whether the player with
-         * identity [id] win the square. It only checks according to the
-         * primitive tic-tac-toe rule.
-         */
-        fun playerSimplyWinSquare(s: IntArray, id: Int): Boolean {
-            return s[0] == id && s[1] == id && s[2] == id
-                    || s[3] == id && s[4] == id && s[5] == id
-                    || s[6] == id && s[7] == id && s[8] == id
-                    || s[0] == id && s[3] == id && s[6] == id
-                    || s[1] == id && s[4] == id && s[7] == id
-                    || s[2] == id && s[5] == id && s[8] == id
-                    || s[0] == id && s[4] == id && s[8] == id
-                    || s[2] == id && s[4] == id && s[6] == id
-        }
         return when {
-            playerSimplyWinSquare(square, 1) -> 1
-            playerSimplyWinSquare(square, -1) -> -1
+            playerSimplyWinSquare(s = square, id = 1) -> 1
+            playerSimplyWinSquare(s = square, id = -1) -> -1
             else -> 0
         }
     }

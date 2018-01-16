@@ -9,15 +9,6 @@ import com.google.common.collect.Sets
 import java.util.Arrays
 
 /**
- * Text Rank algorithm constant.
- */
-private const val D = 0.85
-/**
- * The threshold for convergence.
- */
-private const val CONVERGENCE_THRESHOLD = 1e-3
-
-/**
  * The abstract class used to mark each sentence with a salience value by Text
  * Rank algorithm.
  * It will use the processed data from the API to help further analyze
@@ -25,7 +16,14 @@ private const val CONVERGENCE_THRESHOLD = 1e-3
  */
 object SentenceSalienceMarker : ChunkReaderProcessor {
 
-
+    /**
+     * Text Rank algorithm constant.
+     */
+    private const val D = 0.85
+    /**
+     * The threshold for convergence.
+     */
+    private const val CONVERGENCE_THRESHOLD = 1e-3
     /**
      * A list of [AnnotatedSentence] to be written into database.
      */
@@ -49,6 +47,21 @@ object SentenceSalienceMarker : ChunkReaderProcessor {
     private val randomSentenceID: Int
         get() = (Math.random() * annotatedSentences.size).toInt()
 
+    /**
+     * A helper method to find the index of [beginOffset] from an array of begin
+     * offsets that represents ranges of sentence.
+     */
+    private fun IntArray.getBeginOffsetIndex(beginOffset: Int): Int {
+        val rawIndex = Arrays.binarySearch(this, beginOffset)
+        if (rawIndex >= 0) {
+            return rawIndex
+        }
+        // a + ~a + 1 = 0 ==> ~a = -1 - a => a = ~(-1 - a)
+        val insertionPoint = rawIndex.inv()
+        // Obtain the inversion point from API
+        return insertionPoint - 1
+    }
+    
     /**
      * Calculate the similarity of two sentences, specified by their IDs
      * ([sentence1], [sentence2]) as a [Double].
@@ -196,18 +209,4 @@ object SentenceSalienceMarker : ChunkReaderProcessor {
         annotatedSentences.parallelStream().forEach { it.writeToDatabase() }
     }
 
-}
-
-/**
- * A helper method to find the index of [beginOffset] from an array of begin
- * offsets that represents ranges of sentence.
- */
-private fun IntArray.getBeginOffsetIndex(beginOffset: Int): Int {
-    val rawIndex = Arrays.binarySearch(this, beginOffset)
-    if (rawIndex >= 0) {
-        return rawIndex
-    }
-    // a + ~a + 1 = 0 ==> ~a = -1 - a => a = ~(-1 - a)
-    val insertionPoint = rawIndex.inv() // Obtain the inversion point from API
-    return insertionPoint - 1
 }

@@ -1,5 +1,7 @@
-rootProject.name = 'DeveloperSamWebsite'
+rootProject.name = 'Developer-Sam-Website'
+
 include 'developersam-web-core'
 include 'developersam-mcts'
 include 'developersam-ten'
+include 'developersam-scheduler'
 

@@ -1,4 +1,4 @@
-package com.developersam.model.scheduler
+package com.developersam.scheduler
 
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.dataStore

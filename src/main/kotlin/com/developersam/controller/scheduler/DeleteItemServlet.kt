@@ -1,6 +1,6 @@
 package com.developersam.controller.scheduler
 
-import com.developersam.model.scheduler.Scheduler
+import com.developersam.scheduler.Scheduler
 
 import javax.servlet.annotation.WebServlet
 import javax.servlet.http.HttpServlet

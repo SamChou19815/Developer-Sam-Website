@@ -1,4 +1,4 @@
-package com.developersam.model.scheduler
+package com.developersam.scheduler
 
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.Deletable
@@ -16,10 +16,9 @@ import java.util.concurrent.TimeUnit
  *
  * Construct itself from an [entity] fetched from database.
  */
-class SchedulerItem
-internal constructor(@field:Transient private val entity: Entity) :
-        DataStoreObject(kind = "SchedulerItem"),
-        Deletable {
+class SchedulerItem internal constructor(
+        @field:Transient private val entity: Entity
+) : DataStoreObject(kind = "SchedulerItem"), Deletable {
 
     /**
      * The key string of the entity.

@@ -20,9 +20,10 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    testCompile("junit:junit:+")
+    // Google's Java Library
+    compile 'com.google.guava:guava:23.5-jre'
     // Other Supporting Modules
-    compile project(':developersam-mcts')
+    compile project(':developersam-web-core')
 }
 
 compileKotlin {

@@ -4,10 +4,7 @@ import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.Writable
 import com.developersam.webcore.datastore.dataStore
 import com.google.appengine.api.datastore.Entity
-import com.google.appengine.api.datastore.FetchOptions
 import com.google.appengine.api.datastore.Key
-import com.google.appengine.api.datastore.PreparedQuery
-import com.google.appengine.api.datastore.Query
 import com.google.cloud.language.v1beta2.ClassificationCategory
 
 /**
@@ -47,26 +44,6 @@ class Category private constructor(
                     startIndex = fullName.lastIndexOf(char = '/') + 1)
             val confidence = entity.getProperty("confidence") as Double
             return Category(name = simpleName, confidence = confidence)
-        }
-    }
-
-}
-
-/**
- * The object used to fetch a list of categories.
- */
-object Categories: DataStoreObject(kind = "ChunkReaderContentCategory") {
-
-    /**
-     * Fetch a list of [Category] objects with the same parent text specified
-     * by the [textKey].
-     */
-    fun listOf(textKey: Key): List<Category> {
-        val query: Query = query
-        query.addSort("confidence", Query.SortDirection.DESCENDING)
-        val pq: PreparedQuery = dataStore.prepare(query)
-        return pq.asList(FetchOptions.Builder.withLimit(3)).map {
-            Category.from(it)
         }
     }
 

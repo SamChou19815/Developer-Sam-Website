@@ -17,7 +17,7 @@ class KnowledgePoint private constructor(
         val type: KnowledgeType,
         val url: String?,
         val salience: Double
-) : DataStoreObject("ChunkReaderKnowledgeGraph", parent = textKey),
+) : DataStoreObject(kind = "ChunkReaderKnowledgeGraph", parent = textKey),
         Writable {
 
     /**

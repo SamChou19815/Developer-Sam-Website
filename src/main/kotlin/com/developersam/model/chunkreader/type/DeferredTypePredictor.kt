@@ -2,8 +2,8 @@ package com.developersam.model.chunkreader.type
 
 import com.developersam.model.chunkreader.ChunkReaderSubProcessor
 import com.developersam.model.chunkreader.NLPAPIAnalyzer
-import com.developersam.util.datastore.dataStore
-import com.developersam.util.datastore.getEntityByKey
+import com.developersam.webcore.datastore.dataStore
+import com.developersam.webcore.datastore.getEntityByKey
 import com.google.appengine.api.datastore.Key
 import java.lang.RuntimeException
 

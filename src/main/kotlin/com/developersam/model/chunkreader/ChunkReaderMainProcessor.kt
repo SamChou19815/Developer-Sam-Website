@@ -4,8 +4,8 @@ import com.developersam.model.chunkreader.category.CategoryClassifier
 import com.developersam.model.chunkreader.knowledge.KnowledgeGraphBuilder
 import com.developersam.model.chunkreader.summary.SentenceSalienceMarker
 import com.developersam.model.chunkreader.type.DeferredTypePredictor
-import com.developersam.util.datastore.DataStoreObject
-import com.developersam.util.datastore.dataStore
+import com.developersam.webcore.datastore.DataStoreObject
+import com.developersam.webcore.datastore.dataStore
 import com.google.appengine.api.datastore.Text
 import com.google.appengine.api.users.UserServiceFactory
 import java.util.Arrays

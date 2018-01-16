@@ -1,6 +1,6 @@
 @file:JvmName(name = "DateUtil")
 
-package com.developersam.util
+package com.developersam.webcore.date
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -12,7 +12,7 @@ import java.util.TimeZone
  * The commonly used date format throughout the application.
  */
 @JvmField
-val commonDateFormat = "yyyy-MM-dd"
+internal val commonDateFormat = "yyyy-MM-dd"
 
 /**
  * A helper method to initialize the data with consistent time zone.

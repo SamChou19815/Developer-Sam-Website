@@ -1,9 +1,9 @@
 package com.developersam.model.scheduler
 
-import com.developersam.util.datastore.DataStoreObject
-import com.developersam.util.datastore.Deletable
-import com.developersam.util.datastore.dataStore
-import com.developersam.util.datastore.getEntityByKey
+import com.developersam.webcore.datastore.DataStoreObject
+import com.developersam.webcore.datastore.Deletable
+import com.developersam.webcore.datastore.dataStore
+import com.developersam.webcore.datastore.getEntityByKey
 import com.google.appengine.api.datastore.Entity
 import com.google.appengine.api.datastore.KeyFactory
 import com.google.common.base.MoreObjects

@@ -2,7 +2,7 @@ package com.developersam.controller.chunkreader
 
 import com.developersam.model.chunkreader.ChunkReaderMainProcessor
 import com.developersam.model.chunkreader.RawArticle
-import com.developersam.util.gson
+import com.developersam.webcore.gson.gson
 import javax.servlet.annotation.WebServlet
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest

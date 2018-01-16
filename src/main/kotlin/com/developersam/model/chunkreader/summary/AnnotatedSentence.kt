@@ -1,8 +1,8 @@
 package com.developersam.model.chunkreader.summary
 
-import com.developersam.util.datastore.DataStoreObject
-import com.developersam.util.datastore.Writable
-import com.developersam.util.datastore.dataStore
+import com.developersam.webcore.datastore.DataStoreObject
+import com.developersam.webcore.datastore.Writable
+import com.developersam.webcore.datastore.dataStore
 import com.google.appengine.api.datastore.Entity
 import com.google.appengine.api.datastore.Key
 import com.google.appengine.api.datastore.Text

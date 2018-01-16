@@ -1,7 +1,7 @@
 package com.developersam.controller.scheduler
 
 import com.developersam.model.scheduler.Scheduler
-import com.developersam.util.gson
+import com.developersam.webcore.gson.gson
 import com.google.appengine.api.users.UserServiceFactory
 
 import javax.servlet.annotation.WebServlet

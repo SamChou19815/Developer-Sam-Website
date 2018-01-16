@@ -1,10 +1,10 @@
 package com.developersam.model.scheduler
 
-import com.developersam.util.datastore.DataStoreObject
-import com.developersam.util.datastore.Writable
-import com.developersam.util.datastore.dataStore
-import com.developersam.util.datastore.getEntityByKey
-import com.developersam.util.yesterday
+import com.developersam.webcore.datastore.DataStoreObject
+import com.developersam.webcore.datastore.Writable
+import com.developersam.webcore.datastore.dataStore
+import com.developersam.webcore.datastore.getEntityByKey
+import com.developersam.webcore.date.yesterday
 import com.google.appengine.api.datastore.Entity
 import com.google.appengine.api.users.UserServiceFactory
 import java.util.Date

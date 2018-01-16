@@ -1,8 +1,8 @@
 package com.developersam.model.scheduler
 
-import com.developersam.util.datastore.DataStoreObject
-import com.developersam.util.datastore.dataStore
-import com.developersam.util.yesterday
+import com.developersam.webcore.datastore.DataStoreObject
+import com.developersam.webcore.datastore.dataStore
+import com.developersam.webcore.date.yesterday
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator
 import com.google.appengine.api.datastore.Query.FilterOperator
 import com.google.appengine.api.datastore.Query.FilterPredicate

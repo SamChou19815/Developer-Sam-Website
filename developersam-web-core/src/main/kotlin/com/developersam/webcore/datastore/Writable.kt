@@ -1,4 +1,4 @@
-package com.developersam.util.datastore
+package com.developersam.webcore.datastore
 
 @FunctionalInterface
 interface Writable {

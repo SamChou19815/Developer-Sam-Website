@@ -1,7 +1,7 @@
 package com.developersam.controller.scheduler
 
 import com.developersam.model.scheduler.SchedulerItemData
-import com.developersam.util.gson
+import com.developersam.webcore.gson.gson
 import javax.servlet.annotation.WebServlet
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest

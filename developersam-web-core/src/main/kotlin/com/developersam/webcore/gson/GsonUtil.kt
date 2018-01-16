@@ -1,7 +1,8 @@
 @file:JvmName(name = "GsonUtil")
 
-package com.developersam.util
+package com.developersam.webcore.gson
 
+import com.developersam.webcore.date.commonDateFormat
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 

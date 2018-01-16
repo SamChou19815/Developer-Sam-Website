@@ -1,4 +1,4 @@
-package com.developersam.util.datastore
+package com.developersam.webcore.datastore
 
 import com.google.appengine.api.datastore.DatastoreService
 import com.google.appengine.api.datastore.DatastoreServiceFactory
@@ -18,7 +18,7 @@ val dataStore: DatastoreService = DatastoreServiceFactory.getDatastoreService()
  */
 fun DatastoreService.getEntityByKey(key: Key): Entity? {
     return try {
-        dataStore[key]
+        com.developersam.webcore.datastore.dataStore[key]
     } catch (e: EntityNotFoundException) {
         null
     }

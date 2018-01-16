@@ -2,7 +2,7 @@ package com.developersam.controller.ten
 
 import com.developersam.model.ten.TenBoard
 import com.developersam.model.ten.TenClientMove
-import com.developersam.util.gson
+import com.developersam.webcore.gson.gson
 import javax.servlet.annotation.WebServlet
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest

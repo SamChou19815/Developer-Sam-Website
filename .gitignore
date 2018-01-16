@@ -4,7 +4,7 @@
 /.idea/*
 /lib/*
 /kdoc/*
-developersam.iml
+*.iml
 /src/main/webapp/resource/docs/*
 /src/main/webapp/resource/papers/*
 /src/main/webapp/assets/*

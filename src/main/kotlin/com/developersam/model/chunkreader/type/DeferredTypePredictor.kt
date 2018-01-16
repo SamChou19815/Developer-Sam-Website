@@ -1,6 +1,6 @@
 package com.developersam.model.chunkreader.type
 
-import com.developersam.model.chunkreader.ChunkReaderProcessor
+import com.developersam.model.chunkreader.ChunkReaderSubProcessor
 import com.developersam.model.chunkreader.NLPAPIAnalyzer
 import com.developersam.util.datastore.dataStore
 import com.developersam.util.datastore.getEntityByKey
@@ -14,7 +14,7 @@ import java.lang.RuntimeException
  * into database, deferring the prediction at query time. This structure
  * allows flexible interpretation of data.
  */
-object DeferredTypePredictor : ChunkReaderProcessor {
+object DeferredTypePredictor : ChunkReaderSubProcessor {
 
     private fun getTextType(sentiment: Sentiment): TextType {
         val scoreThreshold = 0.2
@@ -44,9 +44,9 @@ object DeferredTypePredictor : ChunkReaderProcessor {
         val sentiment = analyzer.sentiment
         val entity = dataStore.getEntityByKey(textKey)
                 ?: throw RuntimeException("Text Entity is not in the database!")
-        entity.setProperty("sentiment_score", sentiment.score)
-        entity.setProperty("sentiment_magnitude", sentiment.score)
-        entity.setProperty("token_count", analyzer.tokenCount)
+        entity.setProperty("sentimentScore", sentiment.score)
+        entity.setProperty("sentimentMagnitude", sentiment.score)
+        entity.setProperty("tokenCount", analyzer.tokenCount)
         dataStore.put(entity)
     }
 

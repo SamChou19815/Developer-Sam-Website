@@ -5,15 +5,14 @@ import com.google.cloud.language.v1beta2.AnalyzeSyntaxResponse
 import com.google.cloud.language.v1beta2.ClassificationCategory
 import com.google.cloud.language.v1beta2.Document
 import com.google.cloud.language.v1beta2.Document.Type
+import com.google.cloud.language.v1beta2.EncodingType.UTF16
 import com.google.cloud.language.v1beta2.Entity
 import com.google.cloud.language.v1beta2.LanguageServiceClient
 import com.google.cloud.language.v1beta2.Sentence
 import com.google.cloud.language.v1beta2.Sentiment
-import java.util.concurrent.Executors
-
-import com.google.cloud.language.v1beta2.EncodingType.UTF16
 import java.util.Collections.emptyList
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
 
 /**
  * A [NLPAPIAnalyzer] using Google Cloud NLP API directly.
@@ -26,24 +25,24 @@ class NLPAPIAnalyzer private constructor(text: String) {
      * Sentiment of the entire document.
      */
     @Volatile
-    lateinit internal var sentiment: Sentiment
+    lateinit var sentiment: Sentiment
         private set
     /**
      * List of entities extracted from the text.
      */
     @Volatile
-    lateinit internal var entities: List<Entity>
+    lateinit var entities: List<Entity>
         private set
     /**
      * List of sentences extracted from the text.
      */
     @Volatile
-    lateinit internal var sentences: List<Sentence>
+    lateinit var sentences: List<Sentence>
         private set
     /**
      * List of categories extracted from the text.
      */
-    lateinit internal var categories: List<ClassificationCategory>
+    lateinit var categories: List<ClassificationCategory>
         private set
     /**
      * Number of tokens in the sentence.

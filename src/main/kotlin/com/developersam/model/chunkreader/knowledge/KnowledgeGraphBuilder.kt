@@ -1,6 +1,6 @@
 package com.developersam.model.chunkreader.knowledge
 
-import com.developersam.model.chunkreader.ChunkReaderProcessor
+import com.developersam.model.chunkreader.ChunkReaderSubProcessor
 import com.developersam.model.chunkreader.NLPAPIAnalyzer
 import com.google.appengine.api.datastore.Key
 
@@ -9,7 +9,7 @@ import com.google.appengine.api.datastore.Key
  * It will extract useful information from the API and store them into the
  * database.
  */
-object KnowledgeGraphBuilder : ChunkReaderProcessor {
+object KnowledgeGraphBuilder : ChunkReaderSubProcessor {
 
     override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
         analyzer.entities.parallelStream()

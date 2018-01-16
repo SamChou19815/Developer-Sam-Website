@@ -1,6 +1,6 @@
 package com.developersam.model.chunkreader.summary
 
-import com.developersam.model.chunkreader.ChunkReaderProcessor
+import com.developersam.model.chunkreader.ChunkReaderSubProcessor
 import com.developersam.model.chunkreader.NLPAPIAnalyzer
 import com.google.appengine.api.datastore.Key
 import com.google.cloud.language.v1beta2.Sentence
@@ -14,7 +14,7 @@ import java.util.Arrays
  * It will use the processed data from the API to help further analyze
  * the importance of each sentence.
  */
-object SentenceSalienceMarker : ChunkReaderProcessor {
+object SentenceSalienceMarker : ChunkReaderSubProcessor {
 
     /**
      * Text Rank algorithm constant.

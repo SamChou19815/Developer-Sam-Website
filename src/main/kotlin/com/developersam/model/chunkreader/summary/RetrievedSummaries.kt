@@ -9,9 +9,10 @@ import com.google.appengine.api.datastore.Query.SortDirection.DESCENDING
 
 /**
  * The class used to fetch a list of summaries for a common text key for
- * a given [limit], which will be auto-corrected to 1 if it is below 1.
+ * a given [limit] (defaults to 5), which will be auto-corrected to 1 if
+ * it is below 1.
  */
-class RetrievedSummaries(textKey: Key, private val limit: Int) :
+class RetrievedSummaries(textKey: Key, private val limit: Int = 5) :
         DataStoreObject(kind = "ChunkReaderTextSummary", parent = textKey) {
 
     /**

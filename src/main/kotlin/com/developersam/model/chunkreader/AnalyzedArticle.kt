@@ -1,8 +1,13 @@
 package com.developersam.model.chunkreader
 
+import com.developersam.model.chunkreader.category.RetrievedCategories
+import com.developersam.model.chunkreader.knowledge.RetrievedKnowledgeMap
+import com.developersam.model.chunkreader.summary.RetrievedSummaries
 import com.developersam.model.chunkreader.type.TextType
 import com.google.appengine.api.datastore.Entity
+import com.google.appengine.api.datastore.Key
 import com.google.appengine.api.datastore.Text
+import com.google.common.base.MoreObjects
 import java.util.Date
 
 /**
@@ -34,6 +39,18 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
      * Type of the recognized text.
      */
     private val textType: TextType?
+    /**
+     * A map of knowledge type to list of knowledge points
+     */
+    private val knowledgeMap: RetrievedKnowledgeMap?
+    /**
+     * A list of summaries of the content.
+     */
+    private val summaries: RetrievedSummaries?
+    /**
+     * Categories of the content.
+     */
+    private val categories: RetrievedCategories?
 
     init {
         if (fullDetail) {
@@ -46,42 +63,65 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
             sentimentMagnitude /= tokenCount
             textType = getTextType(
                     score = sentimentScore, magnitude = sentimentMagnitude)
+            val textKey: Key = entity.key
+            knowledgeMap = RetrievedKnowledgeMap(textKey = textKey)
+            summaries = RetrievedSummaries(textKey = textKey)
+            categories = RetrievedCategories(textKey = textKey)
         } else {
             content = null
             textType = null
+            knowledgeMap = null
+            summaries = null
+            categories = null
         }
     }
 
-}
-
-/**
- * The threshold for a biased sentiment.
- */
-private val scoreThreshold = 0.2
-/**
- * The threshold for a strong sentiment.
- */
-private val magnitudeThreshold = 3.0
-
-/**
- * Infer [TextType] from scaled sentiment [score] and sentiment [magnitude].
- */
-private fun getTextType(score: Double, magnitude: Double): TextType {
-    return when {
-        score < -scoreThreshold -> if (magnitude < magnitudeThreshold) {
-            TextType.SLIGHT_OPPOSITION
-        } else {
-            TextType.STRONG_OPPOSITION
-        }
-        score < scoreThreshold -> if (magnitude < magnitudeThreshold) {
-            TextType.CONCEPT
-        } else {
-            TextType.MIXED
-        }
-        else -> if (magnitude < magnitudeThreshold) {
-            TextType.SLIGHT_SUPPORT
-        } else {
-            TextType.STRONG_SUPPORT
-        }
+    override fun toString(): String {
+        return MoreObjects.toStringHelper(this)
+                .add("date", date)
+                .add("title", title)
+                .add("content", content)
+                .add("knowledgeMap", knowledgeMap)
+                .add("summaries", summaries)
+                .add("categories", categories)
+                .toString()
     }
+
+    companion object {
+
+        /**
+         * The threshold for a biased sentiment.
+         */
+        private const val scoreThreshold: Double = 0.2
+        /**
+         * The threshold for a strong sentiment.
+         */
+        private const val magnitudeThreshold: Double = 3.0
+
+        /**
+         * Infer [TextType] from scaled sentiment [score] and
+         * sentiment [magnitude].
+         */
+        private fun getTextType(score: Double, magnitude: Double): TextType {
+            return when {
+                score < -scoreThreshold -> if (magnitude < magnitudeThreshold) {
+                    TextType.SLIGHT_OPPOSITION
+                } else {
+                    TextType.STRONG_OPPOSITION
+                }
+                score < scoreThreshold -> if (magnitude < magnitudeThreshold) {
+                    TextType.CONCEPT
+                } else {
+                    TextType.MIXED
+                }
+                else -> if (magnitude < magnitudeThreshold) {
+                    TextType.SLIGHT_SUPPORT
+                } else {
+                    TextType.STRONG_SUPPORT
+                }
+            }
+        }
+
+    }
+
 }

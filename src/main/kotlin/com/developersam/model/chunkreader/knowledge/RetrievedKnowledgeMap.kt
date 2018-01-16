@@ -7,7 +7,7 @@ import com.google.appengine.api.datastore.Key
 /**
  * The class used to fetch a list of knowledge points for a common text key.
  */
-class RetrievedKnowledgePoints(textKey: Key) :
+class RetrievedKnowledgeMap(textKey: Key) :
         DataStoreObject(kind = "ChunkReaderKnowledgeGraph", parent = textKey) {
 
     /**

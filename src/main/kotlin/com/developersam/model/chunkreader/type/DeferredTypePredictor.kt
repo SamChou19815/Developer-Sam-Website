@@ -16,6 +16,8 @@ import java.lang.RuntimeException
  */
 object DeferredTypePredictor : ChunkReaderSubProcessor {
 
+    override val name: String = "Deferred Type Predictor"
+
     private fun getTextType(sentiment: Sentiment): TextType {
         val scoreThreshold = 0.2
         val magnitudeThreshold = 3.0

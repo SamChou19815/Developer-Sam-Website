@@ -13,6 +13,7 @@ import com.google.cloud.language.v1beta2.Sentiment
 import java.util.Collections.emptyList
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
+import java.util.logging.Logger
 
 /**
  * A [NLPAPIAnalyzer] using Google Cloud NLP API directly.
@@ -96,7 +97,11 @@ class NLPAPIAnalyzer private constructor(text: String) {
             return try {
                 NLPAPIAnalyzer(text)
             } catch (e: Exception) {
-                e.printStackTrace()
+                val logger = Logger.getGlobal()
+                logger.warning(
+                        "Text analysis failed from Google. Text:\n" + text)
+                logger.throwing(
+                        "NLPAPIAnalyzer", "analyze", e)
                 null
             }
         }

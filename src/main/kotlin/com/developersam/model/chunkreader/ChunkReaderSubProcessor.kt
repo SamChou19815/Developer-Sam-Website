@@ -6,8 +6,12 @@ import com.google.appengine.api.datastore.Key
  * The [ChunkReaderSubProcessor] defines how one aspects of the text is further
  * analyzed and stored into the database.
  */
-@FunctionalInterface
 interface ChunkReaderSubProcessor {
+
+    /**
+     * Report the [name] of the processor.
+     */
+    val name: String
 
     /**
      * Further analyze the API result from the [NLPAPIAnalyzer] and put the

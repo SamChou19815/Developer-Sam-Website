@@ -9,6 +9,8 @@ import com.google.appengine.api.datastore.Key
  */
 object CategoryClassifier : ChunkReaderSubProcessor {
 
+    override val name: String = "Category Classifier"
+
     override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
         analyzer.categories.forEach { classificationCategory ->
             Category.from(textKey = textKey, category = classificationCategory)

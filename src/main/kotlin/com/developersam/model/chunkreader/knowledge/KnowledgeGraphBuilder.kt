@@ -11,6 +11,8 @@ import com.google.appengine.api.datastore.Key
  */
 object KnowledgeGraphBuilder : ChunkReaderSubProcessor {
 
+    override val name: String = "Knowledge Graph Builder"
+
     override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
         analyzer.entities.parallelStream()
                 .map({ entity -> KnowledgePoint.from(textKey, entity) })

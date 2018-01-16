@@ -10,6 +10,8 @@ import com.google.appengine.api.datastore.Text
 import com.google.appengine.api.users.UserServiceFactory
 import java.util.Arrays
 import java.util.Date
+import java.util.logging.Logger
+import kotlin.system.measureTimeMillis
 
 /**
  * [ChunkReaderMainProcessor] calls all the other sub-processors to complete
@@ -22,7 +24,12 @@ object ChunkReaderMainProcessor : DataStoreObject("ChunkReaderText") {
      * the processing has succeeded without error.
      */
     fun process(text: String): Boolean {
+        val logger = Logger.getGlobal()
+        val startTime = System.currentTimeMillis()
+        logger.info("Text to be analyzed:\n" + text)
         val analyzer = NLPAPIAnalyzer.analyze(text) ?: return false
+        val endTime = System.currentTimeMillis()
+        logger.info("NLP API Analyzer finished in ${endTime - startTime}ms.")
         val processingTaskArray: Array<ChunkReaderSubProcessor> = arrayOf(
                 DeferredTypePredictor,
                 KnowledgeGraphBuilder,
@@ -37,7 +44,10 @@ object ChunkReaderMainProcessor : DataStoreObject("ChunkReaderText") {
         dataStore.put(entity)
         val textKey = entity.key
         Arrays.stream(processingTaskArray).parallel().forEach {
-            it.process(analyzer = analyzer, textKey = textKey)
+            val runningTime = measureTimeMillis {
+                it.process(analyzer = analyzer, textKey = textKey)
+            }
+            logger.info(it.name + " finished in " + runningTime + "ms.")
         }
         return true
     }

@@ -41,6 +41,8 @@ object SentenceSalienceMarker : ChunkReaderSubProcessor {
      */
     private lateinit var similarityMatrix: Array<DoubleArray>
 
+    override val name: String = "Sentence Salience Marker"
+
     /**
      * Obtain a random sentence id from the [annotatedSentences].
      */

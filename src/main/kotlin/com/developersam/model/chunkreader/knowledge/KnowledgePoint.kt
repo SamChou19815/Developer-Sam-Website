@@ -40,12 +40,12 @@ class KnowledgePoint private constructor(
         return name.hashCode() * 31 + type.hashCode()
     }
 
-    companion object Factory {
+    companion object {
         /**
          * Create a [KnowledgePoint] object from a [textKey] that links to the
          * original text and the [entity].
          */
-        internal fun from(textKey: Key, entity: Entity): KnowledgePoint {
+        fun from(textKey: Key, entity: Entity): KnowledgePoint {
             val type: KnowledgeType = KnowledgeType.from(entity.type)
             val url: String = entity.metadataMap["wikipedia_url"] ?: ""
             return KnowledgePoint(

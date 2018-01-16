@@ -9,6 +9,15 @@ import com.google.common.collect.Sets
 import java.util.Arrays
 
 /**
+ * Text Rank algorithm constant.
+ */
+private const val D = 0.85
+/**
+ * The threshold for convergence.
+ */
+private const val CONVERGENCE_THRESHOLD = 1e-3
+
+/**
  * The abstract class used to mark each sentence with a salience value by Text
  * Rank algorithm.
  * It will use the processed data from the API to help further analyze
@@ -16,10 +25,11 @@ import java.util.Arrays
  */
 object SentenceSalienceMarker : ChunkReaderProcessor {
 
+
     /**
      * A list of [AnnotatedSentence] to be written into database.
      */
-    private lateinit var annotatedSentences: ArrayList<AnnotatedSentence>
+    private lateinit var annotatedSentences: MutableList<AnnotatedSentence>
     /**
      * An array that represents the ranges of each sentence.
      */
@@ -34,13 +44,10 @@ object SentenceSalienceMarker : ChunkReaderProcessor {
     private lateinit var similarityMatrix: Array<DoubleArray>
 
     /**
-     * Obtain a random [AnnotatedSentence] from the [annotatedSentences].
+     * Obtain a random sentence id from the [annotatedSentences].
      */
-    private val randomAnnotatedSentence: AnnotatedSentence
-        get() {
-            val randomIndex = (Math.random() * annotatedSentences.size).toInt()
-            return annotatedSentences[randomIndex]
-        }
+    private val randomSentenceID: Int
+        get() = (Math.random() * annotatedSentences.size).toInt()
 
     /**
      * Calculate the similarity of two sentences, specified by their IDs
@@ -57,7 +64,8 @@ object SentenceSalienceMarker : ChunkReaderProcessor {
 
     /**
      * Build the given sentences and entities into a data structure like a graph
-     * that allows the random walk along the sentences graph.
+     * that allows the random walk along the sentences graph from the
+     * incoming [analyzer] and a [textKey].
      */
     private fun initSentenceGraph(analyzer: NLPAPIAnalyzer, textKey: Key) {
         /*
@@ -65,15 +73,15 @@ object SentenceSalienceMarker : ChunkReaderProcessor {
          * represents the entire paragraph.
          */
         val sentences = analyzer.sentences.sortedBy { it.text.beginOffset }
-        val numberOfSentences = sentences.size
+        val num = sentences.size
         // Late-init instance variables
-        annotatedSentences = ArrayList(numberOfSentences)
-        sentenceRanges = IntArray(numberOfSentences)
-        keywordsArray = Array(size = numberOfSentences) { HashSet<String>() }
-        similarityMatrix = Array(size = numberOfSentences) {
-            DoubleArray(numberOfSentences)
+        annotatedSentences = ArrayList(num)
+        sentenceRanges = IntArray(num)
+        keywordsArray = Array(size = num) { HashSet<String>() }
+        similarityMatrix = Array(size = num) {
+            DoubleArray(num)
         }
-        for (i in 0 until numberOfSentences) {
+        for (i in 0 until num) {
             val sentence: Sentence = sentences[i]
             val text: TextSpan = sentence.text
             val beginOffset: Int = text.beginOffset
@@ -97,8 +105,8 @@ object SentenceSalienceMarker : ChunkReaderProcessor {
             }
         }
         // Build the similarity matrix
-        for (i in 0 until (numberOfSentences - 1)) {
-            for (j in (i + 1) until numberOfSentences) {
+        for (i in 0 until (num - 1)) {
+            for (j in (i + 1) until num) {
                 if (i == j) {
                     continue
                 }
@@ -110,13 +118,13 @@ object SentenceSalienceMarker : ChunkReaderProcessor {
     }
 
     /**
-     * I don't know what it's doing, for now.
+     * Compare the current salience value in [annotatedSentences] to a previous
+     * value to check whether they are convergent.
      */
-    private fun convergent(previousResult: DoubleArray): Boolean {
-        val threshold = 1e-3
-        for (i in previousResult.indices) {
-            val diff = previousResult[i] - annotatedSentences[i].salience
-            if (Math.abs(diff) > threshold) {
+    private fun convergent(previousSalienceArray: DoubleArray): Boolean {
+        for (i in previousSalienceArray.indices) {
+            val diff = previousSalienceArray[i] - annotatedSentences[i].salience
+            if (Math.abs(diff) > CONVERGENCE_THRESHOLD) {
                 return false
             }
         }
@@ -128,7 +136,58 @@ object SentenceSalienceMarker : ChunkReaderProcessor {
      * the their annotated salience value has converge.
      */
     private fun randomVisit() {
-        TODO("Not implemented!")
+        val num = annotatedSentences.size
+        var startSentenceIndex = randomSentenceID
+        var start = annotatedSentences[startSentenceIndex]
+        var counter = 0
+        val previousSalienceArray = DoubleArray(size = num) {
+            Short.MIN_VALUE.toDouble()
+        }
+        while (true) {
+            if (counter % num == 0) {
+                // Check convergence every `num` times
+                if (convergent(previousSalienceArray = previousSalienceArray)) {
+                    return
+                }
+                // Record for future use?
+                for (i in 0 until num) {
+                    previousSalienceArray[i] = annotatedSentences[i].salience
+                }
+            }
+            /**
+             * The following block of code computes a new salience according to
+             * Text Rank algorithm.
+             */
+            var sum = 0.0
+            for (i in 0 until num) {
+                if (i == startSentenceIndex) {
+                    continue
+                }
+                val anotherSentence = annotatedSentences[i]
+                val numerator = similarityMatrix[i][startSentenceIndex]
+                var denominator = 0.0
+                for (j in 0 until num) {
+                    if (i == j) {
+                        continue
+                    }
+                    denominator += similarityMatrix[i][j]
+                }
+                sum += numerator / denominator * anotherSentence.salience
+            }
+            val newSalience = (1 - D) + D * sum
+            // Update with a better salience value
+            start.salience = newSalience
+            counter++
+            // Randomly choose another sentence to continue the loop.
+            while (true) {
+                val i = randomSentenceID
+                if (i != startSentenceIndex) {
+                    startSentenceIndex = i
+                    start = annotatedSentences[i]
+                    break
+                }
+            }
+        }
     }
 
     override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {

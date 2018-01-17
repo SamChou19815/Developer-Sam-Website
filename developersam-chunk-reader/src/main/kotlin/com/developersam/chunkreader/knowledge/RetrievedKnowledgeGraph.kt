@@ -1,4 +1,4 @@
-package com.developersam.model.chunkreader.knowledge
+package com.developersam.chunkreader.knowledge
 
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.dataStore
@@ -7,7 +7,7 @@ import com.google.appengine.api.datastore.Key
 /**
  * The class used to fetch a list of knowledge points for a common text key.
  */
-class RetrievedKnowledgeGraph(textKey: Key) :
+internal class RetrievedKnowledgeGraph(textKey: Key) :
         DataStoreObject(kind = "ChunkReaderKnowledgeGraph", parent = textKey) {
 
     /**

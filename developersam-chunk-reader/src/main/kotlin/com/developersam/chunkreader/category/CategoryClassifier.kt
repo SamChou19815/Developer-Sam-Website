@@ -1,7 +1,7 @@
-package com.developersam.model.chunkreader.category
+package com.developersam.chunkreader.category
 
-import com.developersam.model.chunkreader.ChunkReaderSubProcessor
-import com.developersam.model.chunkreader.NLPAPIAnalyzer
+import com.developersam.chunkreader.ChunkReaderSubProcessor
+import com.developersam.chunkreader.NLPAPIAnalyzer
 import com.google.appengine.api.datastore.Key
 
 /**

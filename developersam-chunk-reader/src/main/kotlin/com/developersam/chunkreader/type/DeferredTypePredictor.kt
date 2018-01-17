@@ -1,7 +1,7 @@
-package com.developersam.model.chunkreader.type
+package com.developersam.chunkreader.type
 
-import com.developersam.model.chunkreader.ChunkReaderSubProcessor
-import com.developersam.model.chunkreader.NLPAPIAnalyzer
+import com.developersam.chunkreader.ChunkReaderSubProcessor
+import com.developersam.chunkreader.NLPAPIAnalyzer
 import com.developersam.webcore.datastore.dataStore
 import com.developersam.webcore.datastore.getEntityByKey
 import com.google.appengine.api.datastore.Key

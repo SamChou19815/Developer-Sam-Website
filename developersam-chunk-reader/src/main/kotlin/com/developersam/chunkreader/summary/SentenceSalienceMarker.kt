@@ -1,7 +1,7 @@
-package com.developersam.model.chunkreader.summary
+package com.developersam.chunkreader.summary
 
-import com.developersam.model.chunkreader.ChunkReaderSubProcessor
-import com.developersam.model.chunkreader.NLPAPIAnalyzer
+import com.developersam.chunkreader.ChunkReaderSubProcessor
+import com.developersam.chunkreader.NLPAPIAnalyzer
 import com.google.appengine.api.datastore.Key
 import com.google.cloud.language.v1beta2.Sentence
 import com.google.cloud.language.v1beta2.TextSpan

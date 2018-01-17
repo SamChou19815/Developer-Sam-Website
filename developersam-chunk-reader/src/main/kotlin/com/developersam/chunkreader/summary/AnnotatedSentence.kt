@@ -1,4 +1,4 @@
-package com.developersam.model.chunkreader.summary
+package com.developersam.chunkreader.summary
 
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.Writable
@@ -13,7 +13,7 @@ import com.google.appengine.api.datastore.Text
  * It is used to build a summary generation system that lets the user specify
  * number of sentences to be included in the summary.
  */
-class AnnotatedSentence(
+internal class AnnotatedSentence(
         textKey: Key,
         internal val sentence: String,
         @field:Transient internal val beginOffset: Int,

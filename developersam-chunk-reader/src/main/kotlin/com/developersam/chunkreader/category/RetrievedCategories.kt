@@ -1,4 +1,4 @@
-package com.developersam.model.chunkreader.category
+package com.developersam.chunkreader.category
 
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.dataStore
@@ -11,7 +11,7 @@ import com.google.appengine.api.datastore.Query.SortDirection.DESCENDING
 /**
  * The class used to fetch a list of categories for a common text key.
  */
-class RetrievedCategories(textKey: Key) :
+internal class RetrievedCategories(textKey: Key) :
         DataStoreObject(kind = "ChunkReaderContentCategory", parent = textKey) {
 
     /**

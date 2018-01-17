@@ -34,6 +34,7 @@
         <url-pattern>/projects</url-pattern>
         <url-pattern>/ten</url-pattern>
         <url-pattern>/scheduler</url-pattern>
+        <url-pattern>/chunkreader</url-pattern>
     </filter-mapping>
 
     <welcome-file-list>

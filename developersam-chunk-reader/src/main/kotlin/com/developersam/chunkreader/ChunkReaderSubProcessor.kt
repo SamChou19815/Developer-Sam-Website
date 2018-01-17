@@ -1,4 +1,4 @@
-package com.developersam.model.chunkreader
+package com.developersam.chunkreader
 
 import com.google.appengine.api.datastore.Key
 
@@ -6,7 +6,7 @@ import com.google.appengine.api.datastore.Key
  * The [ChunkReaderSubProcessor] defines how one aspects of the text is further
  * analyzed and stored into the database.
  */
-interface ChunkReaderSubProcessor {
+internal interface ChunkReaderSubProcessor {
 
     /**
      * Report the [name] of the processor.

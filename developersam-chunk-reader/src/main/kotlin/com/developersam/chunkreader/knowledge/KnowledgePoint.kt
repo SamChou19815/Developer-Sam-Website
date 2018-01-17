@@ -1,4 +1,4 @@
-package com.developersam.model.chunkreader.knowledge
+package com.developersam.chunkreader.knowledge
 
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.Writable
@@ -11,7 +11,7 @@ import com.google.cloud.language.v1beta2.Entity as LanguageEntity
  * The [KnowledgePoint] data class represents an entity that the user may have
  * some interest in.
  */
-class KnowledgePoint private constructor(
+internal class KnowledgePoint private constructor(
         textKey: Key? = null,
         internal val name: String,
         @field:Transient internal val type: KnowledgeType,

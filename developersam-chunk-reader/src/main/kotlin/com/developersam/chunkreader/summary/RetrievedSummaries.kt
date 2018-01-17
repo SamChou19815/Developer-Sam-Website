@@ -1,8 +1,7 @@
-package com.developersam.model.chunkreader.summary
+package com.developersam.chunkreader.summary
 
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.dataStore
-import com.developersam.webcore.datastore.getEntityByKey
 import com.google.appengine.api.datastore.FetchOptions
 import com.google.appengine.api.datastore.Key
 import com.google.appengine.api.datastore.KeyFactory
@@ -14,8 +13,10 @@ import com.google.appengine.api.datastore.Query.SortDirection.DESCENDING
  * a given [limit] (defaults to 5), which will be auto-corrected to 1 if
  * it is below 1.
  */
-class RetrievedSummaries(textKey: Key, private val limit: Int = 5) :
-        DataStoreObject(kind = "ChunkReaderTextSummary", parent = textKey) {
+class RetrievedSummaries internal constructor(
+        textKey: Key,
+        private val limit: Int = 5
+) : DataStoreObject(kind = "ChunkReaderTextSummary", parent = textKey) {
 
     /**
      * Fetch a list of sentences in pure string form associated with the text

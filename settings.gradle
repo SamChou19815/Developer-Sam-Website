@@ -4,4 +4,5 @@ include 'developersam-web-core'
 include 'developersam-mcts'
 include 'developersam-ten'
 include 'developersam-scheduler'
+include 'developersam-chunk-reader'
 

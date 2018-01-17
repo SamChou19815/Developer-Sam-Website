@@ -1,11 +1,11 @@
-package com.developersam.model.chunkreader
+package com.developersam.chunkreader
 
-import com.developersam.model.chunkreader.category.RetrievedCategories
-import com.developersam.model.chunkreader.knowledge.KnowledgePoint
-import com.developersam.model.chunkreader.knowledge.KnowledgeType
-import com.developersam.model.chunkreader.knowledge.RetrievedKnowledgeGraph
-import com.developersam.model.chunkreader.summary.RetrievedSummaries
-import com.developersam.model.chunkreader.type.TextType
+import com.developersam.chunkreader.category.RetrievedCategories
+import com.developersam.chunkreader.knowledge.KnowledgePoint
+import com.developersam.chunkreader.knowledge.KnowledgeType
+import com.developersam.chunkreader.knowledge.RetrievedKnowledgeGraph
+import com.developersam.chunkreader.summary.RetrievedSummaries
+import com.developersam.chunkreader.type.TextType
 import com.developersam.webcore.datastore.dataStore
 import com.developersam.webcore.datastore.getEntityByKey
 import com.google.appengine.api.datastore.Entity
@@ -125,7 +125,6 @@ class AnalyzedArticle {
          * sentiment [magnitude].
          */
         private fun getTextType(score: Double, magnitude: Double): TextType {
-            println(score.toString() + " " + magnitude)
             return when {
                 score < -scoreThreshold -> if (magnitude < magnitudeThreshold) {
                     TextType.SLIGHT_OPPOSITION

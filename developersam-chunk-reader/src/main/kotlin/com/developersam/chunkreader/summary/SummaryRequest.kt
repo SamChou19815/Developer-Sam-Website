@@ -1,4 +1,4 @@
-package com.developersam.model.chunkreader.summary
+package com.developersam.chunkreader.summary
 
 /**
  * Represent a request for a summary for an article of a given [keyString]

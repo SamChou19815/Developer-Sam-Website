@@ -1,11 +1,11 @@
-package com.developersam.model.chunkreader.type
+package com.developersam.chunkreader.type
 
 /**
  * The enum class defines a set of all supported and known types of the texts.
  * The analysis is based on text sentiment.
  * The [description] can be obtained by [toString] method.
  */
-enum class TextType(private val description: String) {
+internal enum class TextType(private val description: String) {
 
     CONCEPT(description = "Concept illustration"),
     MIXED(description = "Mixed reaction"),

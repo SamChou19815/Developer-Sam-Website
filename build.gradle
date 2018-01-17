@@ -42,8 +42,6 @@ dependencies {
     // App Engine API
     compile 'com.google.appengine:appengine:+'
     compile 'com.google.appengine:appengine-api-1.0-sdk:+'
-    // App Engine ML API
-    compile 'com.google.cloud:google-cloud-language:+'
     // Add your dependencies here.
     // Google's Java Library
     compile 'com.google.guava:guava:23.5-jre'
@@ -54,6 +52,7 @@ dependencies {
     compile project(':developersam-web-core')
     compile project(':developersam-ten')
     compile project(':developersam-scheduler')
+    compile project(':developersam-chunk-reader')
 }
 
 appengine {

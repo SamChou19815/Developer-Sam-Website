@@ -1,4 +1,4 @@
-package com.developersam.model.chunkreader
+package com.developersam.chunkreader
 
 /**
  * A raw article input from user, which contains a [title] and [content].

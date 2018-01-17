@@ -1,4 +1,4 @@
-package com.developersam.model.chunkreader
+package com.developersam.chunkreader
 
 import com.google.appengine.api.ThreadManager
 import com.google.cloud.language.v1beta2.AnalyzeSyntaxResponse
@@ -20,7 +20,7 @@ import java.util.logging.Logger
  *
  * It should be constructed from the text needed to analyze.
  */
-class NLPAPIAnalyzer private constructor(text: String) {
+internal class NLPAPIAnalyzer private constructor(text: String) {
 
     /**
      * Sentiment of the entire document.

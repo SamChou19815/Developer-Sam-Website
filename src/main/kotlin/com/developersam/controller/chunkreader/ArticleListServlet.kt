@@ -1,6 +1,6 @@
 package com.developersam.controller.chunkreader
 
-import com.developersam.model.chunkreader.AnalyzedArticles
+import com.developersam.chunkreader.AnalyzedArticles
 import com.developersam.webcore.gson.gson
 import com.google.appengine.api.users.UserServiceFactory
 import javax.servlet.annotation.WebServlet

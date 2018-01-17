@@ -1,15 +1,14 @@
-package com.developersam.model.chunkreader
+package com.developersam.chunkreader
 
-import com.developersam.model.chunkreader.category.CategoryClassifier
-import com.developersam.model.chunkreader.knowledge.KnowledgeGraphBuilder
-import com.developersam.model.chunkreader.summary.SentenceSalienceMarker
-import com.developersam.model.chunkreader.type.DeferredTypePredictor
+import com.developersam.chunkreader.category.CategoryClassifier
+import com.developersam.chunkreader.knowledge.KnowledgeGraphBuilder
+import com.developersam.chunkreader.summary.SentenceSalienceMarker
+import com.developersam.chunkreader.type.DeferredTypePredictor
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.dataStore
 import com.google.appengine.api.ThreadManager
 import com.google.appengine.api.datastore.Text
 import com.google.appengine.api.users.UserServiceFactory
-import java.util.Arrays
 import java.util.Date
 import java.util.concurrent.CountDownLatch
 import java.util.logging.Logger
@@ -31,7 +30,8 @@ object ChunkReaderMainProcessor : DataStoreObject(kind = "ChunkReaderText") {
         val logger = Logger.getGlobal()
         val startTime = System.currentTimeMillis()
         logger.info("Text to be analyzed:\n" + content)
-        val analyzer = NLPAPIAnalyzer.analyze(content) ?: return false
+        val analyzer = NLPAPIAnalyzer.analyze(content)
+                ?: return false
         val endTime = System.currentTimeMillis()
         logger.info(
                 "NLP API Analyzer finished in ${endTime - startTime}ms.")

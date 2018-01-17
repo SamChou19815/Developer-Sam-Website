@@ -1,4 +1,4 @@
-package com.developersam.model.chunkreader.category
+package com.developersam.chunkreader.category
 
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.Writable
@@ -10,7 +10,7 @@ import com.google.cloud.language.v1beta2.ClassificationCategory
 /**
  * The data class [Category] represents a category of the content.
  */
-class Category private constructor(
+internal class Category private constructor(
         textKey: Key? = null,
         internal val name: String,
         private val confidence: Double

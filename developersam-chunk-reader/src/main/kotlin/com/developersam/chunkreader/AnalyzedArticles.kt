@@ -1,4 +1,4 @@
-package com.developersam.model.chunkreader
+package com.developersam.chunkreader
 
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.dataStore
@@ -7,7 +7,6 @@ import com.google.appengine.api.datastore.Query.FilterOperator.EQUAL
 import com.google.appengine.api.datastore.Query.FilterPredicate
 import com.google.appengine.api.datastore.Query.SortDirection.DESCENDING
 import com.google.appengine.api.users.UserServiceFactory
-import org.json.XMLTokener.entity
 
 /**
  * The object to obtain a list of [AnalyzedArticle] objects associated

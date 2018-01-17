@@ -1,7 +1,7 @@
 package com.developersam.controller.chunkreader
 
-import com.developersam.model.chunkreader.summary.RetrievedSummaries
-import com.developersam.model.chunkreader.summary.SummaryRequest
+import com.developersam.chunkreader.summary.RetrievedSummaries
+import com.developersam.chunkreader.summary.SummaryRequest
 import com.developersam.webcore.gson.gson
 import com.google.gson.reflect.TypeToken
 import javax.servlet.annotation.WebServlet

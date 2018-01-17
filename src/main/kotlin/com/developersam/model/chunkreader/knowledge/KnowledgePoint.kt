@@ -14,7 +14,7 @@ import com.google.cloud.language.v1beta2.Entity as LanguageEntity
 class KnowledgePoint private constructor(
         textKey: Key? = null,
         internal val name: String,
-        internal val type: KnowledgeType,
+        @field:Transient internal val type: KnowledgeType,
         internal val url: String?,
         @field:Transient internal val salience: Double
 ) : DataStoreObject(kind = "ChunkReaderKnowledgeGraph", parent = textKey),

@@ -18,7 +18,7 @@ val dataStore: DatastoreService = DatastoreServiceFactory.getDatastoreService()
  */
 fun DatastoreService.getEntityByKey(key: Key): Entity? {
     return try {
-        com.developersam.webcore.datastore.dataStore[key]
+        dataStore[key]
     } catch (e: EntityNotFoundException) {
         null
     }

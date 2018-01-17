@@ -82,8 +82,8 @@ class AnalyzedArticle {
         val sentimentScore = entity.getProperty("sentimentScore") as Double
         val sentimentMagnitude =
                 entity.getProperty("sentimentMagnitude") as Double
-        val score = sentimentScore / tokenCount
-        val magnitude = sentimentMagnitude / tokenCount
+        val score = sentimentScore / Math.log(tokenCount.toDouble())
+        val magnitude = sentimentMagnitude / Math.log(tokenCount.toDouble())
         textType = getTextType(score = score, magnitude = magnitude).toString()
         knowledgeMap = RetrievedKnowledgeMap(textKey = textKey).asMap
         summaries = RetrievedSummaries(textKey = textKey).asList
@@ -107,17 +107,18 @@ class AnalyzedArticle {
         /**
          * The threshold for a biased sentiment.
          */
-        private const val scoreThreshold: Double = 0.2
+        private const val scoreThreshold: Double = 0.05
         /**
          * The threshold for a strong sentiment.
          */
-        private const val magnitudeThreshold: Double = 3.0
+        private const val magnitudeThreshold: Double = 0.5
 
         /**
          * Infer [TextType] from scaled sentiment [score] and
          * sentiment [magnitude].
          */
         private fun getTextType(score: Double, magnitude: Double): TextType {
+            println(score.toString() + " " + magnitude)
             return when {
                 score < -scoreThreshold -> if (magnitude < magnitudeThreshold) {
                     TextType.SLIGHT_OPPOSITION

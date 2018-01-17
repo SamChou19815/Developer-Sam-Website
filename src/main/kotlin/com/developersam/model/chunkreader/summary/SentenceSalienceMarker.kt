@@ -14,7 +14,7 @@ import java.util.Arrays
  * It will use the processed data from the API to help further analyze
  * the importance of each sentence.
  */
-object SentenceSalienceMarker : ChunkReaderSubProcessor {
+internal object SentenceSalienceMarker : ChunkReaderSubProcessor {
 
     /**
      * Text Rank algorithm constant.
@@ -73,6 +73,17 @@ object SentenceSalienceMarker : ChunkReaderSubProcessor {
                 keywordsArray[sentence1], keywordsArray[sentence2]).size
         val sentence1Length = annotatedSentences[sentence1].sentence.length
         val sentence2Length = annotatedSentences[sentence2].sentence.length
+        if (sentence1Length == 0 || sentence2Length == 0) {
+            throw RuntimeException("Zero length sentence!")
+        }
+        if (sentence1Length == 1) {
+            throw RuntimeException("Abnormal sentence: "
+                    + annotatedSentences[sentence1].sentence)
+        }
+        if (sentence2Length == 1) {
+            throw RuntimeException("Abnormal sentence: "
+                    + annotatedSentences[sentence2].sentence)
+        }
         return numCommon.toDouble() / (Math.log(sentence1Length.toDouble() +
                 Math.log(sentence2Length.toDouble())))
     }
@@ -152,6 +163,10 @@ object SentenceSalienceMarker : ChunkReaderSubProcessor {
      */
     private fun randomVisit() {
         val num = annotatedSentences.size
+        if (num == 1) {
+            // No need to run the program, always the selected sentence.
+            return
+        }
         var startSentenceIndex = randomSentenceID
         var start = annotatedSentences[startSentenceIndex]
         var counter = 0
@@ -187,7 +202,12 @@ object SentenceSalienceMarker : ChunkReaderSubProcessor {
                     }
                     denominator += similarityMatrix[i][j]
                 }
-                sum += numerator / denominator * anotherSentence.salience
+                if (denominator < 0) {
+                    throw RuntimeException("Bad addition!")
+                }
+                if (denominator > 1e-6) {
+                    sum += numerator / denominator * anotherSentence.salience
+                }
             }
             val newSalience = (1 - D) + D * sum
             // Update with a better salience value
@@ -208,7 +228,7 @@ object SentenceSalienceMarker : ChunkReaderSubProcessor {
     override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
         initSentenceGraph(analyzer = analyzer, textKey = textKey)
         randomVisit()
-        annotatedSentences.parallelStream().forEach { it.writeToDatabase() }
+        annotatedSentences.forEach { it.writeToDatabase() }
     }
 
 }

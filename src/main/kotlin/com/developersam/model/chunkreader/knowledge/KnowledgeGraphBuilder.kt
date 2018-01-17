@@ -9,7 +9,7 @@ import com.google.appengine.api.datastore.Key
  * It will extract useful information from the API and store them into the
  * database.
  */
-object KnowledgeGraphBuilder : ChunkReaderSubProcessor {
+internal object KnowledgeGraphBuilder : ChunkReaderSubProcessor {
 
     override val name: String = "Knowledge Graph Builder"
 
@@ -17,6 +17,7 @@ object KnowledgeGraphBuilder : ChunkReaderSubProcessor {
         analyzer.entities.parallelStream()
                 .map({ entity -> KnowledgePoint.from(textKey, entity) })
                 .distinct()
+                .sequential()
                 .forEach({ it.writeToDatabase() })
     }
 

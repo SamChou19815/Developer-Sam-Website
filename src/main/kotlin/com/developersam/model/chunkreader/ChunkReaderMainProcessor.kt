@@ -6,10 +6,12 @@ import com.developersam.model.chunkreader.summary.SentenceSalienceMarker
 import com.developersam.model.chunkreader.type.DeferredTypePredictor
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.dataStore
+import com.google.appengine.api.ThreadManager
 import com.google.appengine.api.datastore.Text
 import com.google.appengine.api.users.UserServiceFactory
 import java.util.Arrays
 import java.util.Date
+import java.util.concurrent.CountDownLatch
 import java.util.logging.Logger
 import kotlin.system.measureTimeMillis
 
@@ -45,15 +47,28 @@ object ChunkReaderMainProcessor : DataStoreObject(kind = "ChunkReaderText") {
         entity.setProperty("date", Date())
         entity.setProperty("title", title)
         entity.setProperty("content", Text(content))
+        entity.setProperty("tokenCount", analyzer.tokenCount.toLong())
         dataStore.put(entity)
         val textKey = entity.key
-        Arrays.stream(processingTaskArray).parallel().forEach {
-            val runningTime = measureTimeMillis {
-                it.process(analyzer = analyzer, textKey = textKey)
-            }
-            logger.info(it.name + " finished in " + runningTime + "ms.")
+        val latch = CountDownLatch(processingTaskArray.size)
+        for (processor in processingTaskArray) {
+            ThreadManager.createThreadForCurrentRequest {
+                val runningTime = measureTimeMillis {
+                    processor.process(analyzer = analyzer, textKey = textKey)
+                }
+                logger.info(processor.name + " finished in "
+                        + runningTime + "ms.")
+                latch.countDown()
+            }.run()
         }
-        return true
+        return try {
+            latch.await()
+            true
+        } catch (e: InterruptedException) {
+            logger.throwing("ChunkReaderMainProcessor",
+                    "process", e)
+            false
+        }
     }
 
 }

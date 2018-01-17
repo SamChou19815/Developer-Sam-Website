@@ -7,7 +7,7 @@ import com.google.appengine.api.datastore.Key
 /**
  * The object used to find the categories of a chunk of text.
  */
-object CategoryClassifier : ChunkReaderSubProcessor {
+internal object CategoryClassifier : ChunkReaderSubProcessor {
 
     override val name: String = "Category Classifier"
 

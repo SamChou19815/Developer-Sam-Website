@@ -12,7 +12,7 @@ import com.google.cloud.language.v1beta2.ClassificationCategory
  */
 class Category private constructor(
         textKey: Key? = null,
-        private val name: String,
+        internal val name: String,
         private val confidence: Double
 ) : DataStoreObject(kind = "ChunkReaderContentCategory", parent = textKey),
         Writable {

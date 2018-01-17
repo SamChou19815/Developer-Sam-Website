@@ -1,6 +1,8 @@
 package com.developersam.model.chunkreader
 
 import com.developersam.model.chunkreader.category.RetrievedCategories
+import com.developersam.model.chunkreader.knowledge.KnowledgePoint
+import com.developersam.model.chunkreader.knowledge.KnowledgeType
 import com.developersam.model.chunkreader.knowledge.RetrievedKnowledgeMap
 import com.developersam.model.chunkreader.summary.RetrievedSummaries
 import com.developersam.model.chunkreader.type.TextType
@@ -8,6 +10,7 @@ import com.developersam.webcore.datastore.dataStore
 import com.developersam.webcore.datastore.getEntityByKey
 import com.google.appengine.api.datastore.Entity
 import com.google.appengine.api.datastore.Key
+import com.google.appengine.api.datastore.KeyFactory
 import com.google.appengine.api.datastore.Text
 import com.google.common.base.MoreObjects
 import java.util.Date
@@ -15,24 +18,25 @@ import java.util.Date
 /**
  * An [AnalyzedArticle] is an article with all the information analyzed and
  * presented in a meaningful way.
- * It is initialized by an `entity` from the database.
- * The user of the class can also specify whether to include all the details
- * by the `fullDetail` flag, which defaults to `false`.
  */
-class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
+class AnalyzedArticle {
 
+    /**
+     * Key string of the article for later client info retrieval.
+     */
+    private val keyString: String
     /**
      * Date of the article submission.
      */
-    private val date: Date = entity.getProperty("date") as Date
+    private val date: Date
     /**
      * Title of the article.
      */
-    private val title: String = entity.getProperty("title") as String
+    private val title: String
     /**
      * Number of tokens in the article content.
      */
-    private val tokenCount: Long = entity.getProperty("tokenCount") as Long
+    private val tokenCount: Long
     /**
      * Content of the article.
      */
@@ -44,44 +48,51 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
     /**
      * A map of knowledge type to list of knowledge points
      */
-    private val knowledgeMap: RetrievedKnowledgeMap?
+    private val knowledgeMap: Map<KnowledgeType, List<KnowledgePoint>>?
     /**
      * A list of summaries of the content.
      */
-    private val summaries: RetrievedSummaries?
+    private val summaries: List<String>?
     /**
      * Categories of the content.
      */
-    private val categories: RetrievedCategories?
+    private val categories: List<String>?
 
-    init {
-        if (fullDetail) {
-            content = (entity.getProperty("content") as Text).value
-            var sentimentScore =
-                    entity.getProperty("sentimentScore") as Double
-            var sentimentMagnitude =
-                    entity.getProperty("sentimentMagnitude") as Double
-            sentimentScore /= tokenCount
-            sentimentMagnitude /= tokenCount
-            textType = getTextType(
-                    score = sentimentScore,
-                    magnitude = sentimentMagnitude
-            ).toString()
-            val textKey: Key = entity.key
-            knowledgeMap = RetrievedKnowledgeMap(textKey = textKey)
-            summaries = RetrievedSummaries(textKey = textKey)
-            categories = RetrievedCategories(textKey = textKey)
-        } else {
+    /**
+     * It is initialized by an [entity] from the database.
+     * The user of the class can also specify whether to include all the details
+     * by the [fullDetail] flag, which defaults to `false`.
+     */
+    @Suppress("ConvertSecondaryConstructorToPrimary")
+    constructor(entity: Entity, fullDetail: Boolean = false) {
+        val textKey: Key = entity.key
+        keyString = KeyFactory.keyToString(textKey)
+        date = entity.getProperty("date") as Date
+        title = entity.getProperty("title") as String
+        tokenCount = entity.getProperty("tokenCount") as Long
+        if (!fullDetail) {
             content = null
             textType = null
             knowledgeMap = null
             summaries = null
             categories = null
+            return
         }
+        content = (entity.getProperty("content") as Text).value
+        val sentimentScore = entity.getProperty("sentimentScore") as Double
+        val sentimentMagnitude =
+                entity.getProperty("sentimentMagnitude") as Double
+        val score = sentimentScore / tokenCount
+        val magnitude = sentimentMagnitude / tokenCount
+        textType = getTextType(score = score, magnitude = magnitude).toString()
+        knowledgeMap = RetrievedKnowledgeMap(textKey = textKey).asMap
+        summaries = RetrievedSummaries(textKey = textKey).asList
+        categories = RetrievedCategories(textKey = textKey).asList
     }
 
     override fun toString(): String {
         return MoreObjects.toStringHelper(this)
+                .add("keyString", keyString)
                 .add("date", date)
                 .add("title", title)
                 .add("content", content)

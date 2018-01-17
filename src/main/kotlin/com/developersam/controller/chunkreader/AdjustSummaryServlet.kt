@@ -1,6 +1,5 @@
 package com.developersam.controller.chunkreader
 
-import com.developersam.model.chunkreader.summary.AnnotatedSentence
 import com.developersam.model.chunkreader.summary.RetrievedSummaries
 import com.developersam.model.chunkreader.summary.SummaryRequest
 import com.developersam.webcore.gson.gson
@@ -26,8 +25,8 @@ class AdjustSummaryServlet : HttpServlet() {
             gson.toJson(null, resp.writer)
             return
         }
-        val typeToken = object : TypeToken<List<AnnotatedSentence>>() {}
-        gson.toJson(retrievedSummaries.asList, typeToken.type, resp.writer)
+        val type = object : TypeToken<List<String>>() {}.type
+        gson.toJson(retrievedSummaries.asList, type, resp.writer)
     }
 
 }

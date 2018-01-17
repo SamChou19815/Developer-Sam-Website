@@ -13,10 +13,10 @@ import com.google.cloud.language.v1beta2.Entity as LanguageEntity
  */
 class KnowledgePoint private constructor(
         textKey: Key? = null,
-        val name: String,
-        val type: KnowledgeType,
-        val url: String?,
-        val salience: Double
+        internal val name: String,
+        internal val type: KnowledgeType,
+        internal val url: String?,
+        @field:Transient internal val salience: Double
 ) : DataStoreObject(kind = "ChunkReaderKnowledgeGraph", parent = textKey),
         Writable {
 

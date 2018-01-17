@@ -15,9 +15,9 @@ import com.google.appengine.api.datastore.Text
  */
 class AnnotatedSentence(
         textKey: Key,
-        val sentence: String,
-        val beginOffset: Int,
-        var salience: Double
+        internal val sentence: String,
+        @field:Transient internal val beginOffset: Int,
+        @field:Transient internal var salience: Double
 ) : DataStoreObject(kind = "ChunkReaderTextSummary", parent = textKey),
         Writable {
 

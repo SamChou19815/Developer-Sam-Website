@@ -18,10 +18,10 @@ class RetrievedSummaries(textKey: Key, private val limit: Int = 5) :
         DataStoreObject(kind = "ChunkReaderTextSummary", parent = textKey) {
 
     /**
-     * Fetch a list of [AnnotatedSentence] objects associated with the text
+     * Fetch a list of sentences in pure string form associated with the text
      * key given in constructor.
      */
-    val asList: List<AnnotatedSentence>
+    val asList: List<String>
         get() {
             val query: Query = query
             query.addSort("salience", DESCENDING)
@@ -31,6 +31,7 @@ class RetrievedSummaries(textKey: Key, private val limit: Int = 5) :
                     .asSequence()
                     .map { entity -> AnnotatedSentence(entity = entity) }
                     .sortedBy { it.beginOffset }
+                    .map { it.sentence }
                     .toList()
         }
 

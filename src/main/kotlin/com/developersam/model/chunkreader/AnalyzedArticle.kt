@@ -3,7 +3,7 @@ package com.developersam.model.chunkreader
 import com.developersam.model.chunkreader.category.RetrievedCategories
 import com.developersam.model.chunkreader.knowledge.KnowledgePoint
 import com.developersam.model.chunkreader.knowledge.KnowledgeType
-import com.developersam.model.chunkreader.knowledge.RetrievedKnowledgeMap
+import com.developersam.model.chunkreader.knowledge.RetrievedKnowledgeGraph
 import com.developersam.model.chunkreader.summary.RetrievedSummaries
 import com.developersam.model.chunkreader.type.TextType
 import com.developersam.webcore.datastore.dataStore
@@ -46,6 +46,10 @@ class AnalyzedArticle {
      */
     private val textType: String?
     /**
+     * An array of article keywords.
+     */
+    private val keywords: Array<String>?
+    /**
      * A map of knowledge type to list of knowledge points
      */
     private val knowledgeMap: Map<KnowledgeType, List<KnowledgePoint>>?
@@ -73,6 +77,7 @@ class AnalyzedArticle {
         if (!fullDetail) {
             content = null
             textType = null
+            keywords = null
             knowledgeMap = null
             summaries = null
             categories = null
@@ -85,7 +90,9 @@ class AnalyzedArticle {
         val score = sentimentScore / Math.log(tokenCount.toDouble())
         val magnitude = sentimentMagnitude / Math.log(tokenCount.toDouble())
         textType = getTextType(score = score, magnitude = magnitude).toString()
-        knowledgeMap = RetrievedKnowledgeMap(textKey = textKey).asMap
+        val retrievedKnowledgeGraph = RetrievedKnowledgeGraph(textKey = textKey)
+        keywords = retrievedKnowledgeGraph.asKeywords
+        knowledgeMap = retrievedKnowledgeGraph.asMap
         summaries = RetrievedSummaries(textKey = textKey).asList
         categories = RetrievedCategories(textKey = textKey).asList
     }

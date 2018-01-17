@@ -40,7 +40,7 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
     /**
      * Type of the recognized text.
      */
-    private val textType: TextType?
+    private val textType: String?
     /**
      * A map of knowledge type to list of knowledge points
      */
@@ -64,7 +64,9 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
             sentimentScore /= tokenCount
             sentimentMagnitude /= tokenCount
             textType = getTextType(
-                    score = sentimentScore, magnitude = sentimentMagnitude)
+                    score = sentimentScore,
+                    magnitude = sentimentMagnitude
+            ).toString()
             val textKey: Key = entity.key
             knowledgeMap = RetrievedKnowledgeMap(textKey = textKey)
             summaries = RetrievedSummaries(textKey = textKey)

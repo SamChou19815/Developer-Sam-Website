@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse
  * A servlet that loads list of articles submitted by the user, or gives a login
  * URL to the user.
  */
-@WebServlet("/apis/chunkreader/articleList")
+@WebServlet("/apis/chunkreader/load")
 class ArticleListServlet : HttpServlet() {
 
     override fun doGet(req: HttpServletRequest, resp: HttpServletResponse) {
@@ -21,7 +21,7 @@ class ArticleListServlet : HttpServlet() {
             gson.toJson(AnalyzedArticles.asList, resp.writer)
         } else {
             resp.writer.print(
-                    "url: " + userService.createLoginURL("/scheduler"))
+                    "url: " + userService.createLoginURL("/chunkreader"))
         }
     }
 

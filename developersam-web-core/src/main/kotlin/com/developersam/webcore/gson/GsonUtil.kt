@@ -17,4 +17,4 @@ private fun globalGsonBuilder(): GsonBuilder {
  * A default global [Gson] for the entire app.
  */
 @JvmField
-val gson: Gson = globalGsonBuilder().create()
+internal val globalGson: Gson = globalGsonBuilder().create()

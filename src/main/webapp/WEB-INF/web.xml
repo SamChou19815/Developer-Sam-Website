@@ -18,33 +18,25 @@
             <web-resource-name>Google User Only Apps</web-resource-name>
             <url-pattern>/apis/scheduler/add</url-pattern>
         </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>Google User Only Apps</web-resource-name>
+            <url-pattern>/apis/chunkreader/articleDetail</url-pattern>
+        </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>Google User Only Apps</web-resource-name>
+            <url-pattern>/apis/chunkreader/adjustSummary</url-pattern>
+        </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>Google User Only Apps</web-resource-name>
+            <url-pattern>"/apis/chunkreader/analyze</url-pattern>
+        </web-resource-collection>
         <auth-constraint>
             <role-name>*</role-name>
         </auth-constraint>
     </security-constraint>
 
-    <filter>
-        <filter-name>DirectToIndexFilter</filter-name>
-        <filter-class>com.developersam.controller.filter.DirectToIndexFilter
-        </filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>DirectToIndexFilter</filter-name>
-        <url-pattern>/projects</url-pattern>
-        <url-pattern>/ten</url-pattern>
-        <url-pattern>/scheduler</url-pattern>
-        <url-pattern>/chunkreader</url-pattern>
-    </filter-mapping>
-
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
-
-    <error-page>
-        <!-- Missing resource -->
-        <error-code>404</error-code>
-        <location>/index.html</location>
-    </error-page>
 
 </web-app>

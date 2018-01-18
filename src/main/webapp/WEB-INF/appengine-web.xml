@@ -4,7 +4,7 @@
     <version>3</version>
     <runtime>java8</runtime>
     <automatic-scaling/>
-    <instance-class>F4_1G</instance-class>
+    <instance-class>F4</instance-class>
     <threadsafe>true</threadsafe>
 
     <system-properties>

@@ -118,7 +118,7 @@ class AnalyzedArticle {
         /**
          * The threshold for a strong sentiment.
          */
-        private const val magnitudeThreshold: Double = 0.5
+        private const val magnitudeThreshold: Double = 0.55
 
         /**
          * Infer [TextType] from scaled sentiment [score] and

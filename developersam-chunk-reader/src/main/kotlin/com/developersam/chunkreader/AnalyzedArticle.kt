@@ -14,6 +14,7 @@ import com.google.appengine.api.datastore.KeyFactory
 import com.google.appengine.api.datastore.Text
 import com.google.common.base.MoreObjects
 import java.util.Date
+import java.util.logging.Logger
 
 /**
  * An [AnalyzedArticle] is an article with all the information analyzed and
@@ -118,14 +119,14 @@ class AnalyzedArticle {
         /**
          * The threshold for a strong sentiment.
          */
-        private const val magnitudeThreshold: Double = 0.58
+        private const val magnitudeThreshold: Double = 0.84
 
         /**
          * Infer [TextType] from scaled sentiment [score] and
          * sentiment [magnitude].
          */
         private fun getTextType(score: Double, magnitude: Double): TextType {
-            return when {
+            val type = when {
                 score < -scoreThreshold -> if (magnitude < magnitudeThreshold) {
                     TextType.SLIGHT_OPPOSITION
                 } else {
@@ -142,6 +143,9 @@ class AnalyzedArticle {
                     TextType.STRONG_SUPPORT
                 }
             }
+            val msg = "Type: $type. Score: $score. Magnitude: $magnitude"
+            Logger.getGlobal().info(msg)
+            return type
         }
 
         /**

@@ -104,7 +104,7 @@ class MCTS(private val board: Board, private val timeLimit: Int) {
                             n.winningStatisticsPlusOne(winValue)
                         }
                         n
-                    }.toArray({ size -> arrayOfNulls<Node>(size) })
+                    }.toArray { size -> arrayOfNulls<Node>(size) }
             simulationCounter += len
         }
         Logger.getGlobal().info("# of simulations: " + simulationCounter)

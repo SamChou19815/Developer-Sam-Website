@@ -38,26 +38,14 @@ class TenBoard : Board {
     override val currentPlayerIdentity: Int
         get() = _currentPlayerIdentity;
 
-    /**
-     * Whether the board is empty.
-     *
-     * @return empty or not.
-     */
-    private val isEmpty: Boolean
-        get() {
-            return board.none { smallSquare -> smallSquare.any { it != 0 } }
-        }
-
     override val copy: TenBoard
-        get() = TenBoard(this)
+        get() = TenBoard(oldBoard = this)
 
     override val allLegalMovesForAI: Array<IntArray>
         get() {
-            if (isEmpty) {
-                return initialAILegalMoves
-            }
             val list = LinkedList<IntArray>()
             if (currentBigSquareLegalPosition == -1) {
+                // Can move in every big square
                 for (i in 0 until 9) {
                     for (j in 0 until 9) {
                         if (isLegalMove(i, j)) {
@@ -67,6 +55,7 @@ class TenBoard : Board {
                 }
             } else {
                 for (j in 0 until 9) {
+                    // Can only move in the specified square
                     if (isLegalMove(currentBigSquareLegalPosition, j)) {
                         list.add(intArrayOf(currentBigSquareLegalPosition, j))
                     }
@@ -122,7 +111,7 @@ class TenBoard : Board {
      */
     constructor(data: TenBoardData) {
         board = data.board
-        bigSquaresStatus = IntArray(9)
+        bigSquaresStatus = IntArray(size = 9)
         for (i in 0 until 9) {
             updateBigSquareStatus(i)
         }
@@ -131,11 +120,11 @@ class TenBoard : Board {
     }
 
     /**
-     * Initialize the board from an old board [oldBoard].
+     * Initialize the board from an [oldBoard].
      */
     private constructor(oldBoard: TenBoard) {
-        board = Array(9) { IntArray(0) }
-        bigSquaresStatus = IntArray(9)
+        board = Array(size = 9) { IntArray(size = 0) }
+        bigSquaresStatus = IntArray(size = 9)
         for (i in 0 until 9) {
             // Copy to maintain value safety.
             board[i] = Arrays.copyOf(oldBoard.board[i], 9)
@@ -289,16 +278,6 @@ class TenBoard : Board {
     }
 
     companion object {
-        /**
-         * Pre-computed initial legal moves for AI. Due to symmetry, many values
-         * can be omitted.
-         */
-        private val initialAILegalMoves = arrayOf(
-                intArrayOf(0, 0), intArrayOf(0, 1), intArrayOf(0, 2),
-                intArrayOf(0, 4), intArrayOf(0, 5), intArrayOf(0, 8),
-                intArrayOf(1, 0), intArrayOf(1, 1), intArrayOf(1, 3),
-                intArrayOf(1, 4), intArrayOf(1, 6), intArrayOf(1, 7),
-                intArrayOf(4, 0), intArrayOf(4, 1), intArrayOf(4, 4))
 
         /**
          * Respond to a [clientMove] represented by a [TenClientMove] object and
@@ -318,13 +297,15 @@ class TenBoard : Board {
                 else -> board.switchIdentity()
             }
             // Let AI think
-            val decision = MCTS(board, 1500)
+            val decision = MCTS(board = board, timeLimit = 1500)
             val aiMove = decision.selectMove()
-            board.makeMove(aiMove)
+            board.makeMove(move = aiMove)
             status = board.gameStatus
             // A full response.
-            return TenServerResponse(intArrayOf(aiMove[0], aiMove[1]),
-                    board.currentBigSquareLegalPosition, status, aiMove[2])
+            return TenServerResponse(aiMove = intArrayOf(aiMove[0], aiMove[1]),
+                    currentBigSquareLegalPosition =
+                    board.currentBigSquareLegalPosition,
+                    status = status, aiWinningProbability = aiMove[2])
         }
 
         /**

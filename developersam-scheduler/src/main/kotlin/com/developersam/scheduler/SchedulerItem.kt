@@ -43,6 +43,10 @@ class SchedulerItem internal constructor(
      */
     private val isCompleted: Boolean =
             entity.getProperty("completed") as Boolean
+    /**
+     * The details of an item, which is completely optional.
+     */
+    private val detail: String? = entity.getProperty("detail") as String?
 
     /**
      * A helper property to check whether the user is the owner of the item.
@@ -83,6 +87,7 @@ class SchedulerItem internal constructor(
                 .add("deadline", deadline)
                 .add("daysLeft", daysLeft)
                 .add("completed", isCompleted)
+                .add("detail", detail)
                 .toString()
     }
 

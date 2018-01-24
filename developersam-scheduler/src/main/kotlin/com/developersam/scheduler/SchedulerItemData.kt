@@ -30,6 +30,10 @@ class SchedulerItemData private constructor() :
      * Deadline of the item.
      */
     private val deadline: Date? = null
+    /**
+     * Optional detail of the item.
+     */
+    private var detail: String? = null
 
     /**
      * A helper method to check the sanity of the data and gives back an
@@ -59,6 +63,12 @@ class SchedulerItemData private constructor() :
         itemEntity.setProperty("description", description)
         itemEntity.setProperty("deadline", deadline)
         itemEntity.setProperty("completed", false)
+        // Don't record meaningless detail.
+        detail = detail?.trim()
+        if (detail?.isEmpty() == true) {
+            detail = null
+        }
+        itemEntity.setProperty("detail", detail)
         dataStore.put(itemEntity)
         return true
     }

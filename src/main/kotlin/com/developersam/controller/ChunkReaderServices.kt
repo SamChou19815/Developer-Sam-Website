@@ -26,7 +26,8 @@ object ChunkReaderArticleListService : NoArgService() {
             return if (userService.isUserLoggedIn) {
                 AnalyzedArticles.asList
             } else {
-                "url: " + userService.createLoginURL("/chunkreader")
+                "url: " + userService.createLoginURL(
+                        "/redirect?path=/chunkreader")
             }
         }
 

@@ -5,36 +5,6 @@
                              http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Google User Only Apps</web-resource-name>
-            <url-pattern>/apis/scheduler/delete</url-pattern>
-        </web-resource-collection>
-        <web-resource-collection>
-            <web-resource-name>Google User Only Apps</web-resource-name>
-            <url-pattern>/apis/scheduler/markAs</url-pattern>
-        </web-resource-collection>
-        <web-resource-collection>
-            <web-resource-name>Google User Only Apps</web-resource-name>
-            <url-pattern>/apis/scheduler/add</url-pattern>
-        </web-resource-collection>
-        <web-resource-collection>
-            <web-resource-name>Google User Only Apps</web-resource-name>
-            <url-pattern>/apis/chunkreader/articleDetail</url-pattern>
-        </web-resource-collection>
-        <web-resource-collection>
-            <web-resource-name>Google User Only Apps</web-resource-name>
-            <url-pattern>/apis/chunkreader/adjustSummary</url-pattern>
-        </web-resource-collection>
-        <web-resource-collection>
-            <web-resource-name>Google User Only Apps</web-resource-name>
-            <url-pattern>"/apis/chunkreader/analyze</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>*</role-name>
-        </auth-constraint>
-    </security-constraint>
-
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>

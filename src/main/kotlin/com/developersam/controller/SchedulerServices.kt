@@ -23,7 +23,8 @@ object SchedulerLoadItemsService : NoArgService() {
             return if (userService.isUserLoggedIn) {
                 Scheduler.allSchedulerItems
             } else {
-                "url: " + userService.createLoginURL("/scheduler")
+                "url: " + userService.createLoginURL(
+                        "/redirect?path=/scheduler")
             }
         }
 
@@ -50,6 +51,7 @@ object SchedulerWriteItemService : StructuredInputService<SchedulerItemData>(
  */
 object SchedulerDeleteItemService : OneArgService(parameterName = "key") {
 
+    override val method: HttpMethod = HttpMethod.DELETE
     override val uri: String = "/apis/scheduler/delete"
 
     override fun output(argument: String): Any? {

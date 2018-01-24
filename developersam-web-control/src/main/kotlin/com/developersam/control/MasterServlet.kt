@@ -18,19 +18,50 @@ abstract class MasterServlet : HttpServlet() {
      */
     abstract val serviceRunner: ServiceRunner
 
+    /**
+     * A helper method to add CORS header for [resp] for a given [req].
+     */
+    private fun addCORSHeader(req: HttpServletRequest,
+                              resp: HttpServletResponse) {
+        val origin: String? = req.getHeader("origin")
+        val allowedOrigin: String
+        allowedOrigin = if (origin == "https://www.developersam.com"
+                || origin == "https://developersam.com"
+                || origin == "http://localhost:4200") {
+            origin;
+        } else {
+            "https://www.developersam.com"
+        }
+        resp.addHeader("Access-Control-Allow-Origin", allowedOrigin)
+        resp.addHeader("Access-Control-Allow-Headers",
+                "Content-Type, Authorization, X-Requested-With")
+        resp.addHeader("Access-Control-Allow-Methods",
+                "GET, POST, DELETE, OPTIONS")
+        resp.addHeader("Access-Control-Allow-Credentials", "true")
+        resp.addHeader("Vary", "Origin")
+    }
+
     final override fun doGet(req: HttpServletRequest,
                              resp: HttpServletResponse) {
         serviceRunner.serve(req = req, resp = resp)
+        addCORSHeader(req = req, resp = resp)
     }
 
     final override fun doPost(req: HttpServletRequest,
                               resp: HttpServletResponse) {
         serviceRunner.serve(req = req, resp = resp)
+        addCORSHeader(req = req, resp = resp)
     }
 
     final override fun doDelete(req: HttpServletRequest,
                                 resp: HttpServletResponse) {
         serviceRunner.serve(req = req, resp = resp)
+        addCORSHeader(req = req, resp = resp)
+    }
+
+    final override fun doOptions(req: HttpServletRequest,
+                                 resp: HttpServletResponse) {
+        addCORSHeader(req = req, resp = resp)
     }
 
 }

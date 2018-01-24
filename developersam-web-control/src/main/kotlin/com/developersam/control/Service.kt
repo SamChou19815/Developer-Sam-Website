@@ -41,7 +41,6 @@ sealed class Service {
         val output: Any? = req.getAttribute("output")
         if (output is String) {
             resp.contentType = "text/plain"
-            print("hey")
             resp.writer.print(output)
         } else {
             resp.contentType = "application/json"
@@ -87,7 +86,7 @@ abstract class OneArgService protected constructor(
     /**
      * Only GET is supported to comply with HTTP convention.
      */
-    final override val method = HttpMethod.GET
+    override val method = HttpMethod.GET
 
     /**
      * Compute the output from one [String] [argument].

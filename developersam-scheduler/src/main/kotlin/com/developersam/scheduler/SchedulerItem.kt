@@ -6,6 +6,7 @@ import com.developersam.webcore.datastore.dataStore
 import com.developersam.webcore.datastore.getEntityByKey
 import com.google.appengine.api.datastore.Entity
 import com.google.appengine.api.datastore.KeyFactory
+import com.google.appengine.api.users.UserServiceFactory
 import com.google.common.base.MoreObjects
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -43,9 +44,23 @@ class SchedulerItem internal constructor(
     private val isCompleted: Boolean =
             entity.getProperty("completed") as Boolean
 
+    /**
+     * A helper property to check whether the user is the owner of the item.
+     */
+    private val isOwner: Boolean
+        get() {
+            val email = UserServiceFactory.getUserService().currentUser.email
+            val itemEmail = entity.getProperty("userEmail") as String
+            return email == itemEmail
+        }
+
     override fun deleteFromDatabase(): Boolean {
-        dataStore.delete(entity.key)
-        return true
+        return if (isOwner) {
+            dataStore.delete(entity.key)
+            true
+        } else {
+            false
+        }
     }
 
     /**
@@ -54,8 +69,10 @@ class SchedulerItem internal constructor(
      * @param completed whether the item should be marked as completed or not.
      */
     internal fun markAs(completed: Boolean) {
-        entity.setProperty("completed", completed)
-        dataStore.put(entity)
+        if (isOwner) {
+            entity.setProperty("completed", completed)
+            dataStore.put(entity)
+        }
     }
 
     override fun toString(): String {

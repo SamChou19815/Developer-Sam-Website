@@ -4,6 +4,8 @@ import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.Deletable
 import com.developersam.webcore.datastore.dataStore
 import com.developersam.webcore.datastore.getEntityByKey
+import com.developersam.webcore.exception.AccessDeniedException
+import com.developersam.webcore.service.GoogleUserService
 import com.google.appengine.api.datastore.Entity
 import com.google.appengine.api.datastore.KeyFactory
 import com.google.appengine.api.users.UserServiceFactory
@@ -53,7 +55,8 @@ class SchedulerItem internal constructor(
      */
     private val isOwner: Boolean
         get() {
-            val email = UserServiceFactory.getUserService().currentUser.email
+            val email: String = GoogleUserService.currentUser?.email
+                    ?: throw AccessDeniedException()
             val itemEmail = entity.getProperty("userEmail") as String
             return email == itemEmail
         }

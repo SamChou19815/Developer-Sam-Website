@@ -1,5 +1,6 @@
-package com.developersam.control
+package com.developersam.webcore.service
 
+import com.developersam.webcore.gson.globalGson
 import com.google.gson.Gson
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -16,7 +17,7 @@ sealed class Service {
     /**
      * The [Gson] used by all the subclasses.
      */
-    protected abstract val gson: Gson
+    protected val gson: Gson = globalGson
     /**
      * The [uri] that can be handled by the service.
      */

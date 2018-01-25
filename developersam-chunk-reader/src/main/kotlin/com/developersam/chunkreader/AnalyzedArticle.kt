@@ -8,6 +8,8 @@ import com.developersam.chunkreader.summary.RetrievedSummaries
 import com.developersam.chunkreader.type.TextType
 import com.developersam.webcore.datastore.dataStore
 import com.developersam.webcore.datastore.getEntityByKey
+import com.developersam.webcore.exception.AccessDeniedException
+import com.developersam.webcore.service.GoogleUserService
 import com.google.appengine.api.datastore.Entity
 import com.google.appengine.api.datastore.Key
 import com.google.appengine.api.datastore.KeyFactory
@@ -72,6 +74,12 @@ class AnalyzedArticle {
     constructor(entity: Entity, fullDetail: Boolean = false) {
         val textKey: Key = entity.key
         keyString = KeyFactory.keyToString(textKey)
+        val email = GoogleUserService.currentUser?.email
+                ?: throw AccessDeniedException()
+        val userEmail = entity.getProperty("userEmail") as String
+        if (email != userEmail) {
+            throw AccessDeniedException()
+        }
         date = entity.getProperty("date") as Date
         title = entity.getProperty("title") as String
         tokenCount = entity.getProperty("tokenCount") as Long

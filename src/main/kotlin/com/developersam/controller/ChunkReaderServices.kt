@@ -6,7 +6,7 @@ import com.developersam.chunkreader.ChunkReaderMainProcessor
 import com.developersam.chunkreader.RawArticle
 import com.developersam.chunkreader.summary.RetrievedSummaries
 import com.developersam.chunkreader.summary.SummaryRequest
-import com.developersam.control.HttpMethod
+import com.developersam.webcore.service.HttpMethod
 import com.developersam.webcore.service.NoArgService
 import com.developersam.webcore.service.OneArgService
 import com.developersam.webcore.service.StructuredInputService
@@ -21,15 +21,7 @@ object ChunkReaderArticleListService : NoArgService() {
     override val uri: String = "/apis/chunkreader/load"
 
     override val output: Any
-        get() {
-            val userService = UserServiceFactory.getUserService()
-            return if (userService.isUserLoggedIn) {
-                AnalyzedArticles.asList
-            } else {
-                "url: " + userService.createLoginURL(
-                        "/redirect?path=/chunkreader")
-            }
-        }
+        get() = AnalyzedArticles.asList
 
 }
 

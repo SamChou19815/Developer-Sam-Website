@@ -8,18 +8,19 @@
     <threadsafe>true</threadsafe>
 
     <system-properties>
-        <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
+        <property name="java.util.logging.config.file"
+                  value="WEB-INF/logging.properties"/>
     </system-properties>
 
     <static-files>
-        <include path="/**.png" expiration="7d 23h" />
-        <include path="/**.jpg" expiration="7d 23h" />
-        <include path="/**.ico" expiration="7d 23h" />
-        <include path="/**.gif" expiration="4d 23h" />
-        <include path="/**.css" expiration="7d 23h" />
-        <include path="/**.js" expiration="7d 23h" />
-        <include path="/**.html" expiration="1h" />
-        <include path="/**.zip" />
-        <include path="/**.pdf" />
+        <include path="/**.png" expiration="7d 23h"/>
+        <include path="/**.jpg" expiration="7d 23h"/>
+        <include path="/**.ico" expiration="7d 23h"/>
+        <include path="/**.gif" expiration="4d 23h"/>
+        <include path="/**.css" expiration="7d 23h"/>
+        <include path="/**.js" expiration="7d 23h"/>
+        <include path="/**.html" expiration="1h"/>
+        <include path="/**.zip"/>
+        <include path="/**.pdf"/>
     </static-files>
 </appengine-web-app>

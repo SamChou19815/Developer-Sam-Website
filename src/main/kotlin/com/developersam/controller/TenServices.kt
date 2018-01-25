@@ -1,6 +1,6 @@
 package com.developersam.controller
 
-import com.developersam.control.HttpMethod
+import com.developersam.webcore.service.HttpMethod
 import com.developersam.ten.TenBoard
 import com.developersam.ten.TenClientMove
 import com.developersam.ten.TenServerResponse

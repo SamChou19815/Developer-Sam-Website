@@ -1,4 +1,4 @@
-package com.developersam.control
+package com.developersam.webcore.service
 
 /**
  * A collection of supported [HttpMethod] in the system.

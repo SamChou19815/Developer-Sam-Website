@@ -1,6 +1,6 @@
 package com.developersam.controller
 
-import com.developersam.control.HttpMethod
+import com.developersam.webcore.service.HttpMethod
 import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerItemData
 import com.developersam.webcore.service.NoArgService
@@ -18,15 +18,7 @@ object SchedulerLoadItemsService : NoArgService() {
     override val uri: String = "/apis/scheduler/load"
 
     override val output: Any
-        get() {
-            val userService = UserServiceFactory.getUserService()
-            return if (userService.isUserLoggedIn) {
-                Scheduler.allSchedulerItems
-            } else {
-                "url: " + userService.createLoginURL(
-                        "/redirect?path=/scheduler")
-            }
-        }
+        get() = Scheduler.allSchedulerItems
 
 }
 

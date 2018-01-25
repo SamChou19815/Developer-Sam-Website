@@ -6,6 +6,8 @@ import com.developersam.chunkreader.summary.SentenceSalienceMarker
 import com.developersam.chunkreader.type.DeferredTypePredictor
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.dataStore
+import com.developersam.webcore.exception.AccessDeniedException
+import com.developersam.webcore.service.GoogleUserService
 import com.google.appengine.api.ThreadManager
 import com.google.appengine.api.datastore.Text
 import com.google.appengine.api.users.UserServiceFactory
@@ -42,8 +44,9 @@ object ChunkReaderMainProcessor : DataStoreObject(kind = "ChunkReaderText") {
                 CategoryClassifier
         )
         val entity = newEntity
-        entity.setProperty("userEmail",
-                UserServiceFactory.getUserService().currentUser.email)
+        val userEmail = GoogleUserService.currentUser?.email
+                ?: throw AccessDeniedException()
+        entity.setProperty("userEmail", userEmail)
         entity.setProperty("date", Date())
         entity.setProperty("title", title)
         entity.setProperty("content", Text(content))

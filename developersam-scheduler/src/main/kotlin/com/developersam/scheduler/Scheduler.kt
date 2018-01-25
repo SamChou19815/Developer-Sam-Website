@@ -3,11 +3,12 @@ package com.developersam.scheduler
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.dataStore
 import com.developersam.webcore.date.yesterday
+import com.developersam.webcore.exception.AccessDeniedException
+import com.developersam.webcore.service.GoogleUserService
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator
 import com.google.appengine.api.datastore.Query.FilterOperator
 import com.google.appengine.api.datastore.Query.FilterPredicate
 import com.google.appengine.api.datastore.Query.SortDirection
-import com.google.appengine.api.users.UserServiceFactory
 import java.util.ArrayList
 import java.util.stream.StreamSupport
 
@@ -21,8 +22,8 @@ object Scheduler : DataStoreObject(kind = "SchedulerItem") {
      */
     val allSchedulerItems: Array<SchedulerItem>
         get() {
-            val userEmail = UserServiceFactory.getUserService()
-                    .currentUser.email
+            val userEmail: String = GoogleUserService.currentUser?.email
+                    ?: throw AccessDeniedException()
             val filterUser = FilterPredicate("userEmail",
                     FilterOperator.EQUAL, userEmail)
             val filterDeadline = FilterPredicate("deadline",

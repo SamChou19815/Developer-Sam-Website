@@ -50,7 +50,6 @@ dependencies {
     compile group: 'org.danilopianini', name: 'gson-extras', version: '0.2.1'
     // Other Supporting Modules
     compile project(':developersam-web-core')
-    compile project(':developersam-web-control')
     compile project(':developersam-ten')
     compile project(':developersam-scheduler')
     compile project(':developersam-chunk-reader')

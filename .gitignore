@@ -9,15 +9,7 @@
 *.iml
 
 # Exclude resources
-/src/main/webapp/resource/docs/*
-/src/main/webapp/resource/papers/*
-/src/main/webapp/assets/*
-/src/main/webapp/index.html
-/src/main/webapp/*.js
-/src/main/webapp/*.css
-/web/resource/papers/*
-/web/resource/store/*
-/web/resource/blog/*
+/src/main/webapp/WEB-INF/*.json
 
 # Exclude System Files
 .DS_Store

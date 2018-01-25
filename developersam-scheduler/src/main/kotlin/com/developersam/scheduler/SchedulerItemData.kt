@@ -5,6 +5,8 @@ import com.developersam.webcore.datastore.Writable
 import com.developersam.webcore.datastore.dataStore
 import com.developersam.webcore.datastore.getEntityByKey
 import com.developersam.webcore.date.yesterday
+import com.developersam.webcore.exception.AccessDeniedException
+import com.developersam.webcore.service.GoogleUserService
 import com.google.appengine.api.datastore.Entity
 import com.google.appengine.api.users.UserServiceFactory
 import java.util.Date
@@ -58,7 +60,8 @@ class SchedulerItemData private constructor() :
      */
     override fun writeToDatabase(): Boolean {
         val itemEntity = sanityCheck() ?: return false
-        val userEmail = UserServiceFactory.getUserService().currentUser.email
+        val userEmail = GoogleUserService.currentUser?.email
+                ?: throw AccessDeniedException()
         itemEntity.setProperty("userEmail", userEmail)
         itemEntity.setProperty("description", description)
         itemEntity.setProperty("deadline", deadline)

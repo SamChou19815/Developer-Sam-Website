@@ -1,4 +1,4 @@
-package com.developersam.control
+package com.developersam.webcore.service
 
 import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table

@@ -30,7 +30,8 @@ internal class Category private constructor(
          * Create a [Category] object from a [textKey] that links to the
          * original text and the [ClassificationCategory].
          */
-        fun from(textKey: Key, category: ClassificationCategory): Category {
+        fun fromAnalyzedCategory(textKey: Key,
+                                 category: ClassificationCategory): Category {
             return Category(textKey = textKey, name = category.name,
                     confidence = category.confidence.toDouble())
         }
@@ -38,7 +39,7 @@ internal class Category private constructor(
         /**
          * Create a [Category] object from an [entity] from the datastore.
          */
-        fun from(entity: Entity): Category {
+        fun fromEntity(entity: Entity): Category {
             val fullName = entity.getProperty("name") as String
             val simpleName = fullName.substring(
                     startIndex = fullName.lastIndexOf(char = '/') + 1)

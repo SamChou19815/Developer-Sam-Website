@@ -24,7 +24,7 @@ internal class RetrievedCategories(textKey: Key) :
             query.addSort("confidence", DESCENDING)
             val pq: PreparedQuery = dataStore.prepare(query)
             return pq.asList(FetchOptions.Builder.withLimit(3)).map {
-                Category.from(it).name
+                Category.fromEntity(entity = it).name
             }
         }
 

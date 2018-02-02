@@ -42,6 +42,9 @@ internal class KnowledgePoint private constructor(
     }
 
     override fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
+        }
         if (other !is KnowledgePoint) {
             return false
         }
@@ -58,7 +61,8 @@ internal class KnowledgePoint private constructor(
          * Create a [KnowledgePoint] object from a [textKey] that links to the
          * original text and the language [entity].
          */
-        fun from(textKey: Key, entity: LanguageEntity): KnowledgePoint {
+        fun fromLanguageEntity(textKey: Key,
+                               entity: LanguageEntity): KnowledgePoint {
             val type: KnowledgeType = KnowledgeType.from(entity.type)
             val url: String? = entity.metadataMap["wikipedia_url"]
             return KnowledgePoint(

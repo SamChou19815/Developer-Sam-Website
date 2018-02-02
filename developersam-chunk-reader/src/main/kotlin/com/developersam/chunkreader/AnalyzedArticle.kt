@@ -160,7 +160,7 @@ class AnalyzedArticle {
          * Create a [AnalyzedArticle] with full detail from a [keyString],
          * which may not be created due to a wrong key.
          */
-        fun from(keyString: String): AnalyzedArticle? {
+        fun fromKey(keyString: String): AnalyzedArticle? {
             val entity = dataStore.getEntityByKey(key = keyString)
                     ?: return null
             return AnalyzedArticle(entity = entity, fullDetail = true)

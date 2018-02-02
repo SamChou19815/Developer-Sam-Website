@@ -15,10 +15,11 @@ internal object KnowledgeGraphBuilder : ChunkReaderSubProcessor {
 
     override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
         analyzer.entities.parallelStream()
-                .map({ entity -> KnowledgePoint.from(textKey, entity) })
+                .map { langEntity -> KnowledgePoint.fromLanguageEntity(
+                        textKey = textKey, entity = langEntity) }
                 .distinct()
                 .sequential()
-                .forEach({ it.writeToDatabase() })
+                .forEach { it.writeToDatabase() }
     }
 
 }

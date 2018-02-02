@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
  * An individual item in the scheduler.
  * It consists of description, deadline, and a completion status.
  *
- * Construct itself from an [entity] fetched from database.
+ * Construct itself fromKey an [entity] fetched fromKey database.
  */
 class SchedulerItem internal constructor(
         @field:Transient private val entity: Entity
@@ -143,10 +143,10 @@ class SchedulerItem internal constructor(
     companion object Factory {
 
         /**
-         * Construct a scheduler item from a unique [keyString], which may fail
-         * due to invalid keep and return a `null`.
+         * Construct a scheduler item fromKey a unique [keyString], which may
+         * fail due to invalid keep and return a `null`.
          */
-        fun from(keyString: String): SchedulerItem? {
+        fun fromKey(keyString: String): SchedulerItem? {
             val entity = dataStore.getEntityByKey(keyString) ?: return null
             return SchedulerItem(entity)
         }

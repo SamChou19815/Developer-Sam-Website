@@ -51,7 +51,7 @@ object Scheduler : DataStoreObject(kind = "SchedulerItem") {
      * Delete a scheduler item with a given [key].
      */
     fun delete(key: String) {
-        val item = SchedulerItem.from(key)
+        val item = SchedulerItem.fromKey(keyString = key)
         item?.deleteFromDatabase()
     }
 
@@ -60,7 +60,7 @@ object Scheduler : DataStoreObject(kind = "SchedulerItem") {
      * given [key] and the desired new [completionStatus].
      */
     fun markAs(key: String, completionStatus: Boolean) {
-        val item = SchedulerItem.from(key)
+        val item = SchedulerItem.fromKey(keyString = key)
         item?.markAs(completionStatus)
     }
 

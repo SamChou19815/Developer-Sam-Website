@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse
  * The master service runner.
  */
 @JvmField
-internal val masterServiceRunner = com.developersam.webcore.service.ServiceRunner(services = arrayOf(
+internal val masterServiceRunner = ServiceRunner(services = arrayOf(
         // TEN
         TenResponseService,
         // Scheduler

@@ -13,7 +13,8 @@ internal object CategoryClassifier : ChunkReaderSubProcessor {
 
     override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
         analyzer.categories.forEach { classificationCategory ->
-            Category.from(textKey = textKey, category = classificationCategory)
+            Category.fromAnalyzedCategory(
+                    textKey = textKey, category = classificationCategory)
                     .writeToDatabase()
         }
     }

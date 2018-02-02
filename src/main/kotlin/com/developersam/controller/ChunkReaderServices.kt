@@ -10,7 +10,6 @@ import com.developersam.webcore.service.HttpMethod
 import com.developersam.webcore.service.NoArgService
 import com.developersam.webcore.service.OneArgService
 import com.developersam.webcore.service.StructuredInputService
-import com.google.appengine.api.users.UserServiceFactory
 
 /**
  * A chunk reader service that loads list of articles submitted by the user,
@@ -33,7 +32,7 @@ object ChunkReaderArticleDetailService : OneArgService(parameterName = "key") {
     override val uri: String = "/apis/chunkreader/articleDetail"
 
     override fun output(argument: String): AnalyzedArticle? {
-        return AnalyzedArticle.from(keyString = argument)
+        return AnalyzedArticle.fromKey(keyString = argument)
     }
 
 }

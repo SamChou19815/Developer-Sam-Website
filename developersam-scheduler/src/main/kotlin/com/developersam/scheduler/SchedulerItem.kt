@@ -4,11 +4,11 @@ import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.Deletable
 import com.developersam.webcore.datastore.dataStore
 import com.developersam.webcore.datastore.getEntityByKey
+import com.developersam.webcore.date.addHours
 import com.developersam.webcore.exception.AccessDeniedException
 import com.developersam.webcore.service.GoogleUserService
 import com.google.appengine.api.datastore.Entity
 import com.google.appengine.api.datastore.KeyFactory
-import com.google.appengine.api.users.UserServiceFactory
 import com.google.common.base.MoreObjects
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -37,9 +37,45 @@ class SchedulerItem internal constructor(
      */
     private val deadline: Date = entity.getProperty("deadline") as Date
     /**
+     * Deadline of the item with precision to hours,
+     * which is completely optional.
+     */
+    private val deadlineHour: Int? =
+            (entity.getProperty("deadlineHour") as Long?)?.toInt()
+    /**
+     * Total hours left, used for filtering outdated [SchedulerItem].
+     */
+    @field:Transient
+    internal val totalHoursLeft: Int
+
+    /*
+     * Help calculate total hours left.
+     */
+    init {
+        val actualDeadlineHour: Int = deadlineHour ?: 24
+        val actualDeadlineDate = deadline.addHours(hours = actualDeadlineHour)
+        val diff = actualDeadlineDate.time - Date().time
+        totalHoursLeft = TimeUnit.MILLISECONDS.toHours(diff).toInt()
+    }
+
+    /**
      * Days left.
      */
-    private val daysLeft: Int = calculateDaysLeft(deadline)
+    private val daysLeft: Int = totalHoursLeft / 24
+    /**
+     * Hours left.
+     */
+    private val hoursLeft: Int = totalHoursLeft % 24
+    /**
+     * Optional field of estimated hours.
+     */
+    private val estimatedHours: Int? =
+            (entity.getProperty("estimatedHours") as Long?)?.toInt()
+    /**
+     * Optional field of estimated progress.
+     */
+    private val estimatedProgress: Int? =
+            (entity.getProperty("estimatedProgress") as Long?)?.toInt()
     /**
      * Whether the item has been completed.
      */
@@ -49,6 +85,12 @@ class SchedulerItem internal constructor(
      * The details of an item, which is completely optional.
      */
     private val detail: String? = entity.getProperty("detail") as String?
+
+    init {
+        if (!((estimatedHours != null) xor (estimatedProgress == null))) {
+            throw Error("Inconsistency of estimated value existence!")
+        }
+    }
 
     /**
      * A helper property to check whether the user is the owner of the item.
@@ -89,12 +131,16 @@ class SchedulerItem internal constructor(
                 .add("description", description)
                 .add("deadline", deadline)
                 .add("daysLeft", daysLeft)
+                .add("deadlineHour", deadlineHour)
+                .add("hoursLeft", hoursLeft)
+                .add("estimatedHours", estimatedHours)
+                .add("estimatedProgress", estimatedProgress)
                 .add("completed", isCompleted)
                 .add("detail", detail)
                 .toString()
     }
 
-    companion object {
+    companion object Factory {
 
         /**
          * Construct a scheduler item from a unique [keyString], which may fail
@@ -105,16 +151,6 @@ class SchedulerItem internal constructor(
             return SchedulerItem(entity)
         }
 
-        /**
-         * Calculate and obtain how many days left for the deadline.
-         *
-         * @param deadline deadline date.
-         * @return days left.
-         */
-        private fun calculateDaysLeft(deadline: Date): Int {
-            val diff = deadline.time - Date().time
-            return TimeUnit.MILLISECONDS.toDays(diff).toInt() + 1
-        }
     }
 
 }

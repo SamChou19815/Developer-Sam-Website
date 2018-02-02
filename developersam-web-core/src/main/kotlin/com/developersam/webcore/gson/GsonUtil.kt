@@ -2,15 +2,15 @@
 
 package com.developersam.webcore.gson
 
-import com.developersam.webcore.date.commonDateFormat
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import java.util.Date
 
 /**
  * Create a [GsonBuilder] of system global configuration.
  */
 private fun globalGsonBuilder(): GsonBuilder {
-    return GsonBuilder().setDateFormat(commonDateFormat)
+    return GsonBuilder().registerTypeAdapter(Date::class.java, GsonDateAdapter)
 }
 
 /**

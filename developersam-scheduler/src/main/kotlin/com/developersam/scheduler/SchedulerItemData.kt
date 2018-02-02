@@ -8,7 +8,7 @@ import com.developersam.webcore.date.yesterday
 import com.developersam.webcore.exception.AccessDeniedException
 import com.developersam.webcore.service.GoogleUserService
 import com.google.appengine.api.datastore.Entity
-import com.google.appengine.api.users.UserServiceFactory
+import com.sun.codemodel.internal.JOp.xor
 import java.util.Date
 
 /**
@@ -33,6 +33,20 @@ class SchedulerItemData private constructor() :
      */
     private val deadline: Date? = null
     /**
+     * The optional deadline hour.
+     */
+    private val deadlineHour: Int? = null
+    /**
+     * The optional estimated hours for the project.
+     */
+    private val estimatedHours: Int? = null
+    /**
+     * The optional estimated progress for the project, which is always between
+     * 0 and 100. If it reaches 100, it should be marked as completed
+     * automatically.
+     */
+    private val estimatedProgress: Int? = null;
+    /**
      * Optional detail of the item.
      */
     private var detail: String? = null
@@ -46,6 +60,24 @@ class SchedulerItemData private constructor() :
                 || description.trim().isEmpty()
                 || deadline < yesterday) {
             return null
+        }
+        if (deadlineHour != null && deadlineHour !in 1..24) {
+            // Deadline hours must be in range.
+            return null
+        }
+        if (estimatedHours != null && estimatedHours <= 0
+                && estimatedProgress == null) {
+            // Estimated hours must be positive.
+            return null
+        }
+        if (!((estimatedHours != null) xor (estimatedProgress == null))) {
+            // When est. hours is provided,
+            // est. progress should auto be provided and vice versa.
+            return null
+        }
+        if (estimatedProgress != null && estimatedProgress !in 0..100) {
+            // Estimated progress must be in range.
+            return null;
         }
         return if (keyString == null) {
             newEntity
@@ -65,7 +97,11 @@ class SchedulerItemData private constructor() :
         itemEntity.setProperty("userEmail", userEmail)
         itemEntity.setProperty("description", description)
         itemEntity.setProperty("deadline", deadline)
-        itemEntity.setProperty("completed", false)
+        itemEntity.setProperty("deadlineHour", deadlineHour)
+        itemEntity.setProperty("estimatedHours", estimatedHours)
+        itemEntity.setProperty("estimatedProgress", estimatedProgress)
+        // Automatic setting of completion
+        itemEntity.setProperty("completed", estimatedProgress == 100)
         // Don't record meaningless detail.
         detail = detail?.trim()
         if (detail?.isEmpty() == true) {

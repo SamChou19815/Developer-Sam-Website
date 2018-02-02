@@ -31,6 +31,7 @@ object Scheduler : DataStoreObject(kind = "SchedulerItem") {
             val trueAndFalse = ArrayList<Boolean>(2)
             trueAndFalse.add(true)
             trueAndFalse.add(false)
+            // :< Just to overcome Datastore's indexing and sorting limitation.
             val filterCompleted = FilterPredicate(
                     "completed", FilterOperator.IN, trueAndFalse)
             val filter = CompositeFilterOperator.and(
@@ -38,12 +39,12 @@ object Scheduler : DataStoreObject(kind = "SchedulerItem") {
             val q = query.setFilter(filter)
                     .addSort("completed", SortDirection.ASCENDING)
                     .addSort("deadline", SortDirection.ASCENDING)
-            // :< Just to overcome Datastore's indexing and sorting limitation.
             val pq = dataStore.prepare(q)
             return StreamSupport.stream(
                     pq.asIterable().spliterator(), false)
-                    .map({ SchedulerItem(it) })
-                    .toArray({ size -> arrayOfNulls<SchedulerItem>(size) })
+                    .map { SchedulerItem(it) }
+                    .filter { it.totalHoursLeft >= 0 }
+                    .toArray { size -> arrayOfNulls<SchedulerItem>(size) }
         }
 
     /**

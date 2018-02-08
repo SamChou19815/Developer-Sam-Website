@@ -3,6 +3,7 @@
 **/build/*
 **/.gradle/*
 **/libs/*
+*.class
 
 # Exclude IDEA files
 **/.idea/*

@@ -44,6 +44,7 @@ object Scheduler : DataStoreObject(kind = "SchedulerItem") {
                     pq.asIterable().spliterator(), false)
                     .map { SchedulerItem(it) }
                     .filter { it.totalHoursLeft >= 0 }
+                    .sorted(Comparator.comparingInt { it.totalHoursLeft })
                     .toArray { size -> arrayOfNulls<SchedulerItem>(size) }
         }
 

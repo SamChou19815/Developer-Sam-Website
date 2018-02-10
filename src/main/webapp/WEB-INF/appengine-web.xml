@@ -3,9 +3,14 @@
     <application>dev-sam</application>
     <version>3</version>
     <runtime>java8</runtime>
-    <automatic-scaling/>
+    <automatic-scaling>
+        <min-idle-instances>1</min-idle-instances>
+        <max-idle-instances>2</max-idle-instances>
+    </automatic-scaling>
     <instance-class>F4_1G</instance-class>
     <threadsafe>true</threadsafe>
+
+    <warmup-requests-enabled>true</warmup-requests-enabled>
 
     <system-properties>
         <property name="java.util.logging.config.file"

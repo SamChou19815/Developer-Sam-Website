@@ -8,7 +8,6 @@ import com.developersam.webcore.date.yesterday
 import com.developersam.webcore.exception.AccessDeniedException
 import com.developersam.webcore.service.GoogleUserService
 import com.google.appengine.api.datastore.Entity
-import com.sun.codemodel.internal.JOp.xor
 import java.util.Date
 
 /**

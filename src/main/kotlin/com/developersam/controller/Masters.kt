@@ -29,7 +29,6 @@ internal val masterServiceRunner = ServiceRunner(services = arrayOf(
 /**
  * [MainServlet] is used to handle API calls.
  */
-@WebServlet("/apis/*")
 class MainServlet : MasterServlet() {
 
     override val serviceRunner: ServiceRunner = masterServiceRunner

@@ -79,7 +79,7 @@ class SchedulerItem internal constructor(
     /**
      * Whether the item has been completed.
      */
-    private val isCompleted: Boolean =
+    internal val isCompleted: Boolean =
             entity.getProperty("completed") as Boolean
     /**
      * The details of an item, which is completely optional.

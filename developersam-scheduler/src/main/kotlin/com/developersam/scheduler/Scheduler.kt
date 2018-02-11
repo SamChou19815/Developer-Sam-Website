@@ -8,8 +8,6 @@ import com.developersam.webcore.service.GoogleUserService
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator
 import com.google.appengine.api.datastore.Query.FilterOperator
 import com.google.appengine.api.datastore.Query.FilterPredicate
-import com.google.appengine.api.datastore.Query.SortDirection
-import java.util.ArrayList
 import java.util.stream.StreamSupport
 
 /**
@@ -28,23 +26,20 @@ object Scheduler : DataStoreObject(kind = "SchedulerItem") {
                     FilterOperator.EQUAL, userEmail)
             val filterDeadline = FilterPredicate("deadline",
                     FilterOperator.GREATER_THAN_OR_EQUAL, yesterday)
-            val trueAndFalse = ArrayList<Boolean>(2)
-            trueAndFalse.add(true)
-            trueAndFalse.add(false)
-            // :< Just to overcome Datastore's indexing and sorting limitation.
-            val filterCompleted = FilterPredicate(
-                    "completed", FilterOperator.IN, trueAndFalse)
-            val filter = CompositeFilterOperator.and(
-                    filterCompleted, filterUser, filterDeadline)
-            val q = query.setFilter(filter)
-                    .addSort("completed", SortDirection.ASCENDING)
-                    .addSort("deadline", SortDirection.ASCENDING)
-            val pq = dataStore.prepare(q)
+            val filter = CompositeFilterOperator.and(filterUser, filterDeadline)
+            val pq = dataStore.prepare(query.setFilter(filter))
             return StreamSupport.stream(
                     pq.asIterable().spliterator(), false)
                     .map { SchedulerItem(it) }
                     .filter { it.totalHoursLeft >= 0 }
-                    .sorted(Comparator.comparingInt { it.totalHoursLeft })
+                    .sorted { o1, o2 ->
+                        val c: Int = o1.isCompleted.compareTo(o2.isCompleted)
+                        if (c != 0) {
+                            c
+                        } else {
+                            o1.totalHoursLeft.compareTo(o2.totalHoursLeft)
+                        }
+                    }
                     .toArray { size -> arrayOfNulls<SchedulerItem>(size) }
         }
 

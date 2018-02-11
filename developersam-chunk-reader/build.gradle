@@ -20,6 +20,9 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    // App Engine API
+    compile 'com.google.appengine:appengine:+'
+    compile 'com.google.appengine:appengine-api-1.0-sdk:+'
     // App Engine ML API
     compile 'com.google.cloud:google-cloud-language:+'
     // Google's Java Library

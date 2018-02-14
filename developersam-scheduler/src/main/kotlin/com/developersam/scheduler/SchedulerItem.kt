@@ -67,16 +67,6 @@ class SchedulerItem internal constructor(
      */
     private val hoursLeft: Int = totalHoursLeft % 24
     /**
-     * Optional field of estimated hours.
-     */
-    private val estimatedHours: Int? =
-            (entity.getProperty("estimatedHours") as Long?)?.toInt()
-    /**
-     * Optional field of estimated progress.
-     */
-    private val estimatedProgress: Int? =
-            (entity.getProperty("estimatedProgress") as Long?)?.toInt()
-    /**
      * Whether the item has been completed.
      */
     internal val isCompleted: Boolean =
@@ -85,12 +75,6 @@ class SchedulerItem internal constructor(
      * The details of an item, which is completely optional.
      */
     private val detail: String? = entity.getProperty("detail") as String?
-
-    init {
-        if (!((estimatedHours != null) xor (estimatedProgress == null))) {
-            throw Error("Inconsistency of estimated value existence!")
-        }
-    }
 
     /**
      * A helper property to check whether the user is the owner of the item.
@@ -133,8 +117,6 @@ class SchedulerItem internal constructor(
                 .add("daysLeft", daysLeft)
                 .add("deadlineHour", deadlineHour)
                 .add("hoursLeft", hoursLeft)
-                .add("estimatedHours", estimatedHours)
-                .add("estimatedProgress", estimatedProgress)
                 .add("completed", isCompleted)
                 .add("detail", detail)
                 .toString()

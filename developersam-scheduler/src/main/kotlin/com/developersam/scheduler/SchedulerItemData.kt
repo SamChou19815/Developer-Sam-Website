@@ -36,16 +36,6 @@ class SchedulerItemData private constructor() :
      */
     private val deadlineHour: Int? = null
     /**
-     * The optional estimated hours for the project.
-     */
-    private val estimatedHours: Int? = null
-    /**
-     * The optional estimated progress for the project, which is always between
-     * 0 and 100. If it reaches 100, it should be marked as completed
-     * automatically.
-     */
-    private val estimatedProgress: Int? = null;
-    /**
      * Optional detail of the item.
      */
     private var detail: String? = null
@@ -63,20 +53,6 @@ class SchedulerItemData private constructor() :
         if (deadlineHour != null && deadlineHour !in 1..24) {
             // Deadline hours must be in range.
             return null
-        }
-        if (estimatedHours != null && estimatedHours <= 0
-                && estimatedProgress == null) {
-            // Estimated hours must be positive.
-            return null
-        }
-        if (!((estimatedHours != null) xor (estimatedProgress == null))) {
-            // When est. hours is provided,
-            // est. progress should auto be provided and vice versa.
-            return null
-        }
-        if (estimatedProgress != null && estimatedProgress !in 0..100) {
-            // Estimated progress must be in range.
-            return null;
         }
         return if (keyString == null) {
             newEntity
@@ -97,10 +73,11 @@ class SchedulerItemData private constructor() :
         itemEntity.setProperty("description", description)
         itemEntity.setProperty("deadline", deadline)
         itemEntity.setProperty("deadlineHour", deadlineHour)
-        itemEntity.setProperty("estimatedHours", estimatedHours)
-        itemEntity.setProperty("estimatedProgress", estimatedProgress)
+        // For compatibility
+        itemEntity.setProperty("estimatedHours", null)
+        itemEntity.setProperty("estimatedProgress", null)
         // Automatic setting of completion
-        itemEntity.setProperty("completed", estimatedProgress == 100)
+        itemEntity.setProperty("completed", false)
         // Don't record meaningless detail.
         detail = detail?.trim()
         if (detail?.isEmpty() == true) {

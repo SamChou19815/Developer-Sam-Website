@@ -73,10 +73,6 @@ class SchedulerItemData private constructor() :
         itemEntity.setProperty("description", description)
         itemEntity.setProperty("deadline", deadline)
         itemEntity.setProperty("deadlineHour", deadlineHour)
-        // For compatibility
-        itemEntity.setProperty("estimatedHours", null)
-        itemEntity.setProperty("estimatedProgress", null)
-        // Automatic setting of completion
         itemEntity.setProperty("completed", false)
         // Don't record meaningless detail.
         detail = detail?.trim()

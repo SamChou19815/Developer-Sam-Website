@@ -1,8 +1,8 @@
 package com.developersam.controller
 
 import com.developersam.webcore.service.HttpMethod
-import scheduler.Scheduler
-import scheduler.SchedulerItemData
+import com.developersam.scheduler.Scheduler
+import com.developersam.scheduler.SchedulerItemData
 import com.developersam.webcore.service.NoArgService
 import com.developersam.webcore.service.OneArgService
 import com.developersam.webcore.service.StructuredInputService

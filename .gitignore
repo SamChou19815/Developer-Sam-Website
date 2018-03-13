@@ -13,7 +13,7 @@
 /src/main/webapp/WEB-INF/*.json
 
 # Exclude node_modules
-/src/main/webapp/dev-sam-frontend/node_modules
+/src/main/frontend/node_modules
 
 # Exclude Compiled Static Web App
 /src/main/webapp/dist

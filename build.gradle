@@ -24,6 +24,10 @@ jar {
     version =  '0.1.0'
 }
 
+war {
+    exclude('**/dev-sam-frontend/**')
+}
+
 repositories {
     maven {
         url 'https://maven-central.storage.googleapis.com'

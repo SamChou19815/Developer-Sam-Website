@@ -5,8 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
-    "build": "ng build --prod --build-optimizer --output-path ../dist/",
-    "deploy": "ng build --prod --build-optimizer && firebase deploy",
+    "build": "ng build --prod --build-optimizer --output-path ../webapp/dist/"
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

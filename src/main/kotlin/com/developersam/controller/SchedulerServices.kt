@@ -1,13 +1,12 @@
 package com.developersam.controller
 
 import com.developersam.webcore.service.HttpMethod
-import com.developersam.scheduler.Scheduler
-import com.developersam.scheduler.SchedulerItemData
+import scheduler.Scheduler
+import scheduler.SchedulerItemData
 import com.developersam.webcore.service.NoArgService
 import com.developersam.webcore.service.OneArgService
 import com.developersam.webcore.service.StructuredInputService
 import com.developersam.webcore.service.TwoArgsService
-import com.google.appengine.api.users.UserServiceFactory
 
 /**
  * A service that loads list of scheduler items for a user, or gives a login

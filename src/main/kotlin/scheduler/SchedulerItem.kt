@@ -1,4 +1,4 @@
-package com.developersam.scheduler
+package scheduler
 
 import com.developersam.webcore.datastore.DataStoreObject
 import com.developersam.webcore.datastore.Deletable

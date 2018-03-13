@@ -7,7 +7,7 @@
         <min-idle-instances>1</min-idle-instances>
         <max-idle-instances>1</max-idle-instances>
     </automatic-scaling>
-    <instance-class>F4_1G</instance-class>
+    <instance-class>F2</instance-class>
     <threadsafe>true</threadsafe>
 
     <warmup-requests-enabled>true</warmup-requests-enabled>

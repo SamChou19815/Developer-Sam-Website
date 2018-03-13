@@ -29,10 +29,13 @@ class MCTS(private val board: Board, private val timeLimit: Int) {
     private fun selection(): Node {
         var root = tree
         var isPlayer = true
-        while (root.numberOfLegalMoves > 0) {
+        while (true) {
             // Find optimal move and loop down.
             val children = root.children
-            val len = children?.size ?: throw NoLegalMoveException()
+            val len = children?.size ?: return root
+            if (len == 0) {
+                return root
+            }
             var n = children[0]
             var max = n.getUpperConfidenceBound(isPlayer)
             for (i in 1 until len) {
@@ -46,7 +49,6 @@ class MCTS(private val board: Board, private val timeLimit: Int) {
             isPlayer = !isPlayer // switch player identity
             root = n
         }
-        return root
     }
 
     /**

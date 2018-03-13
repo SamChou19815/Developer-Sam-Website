@@ -1,0 +1,18 @@
+@media (min-width: 1300px) {
+  :host {
+    display: block;
+    column-count: 3;
+    column-gap: 1em;
+    column-fill: initial;
+  }
+}
+
+@media (min-width: 800px) and (max-width: 1300px) {
+  :host {
+    display: block;
+    column-count: 2;
+    column-gap: 1em;
+    column-fill: initial;
+  }
+}
+

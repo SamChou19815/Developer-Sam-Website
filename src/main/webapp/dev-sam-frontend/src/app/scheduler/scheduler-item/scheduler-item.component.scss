@@ -1,0 +1,92 @@
+@import '~@angular/material/theming';
+
+$red-palette: mat-palette($mat-red, 400);
+$deep-orange-palette: mat-palette($mat-deep-orange, 400);
+$orange-palette: mat-palette($mat-orange, 400);
+$green-palette: mat-palette($mat-blue-grey, 400);
+
+:host {
+  display: flex;
+  break-inside: avoid;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.completed {
+  opacity: 0.5;
+}
+
+mat-card {
+  display: flex;
+  flex-direction: column;
+}
+
+mat-card-title {
+  display: flex;
+  align-items: center;
+  margin-top: -24px !important;
+  width: calc(100% + 24px);
+  min-height: 3em;
+  max-height: 3em;
+  line-height: 1.5em;
+  margin-left: -24px;
+  margin-right: -24px;
+  margin-bottom: 1em;
+  padding-left: 24px;
+  font-size: 24px;
+  font-weight: 300;
+  color: white;
+}
+
+span {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.level-0-urgent {
+  background-color: mat-color($red-palette);
+}
+
+.level-1-urgent {
+  background-color: mat-color($deep-orange-palette);
+}
+
+.level-2-urgent {
+  background-color: mat-color($orange-palette);
+}
+
+.level-3-urgent {
+  background-color: mat-color($green-palette);
+}
+
+/*  Mobile */
+@media (max-width: 600px) {
+  mat-card {
+    width: 90%;
+    margin: 1em auto;
+  }
+  mat-card-title {
+    width: calc(100% + 16px);
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+  }
+}
+
+/*  Tablet */
+@media (max-width: 900px) and (min-width: 600px) {
+  mat-card {
+    width: 80%;
+    margin: 1em auto;
+  }
+}
+
+/*  Desktop */
+@media (min-width: 900px) {
+  mat-card {
+    margin: 1em;
+    width: 350px;
+  }
+}

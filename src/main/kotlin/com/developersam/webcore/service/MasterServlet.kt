@@ -44,24 +44,16 @@ abstract class MasterServlet : HttpServlet() {
     final override fun doGet(req: HttpServletRequest,
                              resp: HttpServletResponse) {
         serviceRunner.serve(req = req, resp = resp)
-        addCORSHeader(req = req, resp = resp)
     }
 
     final override fun doPost(req: HttpServletRequest,
                               resp: HttpServletResponse) {
         serviceRunner.serve(req = req, resp = resp)
-        addCORSHeader(req = req, resp = resp)
     }
 
     final override fun doDelete(req: HttpServletRequest,
                                 resp: HttpServletResponse) {
         serviceRunner.serve(req = req, resp = resp)
-        addCORSHeader(req = req, resp = resp)
-    }
-
-    final override fun doOptions(req: HttpServletRequest,
-                                 resp: HttpServletResponse) {
-        addCORSHeader(req = req, resp = resp)
     }
 
 }

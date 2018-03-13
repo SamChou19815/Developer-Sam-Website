@@ -1,0 +1,32 @@
+@import "~@angular/material/theming";
+
+:host {
+  background-color: #DDDDDD;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  @include mat-elevation(16)
+}
+
+/*  Mobile */
+@media (max-width: 600px) {
+  :host {
+    width: 100%;
+  }
+}
+
+/*  Tablet */
+@media (max-width: 900px) and (min-width: 600px) {
+  :host {
+    width: 60%;
+  }
+}
+
+/*  Desktop */
+@media (min-width: 900px) {
+  :host {
+    width: 800px;
+  }
+}
+

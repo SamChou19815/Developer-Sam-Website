@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>Edit Scheduler Item</h2>
+<mat-dialog-content>
+  <mat-form-field>
+    <input matInput
+           [(ngModel)]="schedulerItemData.description"
+           #descriptionInput="ngModel"
+           placeholder="Item Description"
+           type="text"
+           required>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput
+           [(ngModel)]="schedulerItemData.deadline"
+           #deadlineInput="ngModel"
+           placeholder="Deadline"
+           type="date"
+           required>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [(ngModel)]="schedulerItemData.deadlineHour" placeholder="Deadline Hour (1~24)" type="number">
+  </mat-form-field>
+  <mat-form-field>
+    <textarea matInput
+              [(ngModel)]="schedulerItemData.detail"
+              placeholder="Item Detail (Optional)"
+              type="text"></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="primary" mat-button [mat-dialog-close]="null">Cancel</button>
+  <button color="primary" mat-button [mat-dialog-close]="schedulerItemData"
+          [disabled]="submitDisabled">
+    Submit
+  </button>
+</mat-dialog-actions>

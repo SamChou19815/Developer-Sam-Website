@@ -1,0 +1,6 @@
+<app-chunk-reader-article-preview *ngFor="let article of articlesPreview"
+                                  [articlePreview]="article"
+                                  (viewDetailClicked)="displayArticleDetails(article)">
+
+</app-chunk-reader-article-preview>
+<button color="primary" mat-fab (click)="openAddArticleDialog()">+</button>

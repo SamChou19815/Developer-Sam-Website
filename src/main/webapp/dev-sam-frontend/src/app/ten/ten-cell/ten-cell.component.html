@@ -1,0 +1,6 @@
+<div
+  [class.empty-cell]="state.getState() === 0"
+  [class.black-cell]="state.getState() === 1"
+  [class.white-cell]="state.getState() === -1"
+  [class.highlight]="state.isHighlighted()"
+  (click)="submitMove()"></div>

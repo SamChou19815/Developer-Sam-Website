@@ -1,0 +1,42 @@
+:host {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+mat-icon.close-icon {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin: 0 1em 0 0.5em;
+}
+
+mat-toolbar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100% !important;
+  z-index: 2;
+}
+
+.content {
+  position: absolute;
+  top: 64px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: scroll;
+}
+
+/*  Mobile */
+@media (max-width: 600px) {
+  .content {
+    top: 56px;
+  }
+}
+
+.title {
+  font-weight: 400;
+}

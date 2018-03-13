@@ -1,0 +1,27 @@
+{
+  "hosting": {
+    "public": "dist",
+    "rewrites": [
+      {
+        "source": "/projects",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/scheduler",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/chunkreader",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/ten",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/apis/**",
+        "function": "reverseProxy"
+      }
+    ]
+  }
+}

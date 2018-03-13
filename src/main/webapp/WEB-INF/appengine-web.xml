@@ -9,6 +9,7 @@
     </automatic-scaling>
     <instance-class>F2</instance-class>
     <threadsafe>true</threadsafe>
+    <public-root>/dist/</public-root>
 
     <warmup-requests-enabled>true</warmup-requests-enabled>
 

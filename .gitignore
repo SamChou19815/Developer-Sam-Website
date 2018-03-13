@@ -12,5 +12,11 @@
 # Exclude resources
 /src/main/webapp/WEB-INF/*.json
 
+# Exclude node_modules
+/src/main/webapp/dev-sam-frontend/node_modules
+
+# Exclude Compiled Static Web App
+/src/main/webapp/dist
+
 # Exclude System Files
 .DS_Store

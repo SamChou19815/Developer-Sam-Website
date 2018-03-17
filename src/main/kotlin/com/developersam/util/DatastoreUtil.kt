@@ -1,4 +1,4 @@
-@file:JvmName("DatastoreUtil")
+@file:JvmName(name = "DatastoreUtil")
 
 package com.developersam.util
 

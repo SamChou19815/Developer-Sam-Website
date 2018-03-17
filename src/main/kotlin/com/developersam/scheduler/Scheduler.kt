@@ -8,6 +8,9 @@ import com.developersam.util.yesterday
 import com.google.cloud.Timestamp
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter
 
+/**
+ * [Scheduler] is the entry point of many operations of the scheduler app.
+ */
 object Scheduler {
 
     /**

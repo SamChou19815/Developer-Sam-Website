@@ -5,7 +5,7 @@ import com.google.cloud.language.v1beta2.Entity
 /**
  * A collection of all known knowledge entity types.
  */
-internal enum class KnowledgeType {
+enum class KnowledgeType {
 
     PERSON, LOCATION, ORGANIZATION, EVENT, WORK_OF_ART, CONSUMER_GOOD, UNKNOWN;
 
@@ -15,12 +15,12 @@ internal enum class KnowledgeType {
          */
         fun from(entityType: Entity.Type): KnowledgeType {
             return when (entityType) {
-                Entity.Type.PERSON -> PERSON
-                Entity.Type.LOCATION -> LOCATION
-                Entity.Type.ORGANIZATION -> ORGANIZATION
-                Entity.Type.EVENT -> EVENT
-                Entity.Type.WORK_OF_ART -> WORK_OF_ART
-                Entity.Type.CONSUMER_GOOD -> CONSUMER_GOOD
+                PERSON -> PERSON
+                LOCATION -> LOCATION
+                ORGANIZATION -> ORGANIZATION
+                EVENT -> EVENT
+                WORK_OF_ART -> WORK_OF_ART
+                CONSUMER_GOOD -> CONSUMER_GOOD
                 else -> UNKNOWN
             }
         }

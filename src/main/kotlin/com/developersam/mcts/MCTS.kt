@@ -109,7 +109,7 @@ class MCTS(private val board: Board, private val timeLimit: Int) {
                     }.toArray { size -> arrayOfNulls<Node>(size) }
             simulationCounter += len
         }
-        Logger.getGlobal().info("# of simulations: " + simulationCounter)
+        println("# of simulations: $simulationCounter")
     }
 
     /**

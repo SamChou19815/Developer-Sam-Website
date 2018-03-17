@@ -1,63 +1,53 @@
 package com.developersam.scheduler
 
-import com.developersam.webcore.datastore.DataStoreObject
-import com.developersam.webcore.datastore.dataStore
-import com.developersam.webcore.date.yesterday
-import com.developersam.webcore.exception.AccessDeniedException
-import com.developersam.webcore.service.GoogleUserService
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator
-import com.google.appengine.api.datastore.Query.FilterOperator
-import com.google.appengine.api.datastore.Query.FilterPredicate
-import java.util.stream.StreamSupport
+import com.developersam.auth.FirebaseUser
+import com.developersam.util.and
+import com.developersam.util.deleteEntity
+import com.developersam.util.runQueryOf
+import com.developersam.util.yesterday
+import com.google.cloud.Timestamp
+import com.google.cloud.datastore.StructuredQuery.PropertyFilter
 
-/**
- * Represent the scheduler app.
- */
-object Scheduler : DataStoreObject(kind = "SchedulerItem") {
+object Scheduler {
 
     /**
-     * Obtain a list of [allSchedulerItems] for a signed-in user.
+     * [getAllSchedulerItems] gives a list of [SchedulerItem] for a given
+     * [user].
+     *
+     * Requires:
+     * - The given [user] must exist.
      */
-    val allSchedulerItems: Array<SchedulerItem>
-        get() {
-            val userEmail: String = GoogleUserService.currentUser?.email
-                    ?: throw AccessDeniedException()
-            val filterUser = FilterPredicate("userEmail",
-                    FilterOperator.EQUAL, userEmail)
-            val filterDeadline = FilterPredicate("deadline",
-                    FilterOperator.GREATER_THAN_OR_EQUAL, yesterday)
-            val filter = CompositeFilterOperator.and(filterUser, filterDeadline)
-            val pq = dataStore.prepare(query.setFilter(filter))
-            return StreamSupport.stream(
-                    pq.asIterable().spliterator(), false)
-                    .map { SchedulerItem(it) }
-                    .filter { it.totalHoursLeft >= 0 }
-                    .sorted { o1, o2 ->
-                        val c: Int = o1.isCompleted.compareTo(o2.isCompleted)
-                        if (c != 0) {
-                            c
-                        } else {
-                            o1.totalHoursLeft.compareTo(o2.totalHoursLeft)
-                        }
-                    }
-                    .toArray { size -> arrayOfNulls<SchedulerItem>(size) }
-        }
-
-    /**
-     * Delete a scheduler item with a given [key].
-     */
-    fun delete(key: String) {
-        val item = SchedulerItem.fromKey(keyString = key)
-        item?.deleteFromDatabase()
+    fun getAllSchedulerItems(user: FirebaseUser): List<SchedulerItem> {
+        val filterUser = PropertyFilter.eq("userEmail", user.email)
+        val filterDeadline = PropertyFilter.ge("deadline",
+                Timestamp.of(yesterday))
+        val filter = filterUser and filterDeadline
+        return runQueryOf(kind = "SchedulerItem", filter = filter)
+                .map(::SchedulerItem)
+                .filter { it.totalHoursLeft >= 0 }
+                .sorted()
+                .toList()
     }
 
     /**
-     * Mark the completion status for a scheduler item specified by the
-     * given [key] and the desired new [completionStatus].
+     * [delete] removes a scheduler item from database with a given [key] if
+     * the item really belongs to the given [user].
      */
-    fun markAs(key: String, completionStatus: Boolean) {
-        val item = SchedulerItem.fromKey(keyString = key)
-        item?.markAs(completionStatus)
+    fun delete(user: FirebaseUser, key: String) {
+        deleteEntity(keyString = key) {
+            SchedulerItem.fromKey(keyString = it)?.belongsTo(user) == true
+        }
+    }
+
+    /**
+     * [markAs] marks the completion status for a scheduler item specified
+     * by the given [key] and the desired new completion status [completed] if
+     * the item really belongs to the given [user].
+     */
+    fun markAs(user: FirebaseUser, key: String, completed: Boolean) {
+        SchedulerItem.fromKey(keyString = key)
+                ?.takeIf { it.belongsTo(user) }
+                ?.markAs(completed = completed)
     }
 
 }

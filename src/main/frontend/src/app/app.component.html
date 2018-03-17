@@ -12,10 +12,12 @@
       <a class="nav-item" [class.selected]="chunkReaderSelected"
          routerLink="/chunkreader"
          (click)="select(NavElementName.ChunkReader)">Chunk Reader (Beta V2)</a>
+      <a class="nav-item" [class.selected]="discoverSelected"
+         routerLink="/discover"
+         (click)="select(NavElementName.Discover)">Discover</a>
       <a class="nav-item" [class.selected]="tenSelected"
          routerLink="/ten"
          (click)="select(NavElementName.TEN)">TEN</a>
-      <a href="https://blog.developersam.com/" target="_blank" class="nav-item">Blog</a>
       <a href="https://github.com/SamChou19815/Developer-Sam-Website" target="_blank" class="nav-item">Open Source</a>
     </nav>
   </mat-sidenav>

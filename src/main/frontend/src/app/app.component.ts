@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
  * A collection of currently supported nav element names.
  */
 export enum NavElementName {
-  Home = 'Developer Sam', Scheduler = 'Scheduler', ChunkReader = 'Chunk Reader (Beta V2)', TEN = 'TEN'
+  Home = 'Developer Sam', Scheduler = 'Scheduler', ChunkReader = 'Chunk Reader (Beta V2)', Discover = 'Discover', TEN = 'TEN'
 }
 
 @Component({
@@ -46,7 +46,12 @@ export class AppComponent implements AfterViewInit {
    */
   chunkReaderSelected = false;
   /**
-   * Whether ten is selected.
+   * Whether Discover is selected.
+   * @type {boolean}
+   */
+  discoverSelected = false;
+  /**
+   * Whether TEN is selected.
    * @type {boolean}
    */
   tenSelected = false;
@@ -64,13 +69,16 @@ export class AppComponent implements AfterViewInit {
    * @param {string} elementName the name of the element, which can be home, projects, scheduler and TEN.
    */
   select(elementName: NavElementName) {
-    let home = false, scheduler = false, ten = false, chunkReader = false;
+    let home = false, scheduler = false, ten = false, discover = false, chunkReader = false;
     switch (elementName) {
       case NavElementName.Home:
         home = true;
         break;
       case NavElementName.Scheduler:
         scheduler = true;
+        break;
+      case NavElementName.Discover:
+        discover = true;
         break;
       case NavElementName.TEN:
         ten = true;
@@ -82,6 +90,7 @@ export class AppComponent implements AfterViewInit {
     this.homeSelected = home;
     this.schedulerSelected = scheduler;
     this.chunkReaderSelected = chunkReader;
+    this.discoverSelected = discover;
     this.tenSelected = ten;
     this.titleService.setTitle(elementName as string);
     this.title = elementName as string;
@@ -101,6 +110,9 @@ export class AppComponent implements AfterViewInit {
         break;
       case '/chunkreader':
         name = NavElementName.ChunkReader;
+        break;
+      case '/discover':
+        name = NavElementName.Discover;
         break;
       case '/ten':
         name = NavElementName.TEN;

@@ -1,22 +1,19 @@
 package com.developersam.scheduler
 
-import com.developersam.webcore.datastore.DataStoreObject
-import com.developersam.webcore.datastore.Writable
-import com.developersam.webcore.datastore.dataStore
-import com.developersam.webcore.datastore.getEntityByKey
-import com.developersam.webcore.date.yesterday
-import com.developersam.webcore.exception.AccessDeniedException
-import com.developersam.webcore.service.GoogleUserService
-import com.google.appengine.api.datastore.Entity
+import com.developersam.auth.FirebaseUser
+import com.developersam.util.set
+import com.developersam.util.setString
+import com.developersam.util.upsertEntity
+import com.developersam.util.yesterday
+import com.google.cloud.Timestamp
+import com.google.cloud.datastore.Key
 import java.util.Date
 
 /**
  * A simple data class of scheduler item that can be easily written into
  * database. It is also a simplified object for JSON transmission.
  */
-class SchedulerItemData private constructor() :
-        DataStoreObject(kind = "SchedulerItem"),
-        Writable {
+class SchedulerItemData private constructor() {
 
     /**
      * An optional field that that essentially tells the difference between
@@ -34,54 +31,52 @@ class SchedulerItemData private constructor() :
     /**
      * The optional deadline hour.
      */
-    private val deadlineHour: Int? = null
+    private val deadlineHour: Long? = null
     /**
      * Optional detail of the item.
      */
     private var detail: String? = null
 
     /**
-     * A helper method to check the sanity of the data and gives back an
-     * [Entity] if it passes the check and `null` if not.
+     * [sanityCheck] returns whether the given inputs are all valid.
      */
-    private fun sanityCheck(): Entity? {
+    private fun sanityCheck(): Boolean {
         if (description == null || deadline == null
                 || description.trim().isEmpty()
                 || deadline < yesterday) {
-            return null
+            return false
         }
         if (deadlineHour != null && deadlineHour !in 1..24) {
             // Deadline hours must be in range.
-            return null
+            return false
         }
-        return if (keyString == null) {
-            newEntity
-        } else {
-            dataStore.getEntityByKey(keyString)
-        }
+        return true
     }
 
     /**
-     * Write the current record into the database, if it passed the sanity
-     * check and tells whether it was successful.
+     * [writeToDatabase] updates the corresponding scheduler item with the new
+     * given data if the request is legit (i.e. no missing info and the item
+     * really belongs to the given [user]).
+     * It returns whether the operation was successful.
      */
-    override fun writeToDatabase(): Boolean {
-        val itemEntity = sanityCheck() ?: return false
-        val userEmail = GoogleUserService.currentUser?.email
-                ?: throw AccessDeniedException()
-        itemEntity.setProperty("userEmail", userEmail)
-        itemEntity.setProperty("description", description)
-        itemEntity.setProperty("deadline", deadline)
-        itemEntity.setProperty("deadlineHour", deadlineHour)
-        itemEntity.setProperty("completed", false)
-        // Don't record meaningless detail.
-        detail = detail?.trim()
-        if (detail?.isEmpty() == true) {
-            detail = null
+    fun writeToDatabase(user: FirebaseUser): Boolean {
+        if (!sanityCheck()) {
+            return false
         }
-        itemEntity.setProperty("detail", detail)
-        dataStore.put(itemEntity)
-        return true
+        val userEmail = user.email
+        val key = keyString?.let(Key::fromUrlSafe)
+        return upsertEntity(kind = "SchedulerItem", key = key, validator = {
+            it.getString("userEmail") == userEmail
+        }) {
+            it.apply {
+                set("userEmail", userEmail)
+                set("description", description)
+                set("deadline", Timestamp.of(deadline))
+                set("deadlineHour", deadlineHour)
+                set("completed", false)
+                setString("detail", detail)
+            }
+        }
     }
 
 }

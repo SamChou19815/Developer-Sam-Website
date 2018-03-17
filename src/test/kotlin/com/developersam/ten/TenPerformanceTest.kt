@@ -13,7 +13,7 @@ class TenPerformanceTest {
     @Test
     fun testPerformance() {
         TenBoard.runAGameBetweenTwoAIs(
-                aiThinkingTime = 100, printGameStatus = false)
+                aiThinkingTime = 50, printGameStatus = false)
     }
 
 }

@@ -1,18 +1,13 @@
 package com.developersam.chunkreader
 
-import com.developersam.chunkreader.category.CategoryClassifier
-import com.developersam.chunkreader.knowledge.KnowledgeGraphBuilder
+import com.developersam.auth.FirebaseUser
+import com.developersam.chunkreader.category.Category
+import com.developersam.chunkreader.knowledge.KnowledgePoint
 import com.developersam.chunkreader.summary.SentenceSalienceMarker
-import com.developersam.chunkreader.type.DeferredTypePredictor
-import com.developersam.webcore.datastore.DataStoreObject
-import com.developersam.webcore.datastore.dataStore
-import com.developersam.webcore.exception.AccessDeniedException
-import com.developersam.webcore.service.GoogleUserService
-import com.google.appengine.api.ThreadManager
-import com.google.appengine.api.datastore.Text
-import com.google.appengine.api.users.UserServiceFactory
-import java.util.Date
-import java.util.concurrent.CountDownLatch
+import com.developersam.util.buildAndInsertEntity
+import com.developersam.util.buildStringValue
+import com.google.cloud.Timestamp
+import java.util.concurrent.Executors
 import java.util.logging.Logger
 import kotlin.system.measureTimeMillis
 
@@ -20,58 +15,48 @@ import kotlin.system.measureTimeMillis
  * [ChunkReaderMainProcessor] calls all the other sub-processors to complete
  * the chunk reader pre-processing.
  */
-object ChunkReaderMainProcessor : DataStoreObject(kind = "ChunkReaderText") {
+object ChunkReaderMainProcessor {
 
     /**
-     * Process a given [article] and use [Boolean] return to report whether
-     * the processing has succeeded without error.
+     * Process a given [article] and use [Boolean] for a [user], returning
+     * whether the processing has succeeded without error.
      */
-    fun process(article: RawArticle): Boolean {
+    fun process(user: FirebaseUser, article: RawArticle): Boolean {
         val title = article.title ?: return false
         val content = article.content ?: return false
-        val logger = Logger.getGlobal()
         val startTime = System.currentTimeMillis()
-        logger.info("Text to be analyzed:\n" + content)
-        val analyzer = NLPAPIAnalyzer.analyze(content)
-                ?: return false
+        val analyzer = NLPAPIAnalyzer.analyze(content) ?: return false
         val endTime = System.currentTimeMillis()
-        logger.info(
-                "NLP API Analyzer finished in ${endTime - startTime}ms.")
+        val logger = Logger.getGlobal()
+        logger.info("NLP API Analyzer finished in ${endTime - startTime}ms.")
         val processingTaskArray: Array<ChunkReaderSubProcessor> = arrayOf(
-                DeferredTypePredictor,
-                KnowledgeGraphBuilder,
+                KnowledgePoint.graphBuilder,
                 SentenceSalienceMarker,
-                CategoryClassifier
+                Category.classifier
         )
-        val entity = newEntity
-        val userEmail = GoogleUserService.currentUser?.email
-                ?: throw AccessDeniedException()
-        entity.setProperty("userEmail", userEmail)
-        entity.setProperty("date", Date())
-        entity.setProperty("title", title)
-        entity.setProperty("content", Text(content))
-        entity.setProperty("tokenCount", analyzer.tokenCount.toLong())
-        dataStore.put(entity)
-        val textKey = entity.key
-        val latch = CountDownLatch(processingTaskArray.size)
-        for (processor in processingTaskArray) {
-            ThreadManager.createThreadForCurrentRequest {
+        val textKey = buildAndInsertEntity(kind = "ChunkReaderText") {
+            it.apply {
+                set("userEmail", user.email)
+                set("date", Timestamp.now())
+                set("title", title)
+                set("content", buildStringValue(string = content))
+                set("tokenCount", analyzer.tokenCount.toLong())
+            }
+        }
+        val runningT = measureTimeMillis {
+            DeferredTypePredictor.process(analyzer, textKey)
+        }
+        logger.info("Deferred Type Predictor finished in $runningT ms.")
+        val service = Executors.newFixedThreadPool(processingTaskArray.size)
+        processingTaskArray.forEach {
+            service.submit {
                 val runningTime = measureTimeMillis {
-                    processor.process(analyzer = analyzer, textKey = textKey)
+                    it.process(analyzer = analyzer, textKey = textKey)
                 }
-                logger.info(processor.name + " finished in "
-                        + runningTime + "ms.")
-                latch.countDown()
-            }.run()
+                logger.info("${it.name} finished in $runningTime ms.")
+            }
         }
-        return try {
-            latch.await()
-            true
-        } catch (e: InterruptedException) {
-            logger.throwing("ChunkReaderMainProcessor",
-                    "process", e)
-            false
-        }
+        return true
     }
 
 }

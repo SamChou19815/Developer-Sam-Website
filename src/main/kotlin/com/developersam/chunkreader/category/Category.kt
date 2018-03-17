@@ -1,50 +1,72 @@
+@file:JvmName(name = "Categories")
 package com.developersam.chunkreader.category
 
-import com.developersam.webcore.datastore.DataStoreObject
-import com.developersam.webcore.datastore.Writable
-import com.developersam.webcore.datastore.dataStore
-import com.google.appengine.api.datastore.Entity
-import com.google.appengine.api.datastore.Key
-import com.google.cloud.language.v1beta2.ClassificationCategory
+import com.developersam.chunkreader.ChunkReaderSubProcessor
+import com.developersam.chunkreader.NLPAPIAnalyzer
+import com.developersam.util.BuildableEntity
+import com.developersam.util.buildNewEntityOf
+import com.developersam.util.insertToDatabase
+import com.developersam.util.runQueryOf
+import com.google.cloud.datastore.Entity
+import com.google.cloud.datastore.Key
+import com.google.cloud.datastore.StructuredQuery.OrderBy.desc
+import com.google.cloud.datastore.StructuredQuery.PropertyFilter
 
 /**
- * The data class [Category] represents a category of the content.
+ * Commonly used kind of the entities.
+ */
+private const val kind = "ChunkReaderContentCategory"
+
+/**
+ * [Category] represents a category of the content with all the statistical
+ * data.
  */
 internal class Category private constructor(
-        textKey: Key? = null,
+        @field:Transient private val textKey: Key? = null,
         internal val name: String,
         private val confidence: Double
-) : DataStoreObject(kind = "ChunkReaderContentCategory", parent = textKey),
-        Writable {
+) : BuildableEntity {
 
-    override fun writeToDatabase(): Boolean {
-        val entity = newEntity
-        entity.setProperty("name", name)
-        entity.setProperty("confidence", confidence)
-        dataStore.put(entity)
-        return true
-    }
+    override fun toEntityBuilder(): Entity.Builder =
+            buildNewEntityOf(kind = kind, parent = textKey)
+                    .set("name", name)
+                    .set("confidence", confidence)
 
-    companion object Factory {
+    companion object {
         /**
-         * Create a [Category] object from a [textKey] that links to the
-         * original text and the [ClassificationCategory].
+         * [retrievedAsList] fetches a list of categories in string form
+         * associated with the given [textKey].
          */
-        fun fromAnalyzedCategory(textKey: Key,
-                                 category: ClassificationCategory): Category {
-            return Category(textKey = textKey, name = category.name,
-                    confidence = category.confidence.toDouble())
-        }
+        fun retrievedAsList(textKey: Key): List<String> =
+                runQueryOf(
+                        kind = kind,
+                        filter = PropertyFilter.hasAncestor(textKey),
+                        orderBy = desc("confidence"),
+                        limit = 3
+                ).map {
+                    val fullName = it.getString("name")
+                    fullName.substring(
+                            startIndex = fullName.lastIndexOf(char = '/') + 1)
+                }.toList()
 
         /**
-         * Create a [Category] object from an [entity] from the datastore.
+         * [classifier] is used to find the categories of a chunk of
+         * text.
          */
-        fun fromEntity(entity: Entity): Category {
-            val fullName = entity.getProperty("name") as String
-            val simpleName = fullName.substring(
-                    startIndex = fullName.lastIndexOf(char = '/') + 1)
-            val confidence = entity.getProperty("confidence") as Double
-            return Category(name = simpleName, confidence = confidence)
+        val classifier = object : ChunkReaderSubProcessor {
+            override val name: String = "Category Classifier"
+
+            override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
+                analyzer.categories
+                        .parallelStream()
+                        .map {
+                            Category(
+                                    textKey = textKey,
+                                    name = it.name,
+                                    confidence = it.confidence.toDouble()
+                            )
+                        }.insertToDatabase()
+            }
         }
     }
 

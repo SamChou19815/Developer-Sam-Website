@@ -1,9 +1,9 @@
 package com.developersam.chunkreader
 
-import com.google.appengine.api.datastore.Key
+import com.google.cloud.datastore.Key
 
 /**
- * The [ChunkReaderSubProcessor] defines how one aspects of the text is further
+ * [ChunkReaderSubProcessor] defines how one aspects of the text is further
  * analyzed and stored into the database.
  */
 internal interface ChunkReaderSubProcessor {

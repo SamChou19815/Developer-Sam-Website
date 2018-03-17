@@ -2,15 +2,16 @@ package com.developersam.chunkreader.summary
 
 import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
-import com.google.appengine.api.datastore.Key
+import com.developersam.util.insertToDatabase
+import com.google.cloud.datastore.Key
 import com.google.cloud.language.v1beta2.Sentence
 import com.google.cloud.language.v1beta2.TextSpan
 import com.google.common.collect.Sets
 import java.util.Arrays
 
 /**
- * The abstract class used to mark each sentence with a salience value by Text
- * Rank algorithm.
+ * [SentenceSalienceMarker] is used to mark each sentence with a salience value
+ * by Text Rank algorithm.
  * It will use the processed data from the API to help further analyze
  * the importance of each sentence.
  */
@@ -115,7 +116,7 @@ internal object SentenceSalienceMarker : ChunkReaderSubProcessor {
             annotatedSentences.add(AnnotatedSentence(
                     textKey = textKey,
                     sentence = text.content,
-                    beginOffset = beginOffset,
+                    beginOffset = beginOffset.toLong(),
                     salience = Math.random() // Random init salience
             ))
             // Build an array of sentence ranges.
@@ -228,7 +229,7 @@ internal object SentenceSalienceMarker : ChunkReaderSubProcessor {
     override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
         initSentenceGraph(analyzer = analyzer, textKey = textKey)
         randomVisit()
-        annotatedSentences.forEach { it.writeToDatabase() }
+        annotatedSentences.stream().insertToDatabase()
     }
 
 }

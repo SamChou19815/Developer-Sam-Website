@@ -1,19 +1,15 @@
 package com.developersam.chunkreader
 
-import com.developersam.chunkreader.category.RetrievedCategories
+import com.developersam.chunkreader.category.Category
 import com.developersam.chunkreader.knowledge.KnowledgePoint
 import com.developersam.chunkreader.knowledge.KnowledgeType
 import com.developersam.chunkreader.knowledge.RetrievedKnowledgeGraph
 import com.developersam.chunkreader.summary.RetrievedSummaries
-import com.developersam.chunkreader.type.TextType
-import com.developersam.webcore.datastore.dataStore
-import com.developersam.webcore.datastore.getEntityByKey
-import com.developersam.webcore.exception.AccessDeniedException
-import com.developersam.webcore.service.GoogleUserService
-import com.google.appengine.api.datastore.Entity
-import com.google.appengine.api.datastore.Key
-import com.google.appengine.api.datastore.KeyFactory
-import com.google.appengine.api.datastore.Text
+import com.developersam.util.getEntityByKey
+import com.developersam.util.toDate
+import com.google.cloud.datastore.Entity
+import com.google.cloud.datastore.Key
+import com.google.cloud.datastore.StringValue
 import com.google.common.base.MoreObjects
 import java.util.Date
 import java.util.logging.Logger
@@ -70,19 +66,13 @@ class AnalyzedArticle {
      * The user of the class can also specify whether to include all the details
      * by the [fullDetail] flag, which defaults to `false`.
      */
-    @Suppress("ConvertSecondaryConstructorToPrimary")
+    @Suppress(names = ["ConvertSecondaryConstructorToPrimary"])
     constructor(entity: Entity, fullDetail: Boolean = false) {
         val textKey: Key = entity.key
-        keyString = KeyFactory.keyToString(textKey)
-        val email = GoogleUserService.currentUser?.email
-                ?: throw AccessDeniedException()
-        val userEmail = entity.getProperty("userEmail") as String
-        if (email != userEmail) {
-            throw AccessDeniedException()
-        }
-        date = entity.getProperty("date") as Date
-        title = entity.getProperty("title") as String
-        tokenCount = entity.getProperty("tokenCount") as Long
+        keyString = textKey.toUrlSafe()
+        date = entity.getTimestamp("date").toDate()
+        title = entity.getString("title")
+        tokenCount = entity.getLong("tokenCount")
         if (!fullDetail) {
             content = null
             textType = null
@@ -92,18 +82,18 @@ class AnalyzedArticle {
             categories = null
             return
         }
-        content = (entity.getProperty("content") as Text).value
-        val sentimentScore = entity.getProperty("sentimentScore") as Double
-        val sentimentMagnitude =
-                entity.getProperty("sentimentMagnitude") as Double
+        content = entity.getValue<StringValue>("content").get()
+        val sentimentScore = entity.getDouble("sentimentScore")
+        val sentimentMagnitude = entity.getDouble("sentimentMagnitude")
         val score = sentimentScore / Math.log(tokenCount.toDouble())
         val magnitude = sentimentMagnitude / Math.log(tokenCount.toDouble())
         textType = getTextType(score = score, magnitude = magnitude).toString()
-        val retrievedKnowledgeGraph = RetrievedKnowledgeGraph(textKey = textKey)
+        val retrievedKnowledgeGraph =
+                RetrievedKnowledgeGraph(textKey = textKey)
         keywords = retrievedKnowledgeGraph.asKeywords
         knowledgeMap = retrievedKnowledgeGraph.asMap
         summaries = RetrievedSummaries(textKey = textKey).asList
-        categories = RetrievedCategories(textKey = textKey).asList
+        categories = Category.retrievedAsList(textKey = textKey)
     }
 
     override fun toString(): String {
@@ -160,11 +150,10 @@ class AnalyzedArticle {
          * Create a [AnalyzedArticle] with full detail from a [keyString],
          * which may not be created due to a wrong key.
          */
-        fun fromKey(keyString: String): AnalyzedArticle? {
-            val entity = dataStore.getEntityByKey(key = keyString)
-                    ?: return null
-            return AnalyzedArticle(entity = entity, fullDetail = true)
-        }
+        fun fromKey(keyString: String): AnalyzedArticle? =
+                getEntityByKey(key = keyString)?.let {
+                    AnalyzedArticle(entity = it, fullDetail = true)
+                }
     }
 
 }

@@ -2,6 +2,7 @@
 **/out/*
 **/build/*
 **/.gradle/*
+**/gradle/*
 **/libs/*
 *.class
 
@@ -9,14 +10,15 @@
 **/.idea/*
 *.iml
 
-# Exclude resources
+# Exclude Configs
 /src/main/webapp/WEB-INF/*.json
+/src/main/resources/com/developersam/util/*.json
 
 # Exclude node_modules
 /src/main/frontend/node_modules
 
 # Exclude Compiled Static Web App
-/src/main/webapp/dist
+/src/main/resources/public/*
 
 # Exclude System Files
 .DS_Store

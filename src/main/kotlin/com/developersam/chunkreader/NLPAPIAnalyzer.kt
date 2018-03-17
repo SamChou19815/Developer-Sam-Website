@@ -1,6 +1,5 @@
 package com.developersam.chunkreader
 
-import com.google.appengine.api.ThreadManager
 import com.google.cloud.language.v1beta2.AnalyzeSyntaxResponse
 import com.google.cloud.language.v1beta2.ClassificationCategory
 import com.google.cloud.language.v1beta2.Document
@@ -57,19 +56,18 @@ internal class NLPAPIAnalyzer private constructor(text: String) {
             val doc = Document.newBuilder()
                     .setContent(text)
                     .setType(Type.PLAIN_TEXT).build()
-            val service = Executors.newFixedThreadPool(
-                    3, ThreadManager.currentRequestThreadFactory())
+            val service = Executors.newFixedThreadPool(3)
             val latch = CountDownLatch(3)
-            service.submit({
+            service.submit {
                 sentiment = client.analyzeSentiment(doc).documentSentiment
                 latch.countDown()
-            })
-            service.submit({
+            }
+            service.submit {
                 entities = ArrayList(
                         client.analyzeEntitySentiment(doc, UTF16).entitiesList)
                 latch.countDown()
-            })
-            service.submit({
+            }
+            service.submit {
                 val r: AnalyzeSyntaxResponse = client.analyzeSyntax(doc, UTF16)
                 tokenCount = r.tokensCount
                 sentences = ArrayList(r.sentencesList)
@@ -81,30 +79,25 @@ internal class NLPAPIAnalyzer private constructor(text: String) {
                     emptyList()
                 }
                 latch.countDown()
-            })
+            }
             latch.await()
         }
     }
 
-    companion object Factory {
+    companion object {
         /**
          * Obtain an analyzer that has already analyzed the text.
          *
          * @param text text to be analyzed.
          * @return the analysis result, or `null` if the API request failed.
          */
-        fun analyze(text: String): NLPAPIAnalyzer? {
-            return try {
-                NLPAPIAnalyzer(text)
-            } catch (e: Exception) {
-                val logger = Logger.getGlobal()
-                logger.warning(
-                        "Text analysis failed from Google. Text:\n" + text)
-                logger.throwing(
-                        "NLPAPIAnalyzer", "analyze", e)
-                null
-            }
-        }
+        fun analyze(text: String): NLPAPIAnalyzer? =
+                try {
+                    NLPAPIAnalyzer(text)
+                } catch (e: Exception) {
+                    Logger.getGlobal().throwing("NLPAPIAnalyzer", "analyze", e)
+                    null
+                }
     }
 
 }

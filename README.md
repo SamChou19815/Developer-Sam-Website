@@ -1,5 +1,5 @@
-Developer Sam Website (Backend)
-===============================
+Developer Sam Website
+=====================
 The code of my own website that is now open-sourced.
 
 This repository contains both the frontend and the backend. The frontend is 

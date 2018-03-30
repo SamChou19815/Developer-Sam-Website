@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
  * A collection of currently supported nav element names.
  */
 export enum NavElementName {
-  Home = 'Developer Sam', Scheduler = 'Scheduler', ChunkReader = 'Chunk Reader (Beta V2)', Discover = 'Discover', TEN = 'TEN'
+  Home = 'Developer Sam', Scheduler = 'Scheduler', ChunkReader = 'Chunk Reader (Beta V2)', TEN = 'TEN'
 }
 
 @Component({
@@ -77,9 +77,6 @@ export class AppComponent implements AfterViewInit {
       case NavElementName.Scheduler:
         scheduler = true;
         break;
-      case NavElementName.Discover:
-        discover = true;
-        break;
       case NavElementName.TEN:
         ten = true;
         break;
@@ -110,9 +107,6 @@ export class AppComponent implements AfterViewInit {
         break;
       case '/chunkreader':
         name = NavElementName.ChunkReader;
-        break;
-      case '/discover':
-        name = NavElementName.Discover;
         break;
       case '/ten':
         name = NavElementName.TEN;

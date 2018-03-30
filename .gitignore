@@ -10,6 +10,9 @@
 **/.idea/*
 *.iml
 
+# Exclude Vert.x Temps
+**/.vertx/*
+
 # Exclude Configs
 /src/main/webapp/WEB-INF/*.json
 /src/main/resources/com/developersam/util/*.json

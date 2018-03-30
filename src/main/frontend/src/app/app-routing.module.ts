@@ -15,10 +15,6 @@ const routes: Routes = [
   {
     path: 'ten',
     loadChildren: 'app/ten/ten.module#TenModule'
-  },
-  {
-    path: 'discover',
-    loadChildren: 'app/discover/discover.module#DiscoverModule'
   }
 ];
 

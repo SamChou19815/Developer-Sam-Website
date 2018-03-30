@@ -9,8 +9,6 @@ import com.developersam.chunkreader.ChunkReaderMainProcessor
 import com.developersam.chunkreader.RawArticle
 import com.developersam.chunkreader.summary.RetrievedSummaries
 import com.developersam.chunkreader.summary.SummaryRequest
-import com.developersam.discover.PublicUser
-import com.developersam.discover.PublicUserData
 import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerItemData
 import com.developersam.ten.TenBoard
@@ -131,35 +129,12 @@ private val chunkReaderRouter: Router
     }
 
 /**
- * Assemble together routers for app Discover.
- */
-private val discoverRouter: Router
-    get() {
-        val discoverRouter = Router.router(vertx)
-        discoverRouter.route().blockingHandler(FirebaseAuthHandler)
-        // Load Public Users
-        discoverRouter.get("/load").blockingHandler { c ->
-            c.response().end(gson.toJson(PublicUser.list))
-        }
-        // Update Personal Info
-        discoverRouter.post("/update").blockingHandler { c ->
-            val data = gson.fromBuffer(
-                    json = c.body, clazz = PublicUserData::class.java
-            )
-            data.writeToDatabase(c.user().firebaseUser)
-            c.response().end("true")
-        }
-        return discoverRouter
-    }
-
-/**
  * Assemble together API routers from various REST APIs.
  */
 private val apiRouter: Router = Router.router(vertx).apply {
     mountSubRouter("/ten", tenRouter)
     mountSubRouter("/scheduler", schedulerRouter)
     mountSubRouter("/chunkreader", chunkReaderRouter)
-    mountSubRouter("/discover", discoverRouter)
 }
 
 /**

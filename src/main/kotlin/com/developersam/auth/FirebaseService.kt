@@ -19,7 +19,7 @@ internal object FirebaseService {
 
     init {
         val serviceAccount = FirebaseService::class.java.getResourceAsStream(
-                "dev-sam-firebase-adminsdk.json")
+                "/secret/firebase-adminsdk.json")
         val options = FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build()

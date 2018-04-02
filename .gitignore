@@ -15,13 +15,13 @@
 
 # Exclude Configs
 /src/main/webapp/WEB-INF/*.json
-/src/main/resources/com/developersam/util/*.json
 
 # Exclude node_modules
 /src/main/frontend/node_modules
 
 # Exclude Compiled Static Web App
 /src/main/resources/public/*
+/src/main/resources/secret/*
 
 # Exclude System Files
 .DS_Store

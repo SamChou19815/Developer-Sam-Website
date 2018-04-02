@@ -2,11 +2,11 @@ package com.developersam.scheduler
 
 import com.developersam.auth.FirebaseUser
 import com.developersam.util.addHours
-import com.developersam.util.getEntityByKey
-import com.developersam.util.safeGetLong
-import com.developersam.util.safeGetString
-import com.developersam.util.toDate
-import com.developersam.util.update
+import com.developersam.database.getEntityByKey
+import com.developersam.database.safeGetLong
+import com.developersam.database.safeGetString
+import com.developersam.database.toDate
+import com.developersam.database.update
 import com.google.cloud.datastore.Entity
 import com.google.common.base.MoreObjects
 import java.util.Date

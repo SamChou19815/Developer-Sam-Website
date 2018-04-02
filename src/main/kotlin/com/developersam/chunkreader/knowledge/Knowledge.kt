@@ -4,12 +4,12 @@ package com.developersam.chunkreader.knowledge
 
 import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
-import com.developersam.util.BuildableEntity
-import com.developersam.util.buildNewEntityOf
-import com.developersam.util.insertToDatabase
-import com.developersam.util.runQueryOf
-import com.developersam.util.safeGetString
-import com.developersam.util.setString
+import com.developersam.database.BuildableEntity
+import com.developersam.database.buildNewEntityOf
+import com.developersam.database.insertToDatabase
+import com.developersam.database.runQueryOf
+import com.developersam.database.safeGetString
+import com.developersam.database.setString
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter.hasAncestor

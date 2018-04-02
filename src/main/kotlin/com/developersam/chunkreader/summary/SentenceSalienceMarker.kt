@@ -2,7 +2,7 @@ package com.developersam.chunkreader.summary
 
 import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
-import com.developersam.util.insertToDatabase
+import com.developersam.database.insertToDatabase
 import com.google.cloud.datastore.Key
 import com.google.cloud.language.v1beta2.Sentence
 import com.google.cloud.language.v1beta2.TextSpan

@@ -5,8 +5,8 @@ import com.developersam.chunkreader.knowledge.KnowledgePoint
 import com.developersam.chunkreader.knowledge.KnowledgeType
 import com.developersam.chunkreader.knowledge.RetrievedKnowledgeGraph
 import com.developersam.chunkreader.summary.RetrievedSummaries
-import com.developersam.util.getEntityByKey
-import com.developersam.util.toDate
+import com.developersam.database.getEntityByKey
+import com.developersam.database.toDate
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StringValue

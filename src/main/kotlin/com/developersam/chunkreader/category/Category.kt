@@ -3,10 +3,10 @@ package com.developersam.chunkreader.category
 
 import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
-import com.developersam.util.BuildableEntity
-import com.developersam.util.buildNewEntityOf
-import com.developersam.util.insertToDatabase
-import com.developersam.util.runQueryOf
+import com.developersam.database.BuildableEntity
+import com.developersam.database.buildNewEntityOf
+import com.developersam.database.insertToDatabase
+import com.developersam.database.runQueryOf
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StructuredQuery.OrderBy.desc

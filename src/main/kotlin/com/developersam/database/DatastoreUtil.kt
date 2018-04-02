@@ -1,6 +1,6 @@
 @file:JvmName(name = "DatastoreUtil")
 
-package com.developersam.util
+package com.developersam.database
 
 import com.google.cloud.Timestamp
 import com.google.cloud.datastore.Datastore
@@ -156,7 +156,8 @@ fun Entity.update(construct: EntityConstructor) {
  */
 fun buildAndInsertEntity(kind: String, parent: Key? = null,
                          construct: EntityConstructor): Key {
-    val newEntityBuilder = buildNewEntityOf(kind = kind, parent = parent)
+    val newEntityBuilder =
+            buildNewEntityOf(kind = kind, parent = parent)
     construct(newEntityBuilder)
     val entity = newEntityBuilder.build()
     datastore.add(entity)

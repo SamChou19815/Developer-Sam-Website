@@ -1,7 +1,7 @@
 package com.developersam.chunkreader
 
 import com.developersam.auth.FirebaseUser
-import com.developersam.util.runQueryOf
+import com.developersam.database.runQueryOf
 import com.google.cloud.datastore.StructuredQuery.OrderBy.desc
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter.eq
 

@@ -1,6 +1,6 @@
 package com.developersam.chunkreader
 
-import com.developersam.util.upsertEntity
+import com.developersam.database.upsertEntity
 import com.google.cloud.datastore.Key
 
 /**

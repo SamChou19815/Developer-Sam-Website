@@ -4,8 +4,8 @@ import com.developersam.auth.FirebaseUser
 import com.developersam.chunkreader.category.Category
 import com.developersam.chunkreader.knowledge.KnowledgePoint
 import com.developersam.chunkreader.summary.SentenceSalienceMarker
-import com.developersam.util.buildAndInsertEntity
-import com.developersam.util.buildStringValue
+import com.developersam.database.buildAndInsertEntity
+import com.developersam.database.buildStringValue
 import com.google.cloud.Timestamp
 import java.util.concurrent.Executors
 import java.util.logging.Logger
@@ -34,15 +34,16 @@ object ChunkReaderMainProcessor {
                 SentenceSalienceMarker,
                 Category.classifier
         )
-        val textKey = buildAndInsertEntity(kind = "ChunkReaderText") {
-            it.apply {
-                set("userEmail", user.email)
-                set("date", Timestamp.now())
-                set("title", title)
-                set("content", buildStringValue(string = content))
-                set("tokenCount", analyzer.tokenCount.toLong())
-            }
-        }
+        val textKey =
+                buildAndInsertEntity(kind = "ChunkReaderText") {
+                    it.apply {
+                        set("userEmail", user.email)
+                        set("date", Timestamp.now())
+                        set("title", title)
+                        set("content", buildStringValue(string = content))
+                        set("tokenCount", analyzer.tokenCount.toLong())
+                    }
+                }
         val runningT = measureTimeMillis {
             DeferredTypePredictor.process(analyzer, textKey)
         }

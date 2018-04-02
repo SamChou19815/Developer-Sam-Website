@@ -1,4 +1,4 @@
-package com.developersam.util
+package com.developersam.database
 
 import com.google.cloud.datastore.Entity
 

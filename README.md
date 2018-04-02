@@ -6,8 +6,7 @@ This repository contains both the frontend and the backend. The frontend is
 now developed with Angular 5 and Angular Material 5. The backend is developed
 by Kotlin.
 
-Previously independently hosted MCTS and TEN-Board-Game has now been moved
-into this repository for better integration with my website.
+Currently, the project is undergoing an improvement of structure. 
 
 Open Source Acknowledgement
 ---------------------------

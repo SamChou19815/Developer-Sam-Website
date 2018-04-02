@@ -1,7 +1,6 @@
 @file:JvmName("AuthUtil")
-package com.developersam.util
+package com.developersam.auth
 
-import com.developersam.auth.FirebaseUser
 import io.vertx.ext.auth.User
 
 /**

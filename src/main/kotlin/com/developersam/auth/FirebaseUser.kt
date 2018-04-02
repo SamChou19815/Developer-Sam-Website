@@ -42,7 +42,10 @@ class FirebaseUser internal constructor(token: FirebaseToken) : AbstractUser() {
 
     override fun doIsPermitted(permission: String,
                                resultHandler: Handler<AsyncResult<Boolean>>) {
-        // TODO dummy implementation right now.
+        /*
+         * TODO dummy implementation right now
+         * FIXME when more complex situation arises.
+         */
         resultHandler.handle(Future.succeededFuture(true))
     }
 

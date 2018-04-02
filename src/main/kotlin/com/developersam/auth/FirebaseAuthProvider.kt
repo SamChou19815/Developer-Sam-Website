@@ -1,9 +1,8 @@
 package com.developersam.auth
 
-import com.developersam.main.vertx
-import com.developersam.util.FirebaseService
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
+import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.AuthProvider
 import io.vertx.ext.auth.User
@@ -11,8 +10,9 @@ import io.vertx.ext.auth.User
 /**
  * [FirebaseAuthProvider] is responsible for authentication and interaction with
  * Vertx Auth.
+ * It takes an [vertx] to handle async requests.
  */
-object FirebaseAuthProvider : AuthProvider {
+class FirebaseAuthProvider(private val vertx: Vertx) : AuthProvider {
 
     override fun authenticate(authInfo: JsonObject,
                               resultHandler: Handler<AsyncResult<User>>) {

@@ -1,13 +1,11 @@
-package com.developersam.util
+package com.developersam.auth
 
-import com.developersam.auth.FirebaseUser
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseToken
-import java.util.logging.Logger
 
 /**
  * The singleton object for firebase services.
@@ -34,12 +32,8 @@ internal object FirebaseService {
     private val firebaseAuth = FirebaseAuth.getInstance(firebaseApp)
 
     /**
-     * [echo] logs a simple message. Mostly used to force the setup of Firebase.
-     */
-    fun echo() = Logger.getGlobal().info("Firebase Service Initialized!")
-
-    /**
-     * Obtain a [FirebaseUser], which may not exist, from a user given [idToken].
+     * Obtain a [FirebaseUser], which may not exist, from a user given
+     * [idToken], which is allowed to be non-existent.
      */
     fun getUser(idToken: String?): FirebaseUser? {
         if (idToken == null) {

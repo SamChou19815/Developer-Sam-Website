@@ -13,8 +13,8 @@ import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerItemData
 import com.developersam.game.ten.TenBoard
 import com.developersam.game.ten.TenClientMove
-import com.developersam.util.FirebaseService
-import com.developersam.util.firebaseUser
+import com.developersam.auth.FirebaseService
+import com.developersam.auth.firebaseUser
 import com.developersam.util.fromBuffer
 import com.developersam.util.gson
 import io.vertx.core.Vertx
@@ -25,7 +25,8 @@ import io.vertx.ext.web.handler.StaticHandler
 /**
  * Global Vertx.
  */
-val vertx: Vertx = Vertx.vertx()
+private val vertx: Vertx = Vertx.vertx()
+private val authHandler = FirebaseAuthHandler(vertx = vertx)
 
 /**
  * Assemble together routers for app TEN.
@@ -50,7 +51,7 @@ private val tenRouter: Router
 private val schedulerRouter: Router
     get() {
         val schedulerRouter = Router.router(vertx)
-        schedulerRouter.route().blockingHandler(FirebaseAuthHandler)
+        schedulerRouter.route().blockingHandler(authHandler)
         // Load items
         schedulerRouter.get("/load").blockingHandler { c ->
             val user = c.user().firebaseUser
@@ -94,7 +95,7 @@ private val schedulerRouter: Router
 private val chunkReaderRouter: Router
     get() {
         val chunkReaderRouter = Router.router(vertx)
-        chunkReaderRouter.route().blockingHandler(FirebaseAuthHandler)
+        chunkReaderRouter.route().blockingHandler(authHandler)
         // Load Items
         chunkReaderRouter.get("/load").blockingHandler { c ->
             val articles = AnalyzedArticles[c.user().firebaseUser]
@@ -140,9 +141,7 @@ private val apiRouter: Router = Router.router(vertx).apply {
  * Entry point of the server.
  */
 fun main(args: Array<String>) {
-    // Step 1: Setup Firebase
-    FirebaseService.echo()
-    // Step 2: Setup Vertx
+    // Step 1: Setup Vertx
     val server = vertx.createHttpServer()
     val router = Router.router(vertx)
     router.route().handler(BodyHandler.create())
@@ -153,6 +152,6 @@ fun main(args: Array<String>) {
             it.response().sendFile("public/index.html")
         }
     }
-    // Step 3: Start Server
+    // Step 2: Start Server
     server.requestHandler { router.accept(it) }.listen(8080)
 }

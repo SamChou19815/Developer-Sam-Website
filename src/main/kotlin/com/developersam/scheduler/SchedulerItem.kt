@@ -113,7 +113,7 @@ class SchedulerItem internal constructor(
 
         /**
          * Construct a scheduler item fromKey a unique [keyString], which may
-         * fail due to invalid keep and return a `null`.
+         * fail due to invalid key and return a `null`.
          */
         fun fromKey(keyString: String): SchedulerItem? =
                 getEntityByKey(key = keyString)?.let { SchedulerItem(it) }

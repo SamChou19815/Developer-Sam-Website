@@ -1,6 +1,5 @@
 package com.developersam.mcts
 
-import java.util.logging.Logger
 import java.util.stream.IntStream
 
 /**
@@ -121,6 +120,7 @@ class MCTS(private val board: Board, private val timeLimit: Int) {
         val children: Array<Node>? = tree.children
         val len = children?.size ?: throw NoLegalMoveException()
         var nodeChosen: Node = children[0]
+        // Find the best move
         var maxWinningProbability: Double = nodeChosen.winningProbability
         for (i in 1 until len) {
             val n = children[i]
@@ -133,6 +133,7 @@ class MCTS(private val board: Board, private val timeLimit: Int) {
         val move: IntArray = nodeChosen.move ?: throw NoLegalMoveException()
         val winningProbPercentage: Int =
                 nodeChosen.winningProbabilityInPercentage
+        // Fill in information
         val moveWithWinningProb = IntArray(move.size + 1)
         System.arraycopy(move, 0,
                 moveWithWinningProb, 0, move.size)

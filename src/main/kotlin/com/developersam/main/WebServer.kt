@@ -18,7 +18,6 @@ import com.developersam.util.firebaseUser
 import com.developersam.util.fromBuffer
 import com.developersam.util.gson
 import io.vertx.core.Vertx
-import io.vertx.core.http.HttpServerResponse
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.StaticHandler

@@ -33,13 +33,6 @@ internal class Node(
     internal val board: Board? get() = _board
 
     /**
-     * Get number of legal moves.
-     *
-     * @return number of legal moves
-     */
-    internal val numberOfLegalMoves: Int get() = children?.size ?: 0
-
-    /**
      * Obtain winning probability in percentage.
      */
     internal val winningProbabilityInPercentage: Int
@@ -80,9 +73,14 @@ internal class Node(
     /**
      * Get upper confidence bound in MCTS, which needs a [isPlayer] parameter
      * to tell whether to calculate in favor or against the player.
+     *
+     * Requires: the node is not the root.
      */
     internal fun getUpperConfidenceBound(isPlayer: Boolean): Double {
-        val lnt = Math.log(parent!!.winningProbArray[1])
+        if (parent == null) {
+            throw IllegalArgumentException("Cannot be called on root element!")
+        }
+        val lnt = Math.log(parent.winningProbArray[1])
         val winningProb =
                 if (isPlayer) winningProbability else 1 - winningProbability
         val c = 1.0

@@ -13,12 +13,6 @@ object FirebaseAuthHandler : AuthHandlerImpl(FirebaseAuthProvider) {
 
     override fun parseCredentials(context: RoutingContext,
                                   handler: Handler<AsyncResult<JsonObject>>) {
-        /*
-         * TODO migrate to a better mechanism later, use param for now.
-         * val tokenCookie: Cookie? = context.getCookie("firebase-token")
-         * val firebaseToken = tokenCookie?.value ?: "NO_TOKEN_PROVIDED!"
-         * handler.handle()
-         */
         val token: String? = context.request().getParam("token")
         val credential = json {
             obj("token" to token)

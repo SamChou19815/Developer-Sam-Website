@@ -41,6 +41,9 @@ interface Board {
 
     /**
      * Make a [move] without any check, which can accelerate AI simulation.
+     *
+     * Requires:
+     * - [move] is a valid int array representation of a move in the game.
      */
     fun makeMoveWithoutCheck(move: IntArray)
 

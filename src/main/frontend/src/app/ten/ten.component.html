@@ -1,14 +1,17 @@
 <mat-card>
   <mat-card-title class="game-card-header">TEN Game</mat-card-title>
-  <mat-card-subtitle class="game-card-header">{{tenService.message}}</mat-card-subtitle>
+  <mat-card-subtitle class="game-card-header">{{tenService.message}}
+  </mat-card-subtitle>
   <mat-card-subtitle class="game-card-header">
-    Your Identity: {{tenService.board.currentPlayerIdentity == 1 ? "Black": "White"}}
+    Your Identity: {{tenService.board.currentPlayerIdentity == 1 ? "Black":
+    "White"}}
   </mat-card-subtitle>
   <mat-card-subtitle class="game-card-header">
     AI Winning Probability: {{tenService.aiWinningProbability}}%
   </mat-card-subtitle>
   <mat-card-content class="game-cells">
-    <app-blocking-overlay [active]="tenService.blockerActive"></app-blocking-overlay>
+    <app-blocking-overlay
+      [active]="tenService.blockerActive"></app-blocking-overlay>
     <div class="grids">
       <app-ten-cell *ngFor="let tuple of tupleArray"
                     [state]="tenService.board.getCell(tuple)"
@@ -24,21 +27,20 @@
     <span class="game-card-controls-text">New Game</span>
     <button mat-button
             [disabled]="tenService.controlBlocked"
-            (click)="tenService.resetDataAndSelectSide(1)">Play as Black</button>
+            (click)="tenService.resetDataAndSelectSide(1)">Play as Black
+    </button>
     <button mat-button
             [disabled]="tenService.controlBlocked"
-            (click)="tenService.resetDataAndSelectSide(-1)">Play as White</button>
+            (click)="tenService.resetDataAndSelectSide(-1)">Play as White
+    </button>
   </mat-card-actions>
 </mat-card>
 <mat-card>
   <mat-card-title>Rule of the Game</mat-card-title>
   <mat-card-content>
-    The main rules are described
-    <a href="https://mathwithbaddrawings.com/2013/06/16/ultimate-tic-tac-toe" target=_blank>here</a>.
-  </mat-card-content>
-  <mat-card-content>
-    Additional rules are described
-    <a href="https://github.com/SamChou19815/TEN-Board-Game#clarification-of-rules" target=_blank>here</a>.
+    The rules are described
+    <a href="https://github.com/SamChou19815/TEN/READMD.md"
+       target=_blank>here</a>.
   </mat-card-content>
   <mat-card-content>The thinking time for AI is around 1.5s.</mat-card-content>
 </mat-card>

@@ -11,8 +11,8 @@ import com.developersam.chunkreader.summary.RetrievedSummaries
 import com.developersam.chunkreader.summary.SummaryRequest
 import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerItemData
-import com.developersam.ten.TenBoard
-import com.developersam.ten.TenClientMove
+import com.developersam.game.ten.TenBoard
+import com.developersam.game.ten.TenClientMove
 import com.developersam.util.FirebaseService
 import com.developersam.util.firebaseUser
 import com.developersam.util.fromBuffer

@@ -1,10 +1,10 @@
 package com.developersam.scheduler
 
-import com.developersam.auth.FirebaseUser
 import com.developersam.database.set
 import com.developersam.database.setString
 import com.developersam.database.upsertEntity
 import com.developersam.util.yesterday
+import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.Timestamp
 import com.google.cloud.datastore.Key
 import java.util.Date

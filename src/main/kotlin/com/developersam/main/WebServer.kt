@@ -2,7 +2,6 @@
 
 package com.developersam.main
 
-import com.developersam.auth.FirebaseAuthHandler
 import com.developersam.chunkreader.AnalyzedArticle
 import com.developersam.chunkreader.AnalyzedArticles
 import com.developersam.chunkreader.ChunkReaderMainProcessor
@@ -13,9 +12,10 @@ import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerItemData
 import com.developersam.game.ten.TenBoard
 import com.developersam.game.ten.TenClientMove
-import com.developersam.auth.firebaseUser
 import com.developersam.util.fromBuffer
 import com.developersam.util.gson
+import com.developersam.web.auth.FirebaseAuthHandler
+import com.developersam.web.auth.firebaseUser
 import io.vertx.core.Vertx
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler

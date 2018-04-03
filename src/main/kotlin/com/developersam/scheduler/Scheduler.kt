@@ -1,10 +1,10 @@
 package com.developersam.scheduler
 
-import com.developersam.auth.FirebaseUser
 import com.developersam.database.and
 import com.developersam.database.deleteEntity
 import com.developersam.database.runQueryOf
 import com.developersam.util.yesterday
+import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.Timestamp
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter
 

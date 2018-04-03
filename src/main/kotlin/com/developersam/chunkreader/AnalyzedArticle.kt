@@ -124,7 +124,7 @@ class AnalyzedArticle {
          * sentiment [magnitude].
          */
         private fun getTextType(score: Double, magnitude: Double): TextType {
-            val type = when {
+            return when {
                 score < -scoreThreshold -> if (magnitude < magnitudeThreshold) {
                     TextType.SLIGHT_OPPOSITION
                 } else {
@@ -141,9 +141,6 @@ class AnalyzedArticle {
                     TextType.STRONG_SUPPORT
                 }
             }
-            val msg = "Type: $type. Score: $score. Magnitude: $magnitude"
-            Logger.getGlobal().info(msg)
-            return type
         }
 
         /**

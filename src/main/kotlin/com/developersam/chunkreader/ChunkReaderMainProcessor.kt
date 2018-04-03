@@ -1,11 +1,11 @@
 package com.developersam.chunkreader
 
-import com.developersam.auth.FirebaseUser
 import com.developersam.chunkreader.category.Category
 import com.developersam.chunkreader.knowledge.KnowledgePoint
 import com.developersam.chunkreader.summary.SentenceSalienceMarker
 import com.developersam.database.buildAndInsertEntity
 import com.developersam.database.buildStringValue
+import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.Timestamp
 import java.util.concurrent.Executors
 import java.util.logging.Logger

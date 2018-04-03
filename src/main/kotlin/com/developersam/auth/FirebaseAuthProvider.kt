@@ -1,8 +1,8 @@
 package com.developersam.auth
 
 import io.vertx.core.AsyncResult
+import io.vertx.core.Future
 import io.vertx.core.Handler
-import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.AuthProvider
 import io.vertx.ext.auth.User
@@ -10,17 +10,18 @@ import io.vertx.ext.auth.User
 /**
  * [FirebaseAuthProvider] is responsible for authentication and interaction with
  * Vertx Auth.
- * It takes an [vertx] to handle async requests.
+ * It takes a [firebaseService] to authenticate users.
  */
-class FirebaseAuthProvider(private val vertx: Vertx) : AuthProvider {
+internal class FirebaseAuthProvider(
+        private val firebaseService: FirebaseService
+) : AuthProvider {
 
     override fun authenticate(authInfo: JsonObject,
                               resultHandler: Handler<AsyncResult<User>>) {
         val token: String? = authInfo.getString("token")
-        vertx.executeBlocking(Handler {
-            val user = FirebaseService.getUser(idToken = token)
-            it.complete(user)
-        }, resultHandler)
+        val user = firebaseService.getUser(idToken = token)
+        val result: AsyncResult<User> = Future.succeededFuture(user)
+        resultHandler.handle(result)
     }
 
 }

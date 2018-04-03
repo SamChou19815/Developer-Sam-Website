@@ -6,11 +6,14 @@ import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseToken
+import java.io.InputStream
 
 /**
  * The singleton object for firebase services.
+ *
+ * @constructor created by specifying an input stream of SDK config json file.
  */
-internal object FirebaseService {
+internal class FirebaseService(adminSDKConfig: InputStream) {
 
     /**
      * The singleton firebase app.
@@ -18,10 +21,8 @@ internal object FirebaseService {
     private val firebaseApp: FirebaseApp
 
     init {
-        val serviceAccount = FirebaseService::class.java.getResourceAsStream(
-                "/secret/firebase-adminsdk.json")
         val options = FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .setCredentials(GoogleCredentials.fromStream(adminSDKConfig))
                 .build()
         firebaseApp = FirebaseApp.initializeApp(options)
     }
@@ -35,7 +36,7 @@ internal object FirebaseService {
      * Obtain a [FirebaseUser], which may not exist, from a user given
      * [idToken], which is allowed to be non-existent.
      */
-    fun getUser(idToken: String?): FirebaseUser? {
+    internal fun getUser(idToken: String?): FirebaseUser? {
         if (idToken == null) {
             return null
         }

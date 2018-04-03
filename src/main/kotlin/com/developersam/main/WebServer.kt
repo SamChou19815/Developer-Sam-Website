@@ -13,7 +13,6 @@ import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerItemData
 import com.developersam.game.ten.TenBoard
 import com.developersam.game.ten.TenClientMove
-import com.developersam.auth.FirebaseService
 import com.developersam.auth.firebaseUser
 import com.developersam.util.fromBuffer
 import com.developersam.util.gson
@@ -26,7 +25,15 @@ import io.vertx.ext.web.handler.StaticHandler
  * Global Vertx.
  */
 private val vertx: Vertx = Vertx.vertx()
-private val authHandler = FirebaseAuthHandler(vertx = vertx)
+/**
+ * The firebase admin SDK config file.
+ */
+private val adminSDKConfig = System::class.java.getResourceAsStream(
+        "/secret/firebase-adminsdk.json")
+/**
+ * Global Authentication Handler.
+ */
+private val authHandler = FirebaseAuthHandler(adminSDKConfig = adminSDKConfig)
 
 /**
  * Assemble together routers for app TEN.

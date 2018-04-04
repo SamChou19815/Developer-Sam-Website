@@ -2,6 +2,7 @@
 
 package com.developersam.util
 
+import com.developersam.web.database.Consumer
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext

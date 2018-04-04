@@ -1,11 +1,11 @@
 package com.developersam.scheduler
 
-import com.developersam.web.database.and
-import com.developersam.web.database.Consumer
-import com.developersam.web.database.consumeBy
 import com.developersam.main.Database
 import com.developersam.util.yesterday
 import com.developersam.web.auth.FirebaseUser
+import com.developersam.web.database.Consumer
+import com.developersam.web.database.and
+import com.developersam.web.database.consumeBy
 import com.google.cloud.Timestamp
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter
 

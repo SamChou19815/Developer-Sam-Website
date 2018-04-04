@@ -4,10 +4,10 @@ package com.developersam.chunkreader.knowledge
 
 import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
+import com.developersam.main.Database
 import com.developersam.web.database.BuildableEntity
 import com.developersam.web.database.safeGetString
 import com.developersam.web.database.setString
-import com.developersam.main.Database
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter.hasAncestor

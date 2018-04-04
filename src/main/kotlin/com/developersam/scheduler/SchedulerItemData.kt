@@ -1,10 +1,10 @@
 package com.developersam.scheduler
 
-import com.developersam.web.database.setLong
-import com.developersam.web.database.setString
 import com.developersam.main.Database
 import com.developersam.util.yesterday
 import com.developersam.web.auth.FirebaseUser
+import com.developersam.web.database.setLong
+import com.developersam.web.database.setString
 import com.google.cloud.Timestamp
 import com.google.cloud.datastore.Key
 import java.util.Date

@@ -1,8 +1,8 @@
 package com.developersam.chunkreader.summary
 
+import com.developersam.main.Database
 import com.developersam.web.database.BuildableEntity
 import com.developersam.web.database.buildStringValue
-import com.developersam.main.Database
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StringValue

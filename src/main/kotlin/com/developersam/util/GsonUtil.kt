@@ -11,8 +11,6 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import io.netty.buffer.ByteBufInputStream
-import io.vertx.core.AsyncResult
-import io.vertx.core.Handler
 import io.vertx.core.buffer.Buffer
 import io.vertx.ext.web.RoutingContext
 import java.io.InputStreamReader

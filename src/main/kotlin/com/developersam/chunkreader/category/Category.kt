@@ -4,8 +4,8 @@ package com.developersam.chunkreader.category
 
 import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
-import com.developersam.web.database.BuildableEntity
 import com.developersam.main.Database
+import com.developersam.web.database.BuildableEntity
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StructuredQuery.OrderBy.desc

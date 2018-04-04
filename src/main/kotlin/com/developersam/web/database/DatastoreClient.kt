@@ -164,7 +164,7 @@ open class DatastoreClient(private val vertx: Vertx) {
 
     /**
      * [update] performs a simple update operation on an [entity] by its
-     * [builder]. The resultant entity is passed by the [consumer].
+     * [updater]. The resultant entity is passed by the [consumer].
      * This function is suitable for quickly updating a single value.
      */
     fun update(entity: Entity, updater: (Entity.Builder) -> Unit,

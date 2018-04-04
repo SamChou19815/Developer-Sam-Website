@@ -1,4 +1,4 @@
-package com.developersam.database
+package com.developersam.web.database
 
 import com.google.cloud.datastore.Datastore
 import com.google.cloud.datastore.DatastoreException
@@ -9,20 +9,61 @@ import com.google.cloud.datastore.PathElement
 import com.google.cloud.datastore.Query
 import com.google.cloud.datastore.StructuredQuery.Filter
 import com.google.cloud.datastore.StructuredQuery.OrderBy
+import io.vertx.core.AsyncResult
+import io.vertx.core.Handler
+import io.vertx.core.Vertx
 import java.util.stream.Stream
 
 /**
  * [DatastoreClient] is a client for the database operations on Google Cloud
  * Datastore. It wraps the low level APIs with Vert.x-like API to support
  * non-blocking DB operations.
+ *
+ * @constructor it needs a [vertx] object to run async operations.
  */
-object DatastoreClient {
+open class DatastoreClient(private val vertx: Vertx) {
 
     /**
      * The globally used datastore object.
      */
     private val datastore: Datastore =
             DatastoreOptions.getDefaultInstance().service
+
+    /**
+     * The dummy handler to handle `null` handlers.
+     */
+    private val dummyHandler: Handler<AsyncResult<Any>> = Handler {}
+
+    /**
+     * [getHandler] creates a handler of Vert.x from the given consumer [c].
+     * If [c] is empty, then the handler created is a dummy handler which
+     * directly ignores the result.
+     */
+    @Suppress(names = ["UNCHECKED_CAST"])
+    private fun <R> getHandler(c: Consumer<R>?): Handler<AsyncResult<R>> {
+        if (c == null) {
+            return dummyHandler as Handler<AsyncResult<R>>
+        }
+        return Handler { res ->
+            if (res.succeeded()) {
+                res.result().consumeBy(consumer = c)
+            } else if (res.failed()) {
+                throw res.cause()
+            }
+        }
+    }
+
+    /**
+     * [runBlocking] runs some blocking code specified by [body] and passes the
+     * result in [consumer].
+     */
+    private inline fun <R> runBlocking(
+            noinline consumer: Consumer<R>? = null,
+            crossinline body: Producer<R>) {
+        vertx.executeBlocking(Handler {
+            it.complete(body.invoke())
+        }, false, getHandler(consumer))
+    }
 
     // Part 1: Entities
 

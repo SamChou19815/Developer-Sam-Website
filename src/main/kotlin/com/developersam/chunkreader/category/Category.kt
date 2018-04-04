@@ -4,8 +4,8 @@ package com.developersam.chunkreader.category
 
 import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
-import com.developersam.database.BuildableEntity
-import com.developersam.database.DatastoreClient
+import com.developersam.web.database.BuildableEntity
+import com.developersam.main.Database
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StructuredQuery.OrderBy.desc
@@ -27,7 +27,7 @@ internal class Category private constructor(
 ) : BuildableEntity {
 
     override fun toEntityBuilder(): Entity.Builder =
-            DatastoreClient.createEntityBuilder(kind = kind, parent = textKey)
+            Database.createEntityBuilder(kind = kind, parent = textKey)
                     .set("name", name)
                     .set("confidence", confidence)
 
@@ -37,7 +37,7 @@ internal class Category private constructor(
          * with the given [textKey].
          */
         fun retrieve(textKey: Key): List<String> =
-                DatastoreClient.blockingQuery(
+                Database.blockingQuery(
                         kind = kind,
                         filter = PropertyFilter.hasAncestor(textKey),
                         orderBy = desc("confidence"),
@@ -65,7 +65,7 @@ internal class Category private constructor(
                                     confidence = it.confidence.toDouble()
                             )
                         }
-                DatastoreClient.insertEntities(entities = s)
+                Database.insertEntities(entities = s)
             }
         }
     }

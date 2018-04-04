@@ -1,8 +1,8 @@
 package com.developersam.chunkreader
 
-import com.developersam.database.DatastoreClient
-import com.developersam.database.Consumer
-import com.developersam.database.consumeBy
+import com.developersam.web.database.Consumer
+import com.developersam.web.database.consumeBy
+import com.developersam.main.Database
 import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.datastore.StructuredQuery.OrderBy.desc
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter.eq
@@ -17,7 +17,7 @@ object AnalyzedArticles {
      * [get] gives a list of analyzed articles of a user in [consumer].
      */
     fun get(user: FirebaseUser, consumer: Consumer<List<AnalyzedArticle>>) =
-            DatastoreClient.query(
+            Database.query(
                     kind = "ChunkReaderText",
                     filter = eq("userEmail", user.email),
                     orderBy = desc("date")

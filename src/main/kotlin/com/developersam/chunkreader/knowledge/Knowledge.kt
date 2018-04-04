@@ -4,10 +4,10 @@ package com.developersam.chunkreader.knowledge
 
 import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
-import com.developersam.database.BuildableEntity
-import com.developersam.database.DatastoreClient
-import com.developersam.database.safeGetString
-import com.developersam.database.setString
+import com.developersam.web.database.BuildableEntity
+import com.developersam.web.database.safeGetString
+import com.developersam.web.database.setString
+import com.developersam.main.Database
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter.hasAncestor
@@ -42,7 +42,7 @@ internal class KnowledgePoint private constructor(
     )
 
     override fun toEntityBuilder(): Entity.Builder =
-            DatastoreClient.createEntityBuilder(kind = kind, parent = textKey)
+            Database.createEntityBuilder(kind = kind, parent = textKey)
                     .set("name", name)
                     .set("type", type.name)
                     .setString("URL", url)
@@ -84,7 +84,7 @@ internal class KnowledgePoint private constructor(
                             )
                         }
                         .distinct()
-                DatastoreClient.insertEntities(entities = s)
+                Database.insertEntities(entities = s)
             }
         }
 
@@ -103,7 +103,7 @@ internal class RetrievedKnowledgeGraph(textKey: Key) {
      * A list of all knowledge points.
      */
     private val knowledgePoints: List<KnowledgePoint> =
-            DatastoreClient.blockingQuery(
+            Database.blockingQuery(
                     kind = kind, filter = hasAncestor(textKey)
             ).map(::KnowledgePoint).sortedByDescending { it.salience }.toList()
 

@@ -12,7 +12,6 @@ import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerItemData
 import com.developersam.game.ten.TenBoard
 import com.developersam.game.ten.TenClientMove
-import com.developersam.database.runBlocking
 import com.developersam.util.fromBuffer
 import com.developersam.util.gson
 import com.developersam.util.toJsonConsumer
@@ -107,21 +106,19 @@ private val chunkReaderRouter: Router
             )
         }
         // Display Article Detail
-        chunkReaderRouter.get("/articleDetail").handler { c ->
+        chunkReaderRouter.get("/articleDetail").blockingHandler { c ->
             val key: String? = c.request().getParam("key")
-            AnalyzedArticle.fromKey(
-                    keyString = key,
-                    consumer = gson.toJsonConsumer(context = c)
-            )
+            val article = AnalyzedArticle.fromKey(keyString = key)
+            c.response().end(gson.toJson(article))
         }
         // Adjust Amount of Summary
         chunkReaderRouter.post("/adjustSummary").handler { c ->
             val request = gson.fromBuffer(
                     json = c.body, clazz = SummaryRequest::class.java
             )
-            runBlocking(consumer = gson.toJsonConsumer(context = c)) {
-                RetrievedSummaries.from(request)?.asList
-            }
+            RetrievedSummaries.from(request)?.consumeList(
+                    consumer = gson.toJsonConsumer(context = c)
+            ) ?: c.response().end()
         }
         // Analyze An Item: TIME CONSUMING!
         chunkReaderRouter.post("/analyze").blockingHandler { c ->

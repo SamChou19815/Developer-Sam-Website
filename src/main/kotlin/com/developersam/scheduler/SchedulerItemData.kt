@@ -1,8 +1,8 @@
 package com.developersam.scheduler
 
-import com.developersam.database.DatastoreClient
-import com.developersam.database.setLong
-import com.developersam.database.setString
+import com.developersam.web.database.setLong
+import com.developersam.web.database.setString
+import com.developersam.main.Database
 import com.developersam.util.yesterday
 import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.Timestamp
@@ -65,7 +65,7 @@ class SchedulerItemData private constructor() {
         }
         val userEmail = user.email
         val key = keyString?.let(Key::fromUrlSafe)
-        DatastoreClient.upsertEntity(
+        Database.upsertEntity(
                 kind = "SchedulerItem",
                 key = key,
                 validator = { it.getString("userEmail") == userEmail }

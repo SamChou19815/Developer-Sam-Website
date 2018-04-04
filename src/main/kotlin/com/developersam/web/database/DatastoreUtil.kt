@@ -1,6 +1,6 @@
 @file:JvmName(name = "DatastoreUtil")
 
-package com.developersam.database
+package com.developersam.web.database
 
 import com.google.cloud.Timestamp
 import com.google.cloud.datastore.Entity
@@ -13,6 +13,23 @@ import java.util.Date
  * These functions are responsible for packing the API from Google Cloud Client
  * Library and delivering them in a more convenient way.
  */
+
+// Part 0: Types
+
+/**
+ * [Consumer] consumes a value.
+ */
+typealias Consumer<T> = (T) -> Unit
+
+/**
+ * [Producer] produces a value.
+ */
+typealias Producer<T> = () -> T
+
+/**
+ * [consumeBy] lets an object to be consumed by a given [consumer].
+ */
+fun <T> T.consumeBy(consumer: Consumer<T>) = consumer(this)
 
 // Part 1: Entities
 

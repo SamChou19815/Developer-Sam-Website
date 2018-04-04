@@ -3,8 +3,8 @@ package com.developersam.chunkreader
 import com.developersam.chunkreader.category.Category
 import com.developersam.chunkreader.knowledge.KnowledgePoint
 import com.developersam.chunkreader.summary.SentenceSalienceMarker
-import com.developersam.database.DatastoreClient
-import com.developersam.database.buildStringValue
+import com.developersam.web.database.buildStringValue
+import com.developersam.main.Database
 import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.Timestamp
 import java.util.concurrent.Executors
@@ -32,7 +32,7 @@ object ChunkReaderMainProcessor {
                 SentenceSalienceMarker,
                 Category.classifier
         )
-        DatastoreClient.buildAndInsertEntity(
+        Database.buildAndInsertEntity(
                 kind = "ChunkReaderText",
                 constructor = {
                     it.apply {

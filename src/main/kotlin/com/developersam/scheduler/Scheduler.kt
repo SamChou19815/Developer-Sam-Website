@@ -1,9 +1,9 @@
 package com.developersam.scheduler
 
-import com.developersam.database.and
-import com.developersam.database.Consumer
-import com.developersam.database.consumeBy
-import com.developersam.database.DatastoreClient
+import com.developersam.web.database.and
+import com.developersam.web.database.Consumer
+import com.developersam.web.database.consumeBy
+import com.developersam.main.Database
 import com.developersam.util.yesterday
 import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.Timestamp
@@ -27,7 +27,7 @@ object Scheduler {
         val filterDeadline = PropertyFilter.ge("deadline",
                 Timestamp.of(yesterday))
         val filter = filterUser and filterDeadline
-        DatastoreClient.query(kind = "SchedulerItem", filter = filter) { s ->
+        Database.query(kind = "SchedulerItem", filter = filter) { s ->
             s.map(::SchedulerItem)
                     .filter { it.totalHoursLeft >= 0 }
                     .sorted()
@@ -41,7 +41,7 @@ object Scheduler {
      * the item really belongs to the given [user].
      */
     fun delete(user: FirebaseUser, key: String) {
-        DatastoreClient.deleteEntity(keyString = key) {
+        Database.deleteEntity(keyString = key) {
             SchedulerItem.fromKey(keyString = it)?.belongsTo(user) == true
         }
     }

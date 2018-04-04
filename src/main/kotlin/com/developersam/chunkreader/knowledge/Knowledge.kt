@@ -5,11 +5,11 @@ package com.developersam.chunkreader.knowledge
 import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
 import com.developersam.database.BuildableEntity
-import com.developersam.database.buildNewEntityOf
-import com.developersam.database.insertToDatabase
-import com.developersam.database.runQueryOf
+import com.developersam.database.DatastoreClient
 import com.developersam.database.safeGetString
 import com.developersam.database.setString
+import com.developersam.util.Consumer
+import com.developersam.util.consumeBy
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter.hasAncestor
@@ -44,7 +44,7 @@ internal class KnowledgePoint private constructor(
     )
 
     override fun toEntityBuilder(): Entity.Builder =
-            buildNewEntityOf(kind = kind, parent = textKey)
+            DatastoreClient.createEntityBuilder(kind = kind, parent = textKey)
                     .set("name", name)
                     .set("type", type.name)
                     .setString("URL", url)
@@ -73,20 +73,21 @@ internal class KnowledgePoint private constructor(
 
             override val name: String = "Knowledge Graph Builder"
 
-            override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) =
-                    analyzer.entities
-                            .parallelStream()
-                            .map {
-                                KnowledgePoint(
-                                        textKey = textKey,
-                                        name = it.name,
-                                        type = KnowledgeType.from(it.type),
-                                        url = it.metadataMap["wikipedia_url"],
-                                        salience = it.salience.toDouble()
-                                )
-                            }
-                            .distinct()
-                            .insertToDatabase()
+            override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
+                val s = analyzer.entities
+                        .parallelStream()
+                        .map {
+                            KnowledgePoint(
+                                    textKey = textKey,
+                                    name = it.name,
+                                    type = KnowledgeType.from(it.type),
+                                    url = it.metadataMap["wikipedia_url"],
+                                    salience = it.salience.toDouble()
+                            )
+                        }
+                        .distinct()
+                DatastoreClient.insertEntities(entities = s)
+            }
         }
 
     }
@@ -94,8 +95,9 @@ internal class KnowledgePoint private constructor(
 }
 
 /**
- * [RetrievedKnowledgeGraph] used to fetch a list of knowledge points for a
- * common text key.
+ * [RetrievedKnowledgeGraph] used to fetch a list of knowledge points.
+ *
+ * @constructor creates itself from a common text key.
  */
 internal class RetrievedKnowledgeGraph(textKey: Key) {
 
@@ -103,30 +105,29 @@ internal class RetrievedKnowledgeGraph(textKey: Key) {
      * A list of all knowledge points.
      */
     private val knowledgePoints: List<KnowledgePoint> =
-            runQueryOf(kind = kind, filter = hasAncestor(textKey))
-                    .map(::KnowledgePoint)
-                    .sortedByDescending { it.salience }
-                    .toList()
+            DatastoreClient.blockingQuery(
+                    kind = kind, filter = hasAncestor(textKey)
+            ).map(::KnowledgePoint).sortedByDescending { it.salience }.toList()
 
     /**
      * Fetch an array of top keywords.
      */
-    val asKeywords: Array<String>
-        get() = knowledgePoints.stream()
-                .limit(3)
-                .map { it.name }
-                .toArray { size -> arrayOfNulls<String>(size) }
+    val asKeywords: Array<String> =
+            knowledgePoints
+                    .stream().limit(3).map { it.name }
+                    .toArray { size -> arrayOfNulls<String>(size) }
 
     /**
      * Fetch an organized map from small finite known [KnowledgeType] to a list
      * of [KnowledgePoint] objects associated with the text key given in
      * constructor.
      */
-    val asMap: Map<KnowledgeType, List<KnowledgePoint>>
-        get() = knowledgePoints.asSequence()
-                .groupBy { it.type }
-                .onEach { (_, value) ->
-                    value.sortedByDescending { it.salience }
-                }
+    val asMap: Map<KnowledgeType, List<KnowledgePoint>> =
+            knowledgePoints.asSequence().groupBy { it.type }
+                    .onEach { (_, v) ->
+                        v.sortedByDescending {
+                            it.salience
+                        }
+                    }
 
 }

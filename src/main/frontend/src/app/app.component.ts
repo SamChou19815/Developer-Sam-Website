@@ -1,4 +1,9 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ViewChild
+} from '@angular/core';
 import { MatDrawer } from '@angular/material';
 import { Title } from '@angular/platform-browser';
 
@@ -6,7 +11,8 @@ import { Title } from '@angular/platform-browser';
  * A collection of currently supported nav element names.
  */
 export enum NavElementName {
-  Home = 'Developer Sam', Scheduler = 'Scheduler', ChunkReader = 'Chunk Reader (Beta V2)', TEN = 'TEN'
+  Home = 'Developer Sam', Scheduler = 'Scheduler',
+  ChunkReader = 'Chunk Reader (Beta V2)', TEN = 'TEN'
 }
 
 @Component({
@@ -46,11 +52,6 @@ export class AppComponent implements AfterViewInit {
    */
   chunkReaderSelected = false;
   /**
-   * Whether Discover is selected.
-   * @type {boolean}
-   */
-  discoverSelected = false;
-  /**
    * Whether TEN is selected.
    * @type {boolean}
    */
@@ -62,14 +63,18 @@ export class AppComponent implements AfterViewInit {
    * @param {Title} titleService the title service to set web title.
    * @param {ChangeDetectorRef} changeDetector the change detector injected.
    */
-  constructor(private titleService: Title, private changeDetector: ChangeDetectorRef) {}
+  constructor(private titleService: Title,
+              private changeDetector: ChangeDetectorRef) {
+  }
 
   /**
-   * Select an element to highlight to indicate that it has been selected in the nav bar.
-   * @param {string} elementName the name of the element, which can be home, projects, scheduler and TEN.
+   * Select an element to highlight to indicate that it has been selected in
+   * the nav bar.
+   * @param {string} elementName the name of the element, which can be home,
+   * projects, scheduler and TEN.
    */
   select(elementName: NavElementName) {
-    let home = false, scheduler = false, ten = false, discover = false, chunkReader = false;
+    let home = false, scheduler = false, ten = false, chunkReader = false;
     switch (elementName) {
       case NavElementName.Home:
         home = true;
@@ -87,7 +92,6 @@ export class AppComponent implements AfterViewInit {
     this.homeSelected = home;
     this.schedulerSelected = scheduler;
     this.chunkReaderSelected = chunkReader;
-    this.discoverSelected = discover;
     this.tenSelected = ten;
     this.titleService.setTitle(elementName as string);
     this.title = elementName as string;

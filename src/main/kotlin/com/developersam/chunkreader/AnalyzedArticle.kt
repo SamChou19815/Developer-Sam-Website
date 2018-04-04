@@ -5,37 +5,47 @@ import com.developersam.chunkreader.knowledge.KnowledgePoint
 import com.developersam.chunkreader.knowledge.KnowledgeType
 import com.developersam.chunkreader.knowledge.RetrievedKnowledgeGraph
 import com.developersam.chunkreader.summary.RetrievedSummaries
-import com.developersam.database.getEntityByKey
+import com.developersam.database.DatastoreClient
 import com.developersam.database.toDate
+import com.developersam.util.Consumer
+import com.developersam.util.executeBlocking
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StringValue
 import com.google.common.base.MoreObjects
 import java.util.Date
-import java.util.logging.Logger
 
 /**
  * An [AnalyzedArticle] is an article with all the information analyzed and
  * presented in a meaningful way.
+ *
+ * @constructor It is initialized by an `entity` from the database.
+ * The user of the class can also specify whether to include all the details
+ * by the `fullDetail` flag, which defaults to `false`.
  */
-class AnalyzedArticle {
+class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
 
+    /**
+     * Key of the text.
+     */
+    @field:Transient
+    private val textKey: Key = entity.key
     /**
      * Key string of the article for later client info retrieval.
      */
-    private val keyString: String
+    private val keyString: String = textKey.toUrlSafe()
     /**
      * Date of the article submission.
      */
-    private val date: Date
+    private val date: Date = entity.getTimestamp("date").toDate()
     /**
      * Title of the article.
      */
-    private val title: String
+    private val title: String = entity.getString("title")
     /**
      * Number of tokens in the article content.
      */
-    private val tokenCount: Long
+    private val tokenCount: Long = entity.getLong("tokenCount")
     /**
      * Content of the article.
      */
@@ -61,39 +71,29 @@ class AnalyzedArticle {
      */
     private val categories: List<String>?
 
-    /**
-     * It is initialized by an [entity] from the database.
-     * The user of the class can also specify whether to include all the details
-     * by the [fullDetail] flag, which defaults to `false`.
-     */
-    @Suppress(names = ["ConvertSecondaryConstructorToPrimary"])
-    constructor(entity: Entity, fullDetail: Boolean = false) {
-        val textKey: Key = entity.key
-        keyString = textKey.toUrlSafe()
-        date = entity.getTimestamp("date").toDate()
-        title = entity.getString("title")
-        tokenCount = entity.getLong("tokenCount")
-        if (!fullDetail) {
+    init {
+        if (fullDetail) {
+            // Basic Info (Type)
+            content = entity.getValue<StringValue>("content").get()
+            val sentimentScore = entity.getDouble("sentimentScore")
+            val sentimentMagnitude = entity.getDouble("sentimentMagnitude")
+            val score = sentimentScore / Math.log(tokenCount.toDouble())
+            val magnitude = sentimentMagnitude / Math.log(tokenCount.toDouble())
+            textType = getTextType(score, magnitude).toString()
+            // Advanced Info (Knowledge, Summary, Category)
+            val retrievedKnowledgeGraph = RetrievedKnowledgeGraph(textKey)
+            keywords = retrievedKnowledgeGraph.asKeywords
+            knowledgeMap = retrievedKnowledgeGraph.asMap
+            summaries = RetrievedSummaries(textKey).asList
+            categories = Category.retrieve(textKey)
+        } else {
             content = null
             textType = null
             keywords = null
             knowledgeMap = null
             summaries = null
             categories = null
-            return
         }
-        content = entity.getValue<StringValue>("content").get()
-        val sentimentScore = entity.getDouble("sentimentScore")
-        val sentimentMagnitude = entity.getDouble("sentimentMagnitude")
-        val score = sentimentScore / Math.log(tokenCount.toDouble())
-        val magnitude = sentimentMagnitude / Math.log(tokenCount.toDouble())
-        textType = getTextType(score = score, magnitude = magnitude).toString()
-        val retrievedKnowledgeGraph =
-                RetrievedKnowledgeGraph(textKey = textKey)
-        keywords = retrievedKnowledgeGraph.asKeywords
-        knowledgeMap = retrievedKnowledgeGraph.asMap
-        summaries = RetrievedSummaries(textKey = textKey).asList
-        categories = Category.retrievedAsList(textKey = textKey)
     }
 
     override fun toString(): String {
@@ -147,9 +147,13 @@ class AnalyzedArticle {
          * Create a [AnalyzedArticle] with full detail from a [keyString],
          * which may not be created due to a wrong key.
          */
-        fun fromKey(keyString: String): AnalyzedArticle? =
-                getEntityByKey(key = keyString)?.let {
-                    AnalyzedArticle(entity = it, fullDetail = true)
+        fun fromKey(keyString: String?, consumer: Consumer<AnalyzedArticle?>) =
+                executeBlocking(consumer = consumer) {
+                    keyString?.let { k ->
+                        DatastoreClient[k]?.let {
+                            AnalyzedArticle(entity = it, fullDetail = true)
+                        }
+                    }
                 }
     }
 

@@ -38,13 +38,9 @@ export class SchedulerNetworkService {
     this.http.post('/apis/scheduler/write?token=' + token, schedulerItemData, {
       responseType: 'text',
       withCredentials: true
-    }).subscribe(resp => {
+    }).subscribe(_ => {
       ref.close();
-      if (resp === 'true') {
-        this.loadSchedulerItems(success);
-      } else {
-        throw new Error('Bad Response: ' + resp);
-      }
+      this.loadSchedulerItems(success);
     });
   }
 

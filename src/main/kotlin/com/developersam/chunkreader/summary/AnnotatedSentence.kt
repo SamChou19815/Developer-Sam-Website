@@ -1,7 +1,7 @@
 package com.developersam.chunkreader.summary
 
 import com.developersam.database.BuildableEntity
-import com.developersam.database.buildNewEntityOf
+import com.developersam.database.DatastoreClient
 import com.developersam.database.buildStringValue
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
@@ -32,7 +32,8 @@ internal class AnnotatedSentence(
     )
 
     override fun toEntityBuilder(): com.google.cloud.datastore.Entity.Builder =
-            buildNewEntityOf(kind = "ChunkReaderTextSummary", parent = textKey)
+            DatastoreClient.createEntityBuilder(
+                    kind = "ChunkReaderTextSummary", parent = textKey)
                     .set("sentence", buildStringValue(string = sentence))
                     .set("begin_offset", beginOffset)
                     .set("salience", salience)

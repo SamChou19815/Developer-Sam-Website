@@ -1,8 +1,9 @@
 package com.developersam.scheduler
 
+import com.developersam.database.DatastoreClient
 import com.developersam.database.and
-import com.developersam.database.deleteEntity
-import com.developersam.database.runQueryOf
+import com.developersam.util.Consumer
+import com.developersam.util.consumeBy
 import com.developersam.util.yesterday
 import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.Timestamp
@@ -15,21 +16,24 @@ object Scheduler {
 
     /**
      * [getAllSchedulerItems] gives a list of [SchedulerItem] for a given
-     * [user].
+     * [user], which is consumed by the given [consumer].
      *
      * Requires:
      * - The given [user] must exist.
      */
-    fun getAllSchedulerItems(user: FirebaseUser): List<SchedulerItem> {
+    fun getAllSchedulerItems(user: FirebaseUser,
+                             consumer: Consumer<List<SchedulerItem>>) {
         val filterUser = PropertyFilter.eq("userEmail", user.email)
         val filterDeadline = PropertyFilter.ge("deadline",
                 Timestamp.of(yesterday))
         val filter = filterUser and filterDeadline
-        return runQueryOf(kind = "SchedulerItem", filter = filter)
-                .map(::SchedulerItem)
-                .filter { it.totalHoursLeft >= 0 }
-                .sorted()
-                .toList()
+        DatastoreClient.query(kind = "SchedulerItem", filter = filter) { s ->
+            s.map(::SchedulerItem)
+                    .filter { it.totalHoursLeft >= 0 }
+                    .sorted()
+                    .toList()
+                    .consumeBy(consumer = consumer)
+        }
     }
 
     /**
@@ -37,7 +41,7 @@ object Scheduler {
      * the item really belongs to the given [user].
      */
     fun delete(user: FirebaseUser, key: String) {
-        deleteEntity(keyString = key) {
+        DatastoreClient.deleteEntity(keyString = key) {
             SchedulerItem.fromKey(keyString = it)?.belongsTo(user) == true
         }
     }

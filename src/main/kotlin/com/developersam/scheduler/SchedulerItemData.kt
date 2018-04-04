@@ -1,8 +1,8 @@
 package com.developersam.scheduler
 
-import com.developersam.database.set
+import com.developersam.database.DatastoreClient
+import com.developersam.database.setLong
 import com.developersam.database.setString
-import com.developersam.database.upsertEntity
 import com.developersam.util.yesterday
 import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.Timestamp
@@ -59,20 +59,22 @@ class SchedulerItemData private constructor() {
      * really belongs to the given [user]).
      * It returns whether the operation was successful.
      */
-    fun writeToDatabase(user: FirebaseUser): Boolean {
+    fun writeToDatabase(user: FirebaseUser) {
         if (!sanityCheck()) {
-            return false
+            return
         }
         val userEmail = user.email
         val key = keyString?.let(Key::fromUrlSafe)
-        return upsertEntity(kind = "SchedulerItem", key = key, validator = {
-            it.getString("userEmail") == userEmail
-        }) {
+        DatastoreClient.upsertEntity(
+                kind = "SchedulerItem",
+                key = key,
+                validator = { it.getString("userEmail") == userEmail }
+        ) {
             it.apply {
                 set("userEmail", userEmail)
                 set("description", description)
                 set("deadline", Timestamp.of(deadline))
-                set("deadlineHour", deadlineHour)
+                setLong("deadlineHour", deadlineHour)
                 set("completed", false)
                 setString("detail", detail)
             }

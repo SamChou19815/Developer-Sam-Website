@@ -2,7 +2,7 @@ package com.developersam.chunkreader.summary
 
 import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
-import com.developersam.database.insertToDatabase
+import com.developersam.database.DatastoreClient
 import com.google.cloud.datastore.Key
 import com.google.cloud.language.v1beta2.Sentence
 import com.google.cloud.language.v1beta2.TextSpan
@@ -229,7 +229,7 @@ internal object SentenceSalienceMarker : ChunkReaderSubProcessor {
     override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
         initSentenceGraph(analyzer = analyzer, textKey = textKey)
         randomVisit()
-        annotatedSentences.stream().insertToDatabase()
+        DatastoreClient.insertEntities(entities = annotatedSentences.stream())
     }
 
 }

@@ -1,6 +1,8 @@
 package com.developersam.chunkreader.summary
 
-import com.developersam.database.runQueryOf
+import com.developersam.database.DatastoreClient
+import com.developersam.util.Consumer
+import com.developersam.util.consumeBy
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StructuredQuery.OrderBy.desc
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter.hasAncestor
@@ -33,12 +35,12 @@ class RetrievedSummaries internal constructor(
      * Fetch a list of sentences in pure string form associated with the text
      * key given in constructor.
      */
-    val asList: List<String> =
-            runQueryOf(kind, filter, orderBy, actualLimit)
-                    .map { AnnotatedSentence(entity = it) }
-                    .sortedBy { it.beginOffset }
-                    .map { it.sentence }
-                    .toList()
+    val asList = DatastoreClient
+            .blockingQuery(kind, filter, orderBy, actualLimit)
+            .map { AnnotatedSentence(entity = it) }
+            .sortedBy { it.beginOffset }
+            .map { it.sentence }
+            .toList()
 
     companion object {
 

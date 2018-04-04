@@ -11,7 +11,10 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import io.netty.buffer.ByteBufInputStream
+import io.vertx.core.AsyncResult
+import io.vertx.core.Handler
 import io.vertx.core.buffer.Buffer
+import io.vertx.ext.web.RoutingContext
 import java.io.InputStreamReader
 import java.lang.reflect.Type
 import java.util.Date
@@ -47,10 +50,18 @@ private fun globalGsonBuilder(): GsonBuilder {
 val gson: Gson = globalGsonBuilder().create()
 
 /**
- * Converts a [Buffer] object from VertX to a normal Java object with type
- * specified by [clazz].
+ * [Gson.fromBuffer] converts a [Buffer] object from VertX to a normal Java
+ * object with type specified by [clazz].
  */
 fun <T> Gson.fromBuffer(json: Buffer, clazz: Class<T>): T {
     val reader = InputStreamReader(ByteBufInputStream(json.byteBuf))
     return this.fromJson(reader, clazz)
+}
+
+/**
+ * [Gson.toJsonConsumer] creates a consumer that prints the result of the
+ * consumer as JSON string to the client.
+ */
+fun <R> Gson.toJsonConsumer(context: RoutingContext): Consumer<R> = { res ->
+    context.response().end(this.toJson(res))
 }

@@ -1,10 +1,9 @@
 package com.developersam.scheduler
 
-import com.developersam.database.getEntityByKey
+import com.developersam.database.DatastoreClient
 import com.developersam.database.safeGetLong
 import com.developersam.database.safeGetString
 import com.developersam.database.toDate
-import com.developersam.database.update
 import com.developersam.util.addHours
 import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.datastore.Entity
@@ -83,7 +82,9 @@ class SchedulerItem internal constructor(
      * It is the client's responsibility to call [belongsTo] to ensure that.
      */
     internal fun markAs(completed: Boolean) {
-        entity.update { it.set("completed", completed) }
+        DatastoreClient.update(
+                entity = entity, updater = { it.set("completed", completed) }
+        )
     }
 
     override fun compareTo(other: SchedulerItem): Int {
@@ -109,14 +110,14 @@ class SchedulerItem internal constructor(
                 .toString()
     }
 
-    companion object Factory {
+    companion object {
 
         /**
          * Construct a scheduler item fromKey a unique [keyString], which may
          * fail due to invalid key and return a `null`.
          */
         fun fromKey(keyString: String): SchedulerItem? =
-                getEntityByKey(key = keyString)?.let { SchedulerItem(it) }
+                DatastoreClient[keyString]?.let { SchedulerItem(it) }
 
     }
 }

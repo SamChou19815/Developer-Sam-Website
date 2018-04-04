@@ -1,12 +1,13 @@
 @file:JvmName(name = "Categories")
+
 package com.developersam.chunkreader.category
 
 import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
 import com.developersam.database.BuildableEntity
-import com.developersam.database.buildNewEntityOf
-import com.developersam.database.insertToDatabase
-import com.developersam.database.runQueryOf
+import com.developersam.database.DatastoreClient
+import com.developersam.util.Consumer
+import com.developersam.util.consumeBy
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StructuredQuery.OrderBy.desc
@@ -28,17 +29,17 @@ internal class Category private constructor(
 ) : BuildableEntity {
 
     override fun toEntityBuilder(): Entity.Builder =
-            buildNewEntityOf(kind = kind, parent = textKey)
+            DatastoreClient.createEntityBuilder(kind = kind, parent = textKey)
                     .set("name", name)
                     .set("confidence", confidence)
 
     companion object {
         /**
-         * [retrievedAsList] fetches a list of categories in string form
-         * associated with the given [textKey].
+         * [retrieve] fetches a list of categories in string form associated
+         * with the given [textKey].
          */
-        fun retrievedAsList(textKey: Key): List<String> =
-                runQueryOf(
+        fun retrieve(textKey: Key): List<String> =
+                DatastoreClient.blockingQuery(
                         kind = kind,
                         filter = PropertyFilter.hasAncestor(textKey),
                         orderBy = desc("confidence"),
@@ -57,7 +58,7 @@ internal class Category private constructor(
             override val name: String = "Category Classifier"
 
             override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
-                analyzer.categories
+                val s = analyzer.categories
                         .parallelStream()
                         .map {
                             Category(
@@ -65,7 +66,8 @@ internal class Category private constructor(
                                     name = it.name,
                                     confidence = it.confidence.toDouble()
                             )
-                        }.insertToDatabase()
+                        }
+                DatastoreClient.insertEntities(entities = s)
             }
         }
     }

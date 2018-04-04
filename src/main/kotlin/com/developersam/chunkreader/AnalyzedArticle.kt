@@ -7,8 +7,8 @@ import com.developersam.chunkreader.knowledge.RetrievedKnowledgeGraph
 import com.developersam.chunkreader.summary.RetrievedSummaries
 import com.developersam.database.DatastoreClient
 import com.developersam.database.toDate
-import com.developersam.util.Consumer
-import com.developersam.util.executeBlocking
+import com.developersam.database.Consumer
+import com.developersam.database.runBlocking
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StringValue
@@ -148,7 +148,7 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
          * which may not be created due to a wrong key.
          */
         fun fromKey(keyString: String?, consumer: Consumer<AnalyzedArticle?>) =
-                executeBlocking(consumer = consumer) {
+                runBlocking(consumer = consumer) {
                     keyString?.let { k ->
                         DatastoreClient[k]?.let {
                             AnalyzedArticle(entity = it, fullDetail = true)

@@ -8,8 +8,6 @@ import com.developersam.database.BuildableEntity
 import com.developersam.database.DatastoreClient
 import com.developersam.database.safeGetString
 import com.developersam.database.setString
-import com.developersam.util.Consumer
-import com.developersam.util.consumeBy
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter.hasAncestor

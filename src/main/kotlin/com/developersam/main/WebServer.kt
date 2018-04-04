@@ -12,7 +12,7 @@ import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerItemData
 import com.developersam.game.ten.TenBoard
 import com.developersam.game.ten.TenClientMove
-import com.developersam.util.executeBlocking
+import com.developersam.database.runBlocking
 import com.developersam.util.fromBuffer
 import com.developersam.util.gson
 import com.developersam.util.toJsonConsumer
@@ -119,7 +119,7 @@ private val chunkReaderRouter: Router
             val request = gson.fromBuffer(
                     json = c.body, clazz = SummaryRequest::class.java
             )
-            executeBlocking(consumer = gson.toJsonConsumer(context = c)) {
+            runBlocking(consumer = gson.toJsonConsumer(context = c)) {
                 RetrievedSummaries.from(request)?.asList
             }
         }

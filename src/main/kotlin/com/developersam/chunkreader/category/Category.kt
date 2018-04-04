@@ -6,8 +6,6 @@ import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
 import com.developersam.database.BuildableEntity
 import com.developersam.database.DatastoreClient
-import com.developersam.util.Consumer
-import com.developersam.util.consumeBy
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StructuredQuery.OrderBy.desc

@@ -1,8 +1,8 @@
 package com.developersam.chunkreader
 
 import com.developersam.database.DatastoreClient
-import com.developersam.util.Consumer
-import com.developersam.util.consumeBy
+import com.developersam.database.Consumer
+import com.developersam.database.consumeBy
 import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.datastore.StructuredQuery.OrderBy.desc
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter.eq

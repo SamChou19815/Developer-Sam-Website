@@ -1,8 +1,6 @@
 package com.developersam.chunkreader.summary
 
 import com.developersam.database.DatastoreClient
-import com.developersam.util.Consumer
-import com.developersam.util.consumeBy
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StructuredQuery.OrderBy.desc
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter.hasAncestor

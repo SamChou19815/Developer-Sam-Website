@@ -1,7 +1,5 @@
 package com.developersam.database
 
-import com.developersam.util.Consumer
-import com.developersam.util.executeBlocking
 import com.google.cloud.datastore.Datastore
 import com.google.cloud.datastore.DatastoreException
 import com.google.cloud.datastore.DatastoreOptions
@@ -89,7 +87,7 @@ object DatastoreClient {
     fun query(kind: String, filter: Filter? = null,
               orderBy: OrderBy? = null, limit: Int? = null,
               consumer: Consumer<Sequence<Entity>>) {
-        executeBlocking(consumer = consumer) {
+        runBlocking(consumer = consumer) {
             blockingQuery(kind, filter, orderBy, limit)
         }
     }
@@ -107,7 +105,7 @@ object DatastoreClient {
         val newEntityBuilder = createEntityBuilder(kind = kind, parent = parent)
         constructor(newEntityBuilder)
         val entity = newEntityBuilder.build()
-        executeBlocking(consumer = consumer) { datastore.add(entity).key }
+        runBlocking(consumer = consumer) { datastore.add(entity).key }
     }
 
     /**
@@ -120,7 +118,7 @@ object DatastoreClient {
                 .toArray { size ->
                     arrayOfNulls<Entity>(size)
                 }
-        executeBlocking(consumer = consumer) { datastore.add(*array) }
+        runBlocking(consumer = consumer) { datastore.add(*array) }
     }
 
     /**
@@ -132,7 +130,7 @@ object DatastoreClient {
                consumer: Consumer<Entity>? = null) {
         val builder = Entity.newBuilder(entity)
         updater(builder)
-        executeBlocking(consumer = consumer) { datastore.put(builder.build()) }
+        runBlocking(consumer = consumer) { datastore.put(builder.build()) }
     }
 
     /**
@@ -159,7 +157,7 @@ object DatastoreClient {
                     kind = kind, parent = parent, constructor = constructor
             )
         }
-        executeBlocking {
+        runBlocking {
             val txn = datastore.newTransaction()
             try {
                 val entity = txn[key]
@@ -193,7 +191,7 @@ object DatastoreClient {
                        consumer: Consumer<List<Entity>>? = null) {
         val txn = datastore.newTransaction()
         try {
-            executeBlocking(consumer = consumer) {
+            runBlocking(consumer = consumer) {
                 val updatedEntities = txn.fetch(*keys).parallelStream()
                         .map {
                             val builder = Entity.newBuilder(it)
@@ -227,7 +225,7 @@ object DatastoreClient {
                      validator: ((String) -> Boolean)? = null): Boolean {
         val validated = validator?.invoke(keyString) ?: true
         if (validated) {
-            executeBlocking { datastore.delete(Key.fromUrlSafe(keyString)) }
+            runBlocking { datastore.delete(Key.fromUrlSafe(keyString)) }
             return true
         }
         return false

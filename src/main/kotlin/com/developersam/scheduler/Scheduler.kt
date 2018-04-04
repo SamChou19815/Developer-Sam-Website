@@ -1,9 +1,9 @@
 package com.developersam.scheduler
 
-import com.developersam.database.DatastoreClient
 import com.developersam.database.and
-import com.developersam.util.Consumer
-import com.developersam.util.consumeBy
+import com.developersam.database.Consumer
+import com.developersam.database.consumeBy
+import com.developersam.database.DatastoreClient
 import com.developersam.util.yesterday
 import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.Timestamp

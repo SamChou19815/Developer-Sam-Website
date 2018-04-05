@@ -28,8 +28,8 @@ class Trie {
         var hasString: Boolean = false
 
         /**
-         * Report whether the current node has no children, which is a sign
-         * that the node can be removed safely.
+         * Report whether the current node has no children, which is a sign that the node can be
+         * removed safely.
          */
         val hasNoChildren
             get() = map.isEmpty()
@@ -92,8 +92,8 @@ class Trie {
     }
 
     /**
-     * [delete] will delete the given [element] from the [Trie]. If the given
-     * [element] is not in the [Trie], no visible side-effect will occur.
+     * [delete] will delete the given [element] from the [Trie]. If the given [element] is not in
+     * the [Trie], no visible side-effect will occur.
      */
     fun delete(element: String) {
         var node = root ?: return
@@ -137,8 +137,8 @@ class Trie {
     }
 
     /**
-     * [closestWordToPrefix] returns a word contained in the trie of minimal
-     * length with the given [prefix], which may or may not exist.
+     * [closestWordToPrefix] returns a word contained in the trie of minimal length with the given
+     * [prefix], which may or may not exist.
      */
     fun closestWordToPrefix(prefix: String): String? {
         var node = root ?: return null
@@ -158,8 +158,7 @@ class Trie {
                 val sb = StringBuilder()
                 var backNode = n
                 while (true) {
-                    val parent =
-                            backNode.parent ?: return sb.reverse().toString()
+                    val parent = backNode.parent ?: return sb.reverse().toString()
                     sb.append(backNode.charStored)
                     backNode = parent
                 }

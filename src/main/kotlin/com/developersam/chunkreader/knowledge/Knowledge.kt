@@ -64,8 +64,7 @@ internal class KnowledgePoint private constructor(
 
         /**
          * [graphBuilder] is used to help build a knowledge graph.
-         * It will extract useful information from the API and store them into
-         * the database.
+         * It will extract useful information from the API and store them into the database.
          */
         val graphBuilder = object : ChunkReaderSubProcessor {
 
@@ -116,9 +115,8 @@ internal class RetrievedKnowledgeGraph(textKey: Key) {
                     .toArray { size -> arrayOfNulls<String>(size) }
 
     /**
-     * Fetch an organized map from small finite known [KnowledgeType] to a list
-     * of [KnowledgePoint] objects associated with the text key given in
-     * constructor.
+     * Fetch an organized map from small finite known [KnowledgeType] to a list of [KnowledgePoint]
+     * objects associated with the text key given in  constructor.
      */
     val asMap: Map<KnowledgeType, List<KnowledgePoint>> =
             knowledgePoints.asSequence().groupBy { it.type }

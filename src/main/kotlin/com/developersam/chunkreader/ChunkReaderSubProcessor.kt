@@ -14,8 +14,8 @@ internal interface ChunkReaderSubProcessor {
     val name: String
 
     /**
-     * Further analyze the API result from the [NLPAPIAnalyzer] and put the
-     * analysis result into the database that links together with [textKey].
+     * Further analyze the API result from the [NLPAPIAnalyzer] and put the analysis result into
+     * the database that links together with [textKey].
      */
     fun process(analyzer: NLPAPIAnalyzer, textKey: Key)
 

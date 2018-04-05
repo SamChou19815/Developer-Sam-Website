@@ -17,13 +17,10 @@ private const val kind = "ChunkReaderTextSummary"
 private val orderBy = desc("salience")
 
 /**
- * [RetrievedSummaries] is used to fetch a list of summaries for a common text
- * key for a given limit (defaults to 5), which will be auto-corrected to 1 if
- * it is below 1.
+ * [RetrievedSummaries] is used to fetch a list of summaries for a common text key for a given limit
+ * (defaults to 5), which will be auto-corrected to 1 if it is below 1.
  */
-class RetrievedSummaries internal constructor(
-        private val textKey: Key, limit: Int = 5
-) {
+class RetrievedSummaries internal constructor(private val textKey: Key, limit: Int = 5) {
 
     /**
      * The actual limit applied.
@@ -32,8 +29,8 @@ class RetrievedSummaries internal constructor(
     private val filter = hasAncestor(textKey)
 
     /**
-     * Fetch a list of sentences in pure string form associated with the text
-     * key given in constructor.
+     * Fetch a list of sentences in pure string form associated with the text key given in
+     * constructor.
      */
     val asList: List<String> = Database
             .blockingQuery(kind, filter, orderBy, actualLimit)
@@ -43,16 +40,16 @@ class RetrievedSummaries internal constructor(
             .toList()
 
     /**
-     * Fetch a list of sentences in pure string form associated with the text
-     * key given in constructor. It gives the result in [consumer].
+     * [printList] fetches a list of sentences in pure string form associated with the text key
+     * given in constructor. It gives the result in [printer].
      */
-    fun consumeList(consumer: Consumer<List<String>>) =
+    fun printList(printer: Consumer<List<String>>) =
             Database.query(kind, filter, orderBy, actualLimit) { s ->
                 s.map { AnnotatedSentence(entity = it) }
                         .sortedBy { it.beginOffset }
                         .map { it.sentence }
                         .toList()
-                        .consumeBy(consumer = consumer)
+                        .consumeBy(consumer = printer)
             }
 
     companion object {
@@ -64,9 +61,7 @@ class RetrievedSummaries internal constructor(
         fun from(summaryRequest: SummaryRequest): RetrievedSummaries? {
             val keyString = summaryRequest.keyString ?: return null
             val key = Key.fromUrlSafe(keyString)
-            return RetrievedSummaries(
-                    textKey = key, limit = summaryRequest.limit
-            )
+            return RetrievedSummaries(textKey = key, limit = summaryRequest.limit)
         }
 
     }

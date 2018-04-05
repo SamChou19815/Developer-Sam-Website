@@ -11,14 +11,14 @@ import java.util.concurrent.Executors
 import kotlin.system.measureTimeMillis
 
 /**
- * [ChunkReaderMainProcessor] calls all the other sub-processors to complete
- * the chunk reader pre-processing.
+ * [ChunkReaderMainProcessor] calls all the other sub-processors to complete the chunk reader
+ * pre-processing.
  */
 object ChunkReaderMainProcessor {
 
     /**
-     * Process a given [article] and use [Boolean] for a [user], returning
-     * whether the processing has succeeded without error.
+     * Process a given [article] and use [Boolean] for a [user], returning whether the processing
+     * has succeeded without error.
      */
     fun process(user: FirebaseUser, article: RawArticle): Boolean {
         val title = article.title ?: return false

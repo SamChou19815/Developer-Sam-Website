@@ -8,15 +8,17 @@ import com.developersam.chunkreader.ChunkReaderMainProcessor
 import com.developersam.chunkreader.RawArticle
 import com.developersam.chunkreader.summary.RetrievedSummaries
 import com.developersam.chunkreader.summary.SummaryRequest
-import com.developersam.game.ten.TenBoard
+import com.developersam.game.ten.TenBoard.Companion.respond
 import com.developersam.game.ten.TenClientMove
 import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerItemData
-import com.developersam.util.fromBuffer
-import com.developersam.util.gson
-import com.developersam.util.toJsonConsumer
+import com.developersam.util.blockingJsonHandler
+import com.developersam.util.blockingRequestHandler
+import com.developersam.util.functionalHandler
+import com.developersam.util.jsonHandler
+import com.developersam.util.requestHandler
+import com.developersam.util.userHandler
 import com.developersam.web.auth.FirebaseAuthHandler
-import com.developersam.web.auth.firebaseUser
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.StaticHandler
@@ -25,9 +27,8 @@ import io.vertx.ext.web.handler.StaticHandler
  * Global Authentication Handler.
  */
 private val authHandler = FirebaseAuthHandler(
-        adminSDKConfig = System::class.java.getResourceAsStream(
-                "/secret/firebase-adminsdk.json")
-);
+        adminSDKConfig = System::class.java.getResourceAsStream("/secret/firebase-adminsdk.json")
+)
 
 /**
  * Assemble together routers for app TEN.
@@ -36,13 +37,9 @@ private val tenRouter: Router
     get() {
         val tenRouter = Router.router(vertx)
         // Respond to human move
-        tenRouter.post("/response").blockingHandler { c ->
-            val clientMove = gson.fromBuffer(
-                    json = c.body, clazz = TenClientMove::class.java
-            )
-            val serverResponse = TenBoard.respond(clientMove = clientMove)
-            c.response().end(gson.toJson(serverResponse))
-        }
+        tenRouter.post("/response").functionalHandler(
+                c = TenClientMove::class.java, f = ::respond
+        )
         return tenRouter
     }
 
@@ -54,39 +51,30 @@ private val schedulerRouter: Router
         val schedulerRouter = Router.router(vertx)
         schedulerRouter.route().blockingHandler(authHandler)
         // Load items
-        schedulerRouter.get("/load").handler { c ->
-            val user = c.user().firebaseUser
-            Scheduler.getAllSchedulerItems(
-                    user = user, consumer = gson.toJsonConsumer(context = c)
-            )
+        schedulerRouter.get("/load").userHandler { user, printer ->
+            Scheduler.getAllSchedulerItems(user = user, printer = printer)
         }
         // Write an item
-        schedulerRouter.post("/write").handler { c ->
-            val user = c.user().firebaseUser
-            val itemData = gson.fromBuffer(
-                    json = c.body, clazz = SchedulerItemData::class.java
-            )
-            val result = itemData.writeToDatabase(user = user).toString()
-            c.response().end(result)
+        schedulerRouter.post("/write").jsonHandler(
+                c = SchedulerItemData::class.java) { itemData, user, printer ->
+            itemData.writeToDatabase(user = user)
+            printer(Unit)
         }
         // Delete an item
-        schedulerRouter.delete("/delete").handler { c ->
-            val user = c.user().firebaseUser
-            val key: String = c.request().getParam("key")
+        schedulerRouter.delete("/delete").requestHandler { req, user, printer ->
+            val key: String = req.getParam("key")
             Scheduler.delete(user = user, key = key)
-            c.response().end()
+            printer(Unit)
         }
         // Mark as complete
-        schedulerRouter.post("/markAs").handler { c ->
-            val user = c.user().firebaseUser
-            val request = c.request()
-            val key: String? = request.getParam("key")
+        schedulerRouter.post("/markAs").requestHandler { req, user, printer ->
+            val key: String? = req.getParam("key")
             val completed: Boolean? =
-                    request.getParam("completed")?.toBoolean()
+                    req.getParam("completed")?.toBoolean()
             if (key != null && completed != null) {
                 Scheduler.markAs(user = user, key = key, completed = completed)
             }
-            c.response().end()
+            printer(Unit)
         }
         return schedulerRouter
     }
@@ -99,36 +87,23 @@ private val chunkReaderRouter: Router
         val chunkReaderRouter = Router.router(vertx)
         chunkReaderRouter.route().blockingHandler(authHandler)
         // Load Items
-        chunkReaderRouter.get("/load").handler { c ->
-            AnalyzedArticles.get(
-                    user = c.user().firebaseUser,
-                    consumer = gson.toJsonConsumer(context = c)
-            )
+        chunkReaderRouter.get("/load").userHandler { user, printer ->
+            AnalyzedArticles.get(user = user, printer = printer)
         }
         // Display Article Detail
-        chunkReaderRouter.get("/articleDetail").blockingHandler { c ->
-            val key: String? = c.request().getParam("key")
-            val article = AnalyzedArticle.fromKey(keyString = key)
-            c.response().end(gson.toJson(article))
+        chunkReaderRouter.get("/articleDetail").blockingRequestHandler { req, _ ->
+            AnalyzedArticle.fromKey(keyString = req.getParam("key"))
         }
         // Adjust Amount of Summary
-        chunkReaderRouter.post("/adjustSummary").handler { c ->
-            val request = gson.fromBuffer(
-                    json = c.body, clazz = SummaryRequest::class.java
-            )
-            RetrievedSummaries.from(request)?.consumeList(
-                    consumer = gson.toJsonConsumer(context = c)
-            ) ?: c.response().end()
+        chunkReaderRouter.post("/adjustSummary").jsonHandler(
+                c = SummaryRequest::class.java) { summaryRequest, _, printer ->
+            RetrievedSummaries.from(summaryRequest = summaryRequest)?.printList(printer = printer)
+                    ?: printer(Unit)
         }
         // Analyze An Item: TIME CONSUMING!
-        chunkReaderRouter.post("/analyze").blockingHandler { c ->
-            val article = gson.fromBuffer(
-                    json = c.body, clazz = RawArticle::class.java
-            )
-            val result = ChunkReaderMainProcessor.process(
-                    user = c.user().firebaseUser, article = article
-            )
-            c.response().end(result.toString())
+        chunkReaderRouter.post("/analyze").blockingJsonHandler(
+                c = RawArticle::class.java) { rawArticle, user ->
+            ChunkReaderMainProcessor.process(user = user, article = rawArticle)
         }
         return chunkReaderRouter
     }

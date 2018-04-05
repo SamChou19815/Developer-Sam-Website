@@ -5,8 +5,8 @@ package com.developersam
 import java.util.Random
 
 /**
- * [generateRandomCharacters] generates a random sequence of characters with
- * random length of at most 100.
+ * [generateRandomCharacters] generates a random sequence of characters with random length of at
+ * most 100.
  */
 private fun generateRandomCharacters(): CharArray {
     val random = Random()
@@ -19,8 +19,6 @@ private fun generateRandomCharacters(): CharArray {
 }
 
 /**
- * [generateRandomString] generate a random string with random length of at
- * most 100.
+ * [generateRandomString] generate a random string with random length of at most 100.
  */
-internal fun generateRandomString(): String =
-        String(chars = generateRandomCharacters())
+internal fun generateRandomString(): String = String(chars = generateRandomCharacters())

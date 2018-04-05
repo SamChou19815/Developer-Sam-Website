@@ -14,12 +14,12 @@ import com.google.common.base.MoreObjects
 import java.util.Date
 
 /**
- * An [AnalyzedArticle] is an article with all the information analyzed and
- * presented in a meaningful way.
+ * An [AnalyzedArticle] is an article with all the information analyzed and presented in a
+ * meaningful way.
  *
  * @constructor It is initialized by an `entity` from the database.
- * The user of the class can also specify whether to include all the details
- * by the `fullDetail` flag, which defaults to `false`.
+ * The user of the class can also specify whether to include all the details by the `fullDetail`
+ * flag, which defaults to `false`.
  */
 class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
 
@@ -118,8 +118,7 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
         private const val magnitudeThreshold: Double = 0.84
 
         /**
-         * Infer [TextType] from scaled sentiment [score] and
-         * sentiment [magnitude].
+         * Infer [TextType] from scaled sentiment [score] and sentiment [magnitude].
          */
         private fun getTextType(score: Double, magnitude: Double): TextType {
             return when {
@@ -142,8 +141,8 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
         }
 
         /**
-         * Create a [AnalyzedArticle] with full detail from a [keyString],
-         * which may not be created due to a wrong key.
+         * Create a [AnalyzedArticle] with full detail from a [keyString], which may not be
+         * created due to a wrong key.
          */
         fun fromKey(keyString: String?): AnalyzedArticle? =
                 keyString?.let { k ->

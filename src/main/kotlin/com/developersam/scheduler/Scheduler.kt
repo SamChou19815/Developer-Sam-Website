@@ -16,23 +16,22 @@ object Scheduler {
 
     /**
      * [getAllSchedulerItems] gives a list of [SchedulerItem] for a given
-     * [user], which is consumed by the given [consumer].
+     * [user], which is printed by the given [printer].
      *
      * Requires:
      * - The given [user] must exist.
      */
     fun getAllSchedulerItems(user: FirebaseUser,
-                             consumer: Consumer<List<SchedulerItem>>) {
+                             printer: Consumer<List<SchedulerItem>>) {
         val filterUser = PropertyFilter.eq("userEmail", user.email)
-        val filterDeadline = PropertyFilter.ge("deadline",
-                Timestamp.of(yesterday))
+        val filterDeadline = PropertyFilter.ge("deadline", Timestamp.of(yesterday))
         val filter = filterUser and filterDeadline
         Database.query(kind = "SchedulerItem", filter = filter) { s ->
             s.map(::SchedulerItem)
                     .filter { it.totalHoursLeft >= 0 }
                     .sorted()
                     .toList()
-                    .consumeBy(consumer = consumer)
+                    .consumeBy(consumer = printer)
         }
     }
 
@@ -42,7 +41,7 @@ object Scheduler {
      */
     fun delete(user: FirebaseUser, key: String) {
         Database.deleteEntity(keyString = key) {
-            SchedulerItem.fromKey(keyString = it)?.belongsTo(user) == true
+            SchedulerItem.fromKey(key = it)?.belongsTo(user) == true
         }
     }
 
@@ -52,7 +51,7 @@ object Scheduler {
      * the item really belongs to the given [user].
      */
     fun markAs(user: FirebaseUser, key: String, completed: Boolean) {
-        SchedulerItem.fromKey(keyString = key)
+        SchedulerItem.fromKey(key = key)
                 ?.takeIf { it.belongsTo(user) }
                 ?.markAs(completed = completed)
     }

@@ -90,8 +90,7 @@ class TrieTest {
                 break
             }
         }
-        assertTrue("Missing some values",
-                containsAllRandomlyGeneratedString)
+        assertTrue("Missing some values", containsAllRandomlyGeneratedString)
     }
 
     /**
@@ -113,8 +112,7 @@ class TrieTest {
         val cs211PrefixClosestWord =
                 officialTrie.closestWordToPrefix("CS211")
         assertTrue("Wrong with 'CS211'",
-                cs211PrefixClosestWord == "CS2112"
-                        || cs211PrefixClosestWord == "CS2110")
+                cs211PrefixClosestWord == "CS2112" || cs211PrefixClosestWord == "CS2110")
         val cannotBeFound = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         // very unlikely to appear.
         assertEquals("Wrong with not found",
@@ -123,10 +121,8 @@ class TrieTest {
         for (randomString in listOfRandomStrings) {
             assertEquals("Wrong with itself",
                     randomTrie.closestWordToPrefix(randomString), randomString)
-            val randomLengthOfPrefix =
-                    (Math.random() * randomString.length).toInt()
-            val randomPrefix = randomString.substring(0,
-                    randomLengthOfPrefix)
+            val randomLengthOfPrefix = (Math.random() * randomString.length).toInt()
+            val randomPrefix = randomString.substring(0, randomLengthOfPrefix)
             assertEquals("Wrong with prefix",
                     randomTrie.closestWordToPrefix(randomPrefix)
                             ?.substring(0, randomLengthOfPrefix), randomPrefix)

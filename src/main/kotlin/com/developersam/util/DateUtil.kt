@@ -55,8 +55,8 @@ val yesterday: Date
     }
 
 /**
- * A helper method to add a few [amount] of time with the specified unit
- * ([fieldName]) to a given [date].
+ * A helper method to add a few [amount] of time with the specified unit ([fieldName]) to a given
+ * [date].
  * This method will not modify the old date but will instead create a new one.
  */
 private fun add(date: Date, fieldName: Int, amount: Int): Date {

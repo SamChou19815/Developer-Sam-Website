@@ -14,16 +14,16 @@ import com.google.cloud.datastore.StructuredQuery.PropertyFilter.eq
 object AnalyzedArticles {
 
     /**
-     * [get] gives a list of analyzed articles of a user in [consumer].
+     * [get] gives a list of analyzed articles of a user in [printer].
      */
-    fun get(user: FirebaseUser, consumer: Consumer<List<AnalyzedArticle>>) =
+    fun get(user: FirebaseUser, printer: Consumer<List<AnalyzedArticle>>) =
             Database.query(
                     kind = "ChunkReaderText",
                     filter = eq("userEmail", user.email),
                     orderBy = desc("date")
             ) { s ->
                 s.map { AnalyzedArticle(entity = it, fullDetail = false) }
-                        .toList().consumeBy(consumer = consumer)
+                        .toList().consumeBy(consumer = printer)
             }
 
 }

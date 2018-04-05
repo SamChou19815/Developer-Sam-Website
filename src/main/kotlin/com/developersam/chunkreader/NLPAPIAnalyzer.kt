@@ -86,7 +86,7 @@ internal class NLPAPIAnalyzer private constructor(text: String) {
 
     companion object {
         /**
-         * Obtain an analyzer that has already analyzed the text.
+         * [analyze] creates an analyzer that has already analyzed the text.
          *
          * @param text text to be analyzed.
          * @return the analysis result, or `null` if the API request failed.

@@ -17,8 +17,7 @@ import com.google.cloud.datastore.StructuredQuery.PropertyFilter
 private const val kind = "ChunkReaderContentCategory"
 
 /**
- * [Category] represents a category of the content with all the statistical
- * data.
+ * [Category] represents a category of the content with all the statistical data.
  */
 internal class Category private constructor(
         @field:Transient private val textKey: Key? = null,
@@ -33,8 +32,7 @@ internal class Category private constructor(
 
     companion object {
         /**
-         * [retrieve] fetches a list of categories in string form associated
-         * with the given [textKey].
+         * [retrieve] fetches a list of categories in string form associated with the given [textKey].
          */
         fun retrieve(textKey: Key): List<String> =
                 Database.blockingQuery(
@@ -49,8 +47,7 @@ internal class Category private constructor(
                 }.toList()
 
         /**
-         * [classifier] is used to find the categories of a chunk of
-         * text.
+         * [classifier] is used to find the categories of a chunk of text.
          */
         val classifier = object : ChunkReaderSubProcessor {
             override val name: String = "Category Classifier"

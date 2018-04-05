@@ -8,10 +8,10 @@ import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StringValue
 
 /**
- * [AnnotatedSentence] is essentially a sentence object marked with a
- * [salience] value to denote its importance.
- * It is used to build a summary generation system that lets the user specify
- * number of sentences to be included in the summary.
+ * [AnnotatedSentence] is essentially a sentence object marked with a [salience] value to denote its
+ * importance.
+ * It is used to build a summary generation system that lets the user specify number of sentences to
+ * be included in the summary.
  */
 internal class AnnotatedSentence(
         @field:Transient private val textKey: Key,
@@ -21,8 +21,7 @@ internal class AnnotatedSentence(
 ) : BuildableEntity {
 
     /**
-     * Construct itself from an [Entity] from the database. Used during
-     * information retrieval.
+     * Construct itself from an [Entity] from the database. Used during information retrieval.
      */
     internal constructor(entity: Entity) : this(
             textKey = entity.key.parent,

@@ -10,8 +10,8 @@ import com.google.cloud.datastore.Key
 import java.util.Date
 
 /**
- * A simple data class of scheduler item that can be easily written into
- * database. It is also a simplified object for JSON transmission.
+ * A simple data class of scheduler item that can be easily written into database. It is also a
+ * simplified object for JSON transmission.
  */
 class SchedulerItemData private constructor() {
 
@@ -54,10 +54,8 @@ class SchedulerItemData private constructor() {
     }
 
     /**
-     * [writeToDatabase] updates the corresponding scheduler item with the new
-     * given data if the request is legit (i.e. no missing info and the item
-     * really belongs to the given [user]).
-     * It returns whether the operation was successful.
+     * [writeToDatabase] updates the corresponding scheduler item with the new given data if the
+     * request is legit (i.e. no missing info and the item really belongs to the given [user]).
      */
     fun writeToDatabase(user: FirebaseUser) {
         if (!sanityCheck()) {

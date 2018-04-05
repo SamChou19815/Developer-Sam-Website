@@ -34,8 +34,7 @@ class SchedulerItem internal constructor(
      * Deadline of the item with precision to hours,
      * which is completely optional.
      */
-    private val deadlineHour: Int? =
-            entity.safeGetLong("deadlineHour")?.toInt()
+    private val deadlineHour: Int? = entity.safeGetLong("deadlineHour")?.toInt()
     /**
      * Total hours left, used for filtering outdated [SchedulerItem].
      */
@@ -73,8 +72,7 @@ class SchedulerItem internal constructor(
      * [belongsTo] reports whether the [SchedulerItem] belongs to another
      * [user].
      */
-    internal fun belongsTo(user: FirebaseUser) =
-            user.email == entity.getString("userEmail")
+    internal fun belongsTo(user: FirebaseUser) = user.email == entity.getString("userEmail")
 
     /**
      * [markAs] marks the item as completed or not, as decided by [completed].
@@ -82,9 +80,7 @@ class SchedulerItem internal constructor(
      * It is the client's responsibility to call [belongsTo] to ensure that.
      */
     internal fun markAs(completed: Boolean) {
-        Database.update(
-                entity = entity, updater = { it.set("completed", completed) }
-        )
+        Database.update(entity = entity, updater = { it.set("completed", completed) })
     }
 
     override fun compareTo(other: SchedulerItem): Int {
@@ -113,11 +109,10 @@ class SchedulerItem internal constructor(
     companion object {
 
         /**
-         * Construct a scheduler item fromKey a unique [keyString], which may
-         * fail due to invalid key and return a `null`.
+         * Construct a scheduler item fromKey a unique [key], which may fail due to invalid
+         * key and return a `null`.
          */
-        fun fromKey(keyString: String): SchedulerItem? =
-                Database[keyString]?.let { SchedulerItem(it) }
+        fun fromKey(key: String): SchedulerItem? = Database[key]?.let { SchedulerItem(it) }
 
     }
 }

@@ -16,13 +16,13 @@ import java.io.InputStreamReader
  */
 private typealias Printer = Consumer<Any?>
 
-private typealias FunctionalHandler<T> = (T) -> Any?
 private typealias UserHandler = (user: FirebaseUser, printer: Printer) -> Unit
 private typealias JsonHandler<T> = (T, user: FirebaseUser, printer: Printer) -> Unit
-private typealias BlockingJsonHandler<T> = (T, user: FirebaseUser) -> Any?
 private typealias RequestHandler =
         (req: HttpServerRequest, user: FirebaseUser, printer: Printer) -> Unit
 
+private typealias FunctionalHandler<T> = (T) -> Any?
+private typealias BlockingJsonHandler<T> = (T, user: FirebaseUser) -> Any?
 private typealias BlockingRequestHandler = (req: HttpServerRequest, user: FirebaseUser) -> Any?
 
 /**

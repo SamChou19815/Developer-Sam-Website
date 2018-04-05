@@ -1,7 +1,6 @@
 package com.developersam.scheduler
 
 import com.developersam.main.Database
-import com.developersam.util.addHours
 import com.developersam.web.auth.FirebaseUser
 import com.developersam.web.database.safeGetLong
 import com.developersam.web.database.safeGetString

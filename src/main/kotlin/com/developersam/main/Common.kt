@@ -4,7 +4,7 @@ import com.developersam.web.database.DatastoreClient
 import io.vertx.core.Vertx
 
 /**
- * Global Vertx.
+ * Global [Vertx].
  */
 val vertx: Vertx = Vertx.vertx()
 

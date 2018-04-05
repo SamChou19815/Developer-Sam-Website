@@ -25,8 +25,7 @@ private fun initializedDateFormatter(): SimpleDateFormat {
 /**
  * A consistently used date formatter.
  */
-@JvmField
-internal val dateFormatter = initializedDateFormatter()
+private val dateFormatter = initializedDateFormatter()
 
 /**
  * Convert a [Date] object to [String] in format yyyy-MM-dd in EST.

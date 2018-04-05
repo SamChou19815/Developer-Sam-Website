@@ -40,6 +40,8 @@ repositories {
     maven {
         url 'https://maven-central.storage.googleapis.com'
         // Google's mirror of Maven Central
+    }
+    maven {
         url 'https://jitpack.io'
     }
     jcenter()
@@ -70,9 +72,9 @@ dependencies {
     // TEN
     compile 'com.github.SamChou19815:TEN:1.0.2'
     // VertFireAuth
-    compile 'com.github.SamChou19815:vert-fire-auth:0.1.0'
+    compile 'com.github.SamChou19815:vert-fire-auth:0.2.0'
     // Vertx-GCP-Datastore
-    compile 'com.github.SamChou19815:vertx-gcp-datastore:0.1.0'
+    compile 'com.github.SamChou19815:vertx-gcp-datastore:0.2.0'
 }
 
 shadowJar {

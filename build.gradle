@@ -40,7 +40,7 @@ repositories {
     maven {
         url 'https://maven-central.storage.googleapis.com'
         // Google's mirror of Maven Central
-        maven { url 'https://jitpack.io' }
+        url 'https://jitpack.io'
     }
     jcenter()
     mavenCentral()

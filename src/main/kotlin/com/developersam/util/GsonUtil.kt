@@ -33,9 +33,8 @@ private object GsonDateAdapter : JsonSerializer<Date>, JsonDeserializer<Date> {
 /**
  * Create a [GsonBuilder] of system global configuration.
  */
-private fun globalGsonBuilder(): GsonBuilder {
-    return GsonBuilder().registerTypeAdapter(Date::class.java, GsonDateAdapter)
-}
+private fun globalGsonBuilder(): GsonBuilder =
+        GsonBuilder().registerTypeAdapter(Date::class.java, GsonDateAdapter)
 
 /**
  * A default global [Gson] for the entire app.

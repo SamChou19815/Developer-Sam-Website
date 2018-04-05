@@ -71,6 +71,8 @@ dependencies {
     compile 'com.github.SamChou19815:TEN:1.0.2'
     // VertFireAuth
     compile 'com.github.SamChou19815:vert-fire-auth:0.1.0'
+    // Vertx-GCP-Datastore
+    compile 'com.github.SamChou19815:vertx-gcp-datastore:0.1.0'
 }
 
 shadowJar {

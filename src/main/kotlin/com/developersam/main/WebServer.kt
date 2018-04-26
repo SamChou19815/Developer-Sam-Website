@@ -2,6 +2,7 @@
 
 package com.developersam.main
 
+import cognitivej.vision.face.scenario.FaceScenarios
 import com.developersam.chunkreader.AnalyzedArticle
 import com.developersam.chunkreader.AnalyzedArticles
 import com.developersam.chunkreader.ChunkReaderMainProcessor
@@ -19,16 +20,20 @@ import com.developersam.util.jsonHandler
 import com.developersam.util.requestHandler
 import com.developersam.util.userHandler
 import com.developersam.web.auth.FirebaseAuthHandler
+import com.developersam.web.firebase.FirebaseService
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.StaticHandler
 
 /**
+ * Globally used firebase service.
+ */
+private val firebaseService = FirebaseService(
+        adminSDKConfig = System::class.java.getResourceAsStream("/secret/firebase-adminsdk.json"))
+/**
  * Global Authentication Handler.
  */
-private val authHandler = FirebaseAuthHandler(
-        adminSDKConfig = System::class.java.getResourceAsStream("/secret/firebase-adminsdk.json")
-)
+private val authHandler = FirebaseAuthHandler(firebaseService = firebaseService)
 
 /**
  * Assemble together routers for app TEN.

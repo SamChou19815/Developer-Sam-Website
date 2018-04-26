@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.2.31'
+    ext.kotlin_version = '1.2.40'
     repositories {
         jcenter() // Bintray's repository - a fast Maven Central mirror & more
         mavenCentral()
@@ -71,10 +71,12 @@ dependencies {
     compile 'log4j:log4j:+'
     // TEN
     compile 'com.github.SamChou19815:TEN:1.0.2'
-    // VertFireAuth
-    compile 'com.github.SamChou19815:vert-fire-auth:0.2.0'
+    // VertFire
+    compile 'com.github.SamChou19815:vert-fire:0.3.0'
     // Vertx-GCP-Datastore
     compile 'com.github.SamChou19815:vertx-gcp-datastore:0.2.0'
+    // CognitiveJ
+    compile 'com.github.SamChou19815:cognitivej:0.8.0'
 }
 
 shadowJar {

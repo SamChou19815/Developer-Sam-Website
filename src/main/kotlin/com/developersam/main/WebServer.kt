@@ -2,15 +2,14 @@
 
 package com.developersam.main
 
-import cognitivej.vision.face.scenario.FaceScenarios
 import com.developersam.chunkreader.AnalyzedArticle
 import com.developersam.chunkreader.AnalyzedArticles
 import com.developersam.chunkreader.ChunkReaderMainProcessor
 import com.developersam.chunkreader.RawArticle
 import com.developersam.chunkreader.summary.RetrievedSummaries
 import com.developersam.chunkreader.summary.SummaryRequest
-import com.developersam.game.ten.TenBoard.Companion.respond
-import com.developersam.game.ten.TenClientMove
+import com.developersam.game.ten.Board.Companion.respond
+import com.developersam.game.ten.ClientMove
 import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerItemData
 import com.developersam.util.blockingJsonHandler
@@ -43,7 +42,7 @@ private val tenRouter: Router
         val tenRouter = Router.router(vertx)
         // Respond to human move
         tenRouter.post("/response").functionalHandler(
-                c = TenClientMove::class.java, f = ::respond
+                c = ClientMove::class.java, f = ::respond
         )
         return tenRouter
     }

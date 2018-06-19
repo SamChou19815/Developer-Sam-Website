@@ -12,10 +12,9 @@ import kotlin.streams.toList
 import com.google.cloud.language.v1beta2.Entity as LanguageEntity
 
 /**
- * The [KnowledgePoint] data class represents an entity that the user may have
- * some interest in.
+ * The [Knowledge] data class represents an entity that the user may have some interest in.
  */
-internal class KnowledgePoint private constructor(
+internal class Knowledge private constructor(
         @field:Transient private val textKey: Key? = null,
         internal val name: String,
         @field:Transient internal val type: KnowledgeType,
@@ -45,7 +44,7 @@ internal class KnowledgePoint private constructor(
         if (this === other) {
             return true
         }
-        if (other !is KnowledgePoint) {
+        if (other !is Knowledge) {
             return false
         }
         return name == other.name && type == other.type
@@ -74,7 +73,7 @@ internal class KnowledgePoint private constructor(
             val s = analyzer.entities
                     .stream()
                     .map {
-                        KnowledgePoint(
+                        Knowledge(
                                 textKey = textKey,
                                 name = it.name,
                                 type = KnowledgeType.from(it.type),
@@ -96,10 +95,10 @@ internal class KnowledgePoint private constructor(
         /**
          * A list of all knowledge points.
          */
-        private val knowledgePoints: List<KnowledgePoint> =
+        private val knowledgePoints: List<Knowledge> =
                 Database.blockingQuery(
                         kind = kind, filter = hasAncestor(textKey)
-                ).map(::KnowledgePoint).sortedByDescending { it.salience }.toList()
+                ).map(::Knowledge).sortedByDescending { it.salience }.toList()
 
         /**
          * Fetch an array of top keywords.
@@ -110,9 +109,9 @@ internal class KnowledgePoint private constructor(
 
         /**
          * Fetch an organized map from small finite known [KnowledgeType] to a list of
-         * [KnowledgePoint] objects associated with the text key given in  constructor.
+         * [Knowledge] objects associated with the text key given in  constructor.
          */
-        val asMap: Map<KnowledgeType, List<KnowledgePoint>> =
+        val asMap: Map<KnowledgeType, List<Knowledge>> =
                 knowledgePoints.asSequence().groupBy { it.type }
                         .onEach { (_, v) ->
                             v.sortedByDescending {

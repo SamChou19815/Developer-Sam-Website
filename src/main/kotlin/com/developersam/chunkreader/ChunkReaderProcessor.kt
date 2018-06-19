@@ -1,6 +1,6 @@
 package com.developersam.chunkreader
 
-import com.developersam.chunkreader.knowledge.KnowledgePoint
+import com.developersam.chunkreader.knowledge.Knowledge
 import com.developersam.chunkreader.summary.SentenceSalienceMarker
 import com.developersam.main.Database
 import com.developersam.web.auth.FirebaseUser
@@ -58,7 +58,7 @@ object ChunkReaderProcessor {
             val services = Executors.newFixedThreadPool(3)
             services.submit {
                 val runningTime = measureTimeMillis {
-                    KnowledgePoint.GraphBuilder.build(analyzer = analyzer, textKey = textKey)
+                    Knowledge.GraphBuilder.build(analyzer = analyzer, textKey = textKey)
                 }
                 println("Knowledge Graph Builder finished in $runningTime ms.")
             }

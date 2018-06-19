@@ -1,13 +1,12 @@
 package com.developersam.chunkreader
 
-import com.developersam.chunkreader.knowledge.KnowledgePoint
+import com.developersam.chunkreader.knowledge.Knowledge
 import com.developersam.chunkreader.knowledge.KnowledgeType
 import com.developersam.chunkreader.summary.RetrievedSummaries
 import com.developersam.main.Database
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StringValue
-import com.google.common.base.MoreObjects
 import java.util.Date
 
 /**
@@ -28,14 +27,17 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
     /**
      * Key string of the article for later client info retrieval.
      */
+    @Suppress(names = ["unused"])
     private val keyString: String = textKey.toUrlSafe()
     /**
      * Date of the article submission.
      */
+    @Suppress(names = ["unused"])
     private val date: Date = entity.getTimestamp("date").toDate()
     /**
      * Title of the article.
      */
+    @Suppress(names = ["unused"])
     private val title: String = entity.getString("title")
     /**
      * Number of tokens in the article content.
@@ -56,7 +58,7 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
     /**
      * A map of knowledge type to list of knowledge points
      */
-    private val knowledgeMap: Map<KnowledgeType, List<KnowledgePoint>>?
+    private val knowledgeMap: Map<KnowledgeType, List<Knowledge>>?
     /**
      * A list of summaries of the content.
      */
@@ -72,7 +74,7 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
             val magnitude = sentimentMagnitude / Math.log(tokenCount.toDouble())
             textType = getTextType(score, magnitude).toString()
             // Advanced Info (Knowledge, Summary, Category)
-            val retrievedKnowledgeGraph = KnowledgePoint.RetrievedKnowledgeGraph(textKey)
+            val retrievedKnowledgeGraph = Knowledge.RetrievedKnowledgeGraph(textKey)
             keywords = retrievedKnowledgeGraph.asKeywords
             knowledgeMap = retrievedKnowledgeGraph.asMap
             summaries = RetrievedSummaries(textKey).asList
@@ -83,17 +85,6 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
             knowledgeMap = null
             summaries = null
         }
-    }
-
-    override fun toString(): String {
-        return MoreObjects.toStringHelper(this)
-                .add("keyString", keyString)
-                .add("date", date)
-                .add("title", title)
-                .add("content", content)
-                .add("knowledgeMap", knowledgeMap)
-                .add("summaries", summaries)
-                .toString()
     }
 
     companion object {

@@ -13,16 +13,14 @@ enum class KnowledgeType {
         /**
          * Convert an [Entity.Type] to a [KnowledgeType] in the system.
          */
-        fun from(entityType: Entity.Type): KnowledgeType {
-            return when (entityType) {
-                PERSON -> PERSON
-                LOCATION -> LOCATION
-                ORGANIZATION -> ORGANIZATION
-                EVENT -> EVENT
-                WORK_OF_ART -> WORK_OF_ART
-                CONSUMER_GOOD -> CONSUMER_GOOD
-                else -> UNKNOWN
-            }
+        fun from(entityType: Entity.Type): KnowledgeType = when (entityType) {
+            Entity.Type.PERSON -> PERSON
+            Entity.Type.LOCATION -> LOCATION
+            Entity.Type.ORGANIZATION -> ORGANIZATION
+            Entity.Type.EVENT -> EVENT
+            Entity.Type.WORK_OF_ART -> WORK_OF_ART
+            Entity.Type.CONSUMER_GOOD -> CONSUMER_GOOD
+            Entity.Type.OTHER, Entity.Type.UNKNOWN, Entity.Type.UNRECOGNIZED -> UNKNOWN
         }
     }
 

@@ -1,12 +1,10 @@
 package com.developersam.chunkreader
 
-import com.developersam.chunkreader.category.Category
 import com.developersam.chunkreader.knowledge.KnowledgePoint
 import com.developersam.chunkreader.knowledge.KnowledgeType
 import com.developersam.chunkreader.knowledge.RetrievedKnowledgeGraph
 import com.developersam.chunkreader.summary.RetrievedSummaries
 import com.developersam.main.Database
-import com.developersam.web.database.toDate
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StringValue
@@ -64,10 +62,6 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
      * A list of summaries of the content.
      */
     private val summaries: List<String>?
-    /**
-     * Categories of the content.
-     */
-    private val categories: List<String>?
 
     init {
         if (fullDetail) {
@@ -83,14 +77,12 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
             keywords = retrievedKnowledgeGraph.asKeywords
             knowledgeMap = retrievedKnowledgeGraph.asMap
             summaries = RetrievedSummaries(textKey).asList
-            categories = Category.retrieve(textKey)
         } else {
             content = null
             textType = null
             keywords = null
             knowledgeMap = null
             summaries = null
-            categories = null
         }
     }
 
@@ -102,7 +94,6 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
                 .add("content", content)
                 .add("knowledgeMap", knowledgeMap)
                 .add("summaries", summaries)
-                .add("categories", categories)
                 .toString()
     }
 

@@ -14,8 +14,6 @@ internal enum class TextType(private val description: String) {
     SLIGHT_SUPPORT(description = "Slight support for an opinion"),
     STRONG_SUPPORT(description = "Strong support for an opinion");
 
-    override fun toString(): String {
-        return description
-    }
+    override fun toString(): String = description
 
 }

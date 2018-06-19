@@ -4,7 +4,7 @@ package com.developersam.main
 
 import com.developersam.chunkreader.AnalyzedArticle
 import com.developersam.chunkreader.AnalyzedArticles
-import com.developersam.chunkreader.ChunkReaderMainProcessor
+import com.developersam.chunkreader.ChunkReaderProcessor
 import com.developersam.chunkreader.RawArticle
 import com.developersam.chunkreader.summary.RetrievedSummaries
 import com.developersam.chunkreader.summary.SummaryRequest
@@ -107,7 +107,7 @@ private val chunkReaderRouter: Router
         // Analyze An Item: TIME CONSUMING!
         chunkReaderRouter.post("/analyze").blockingJsonHandler(
                 c = RawArticle::class.java) { rawArticle, user ->
-            ChunkReaderMainProcessor.process(user = user, article = rawArticle)
+            ChunkReaderProcessor.process(user = user, article = rawArticle)
         }
         return chunkReaderRouter
     }

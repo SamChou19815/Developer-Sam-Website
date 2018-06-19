@@ -1,6 +1,5 @@
 package com.developersam.chunkreader.summary
 
-import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
 import com.developersam.main.Database
 import com.google.cloud.datastore.Key
@@ -15,7 +14,7 @@ import java.util.Arrays
  * It will use the processed data from the API to help further analyze the importance of each
  * sentence.
  */
-internal object SentenceSalienceMarker : ChunkReaderSubProcessor {
+internal object SentenceSalienceMarker {
 
     /**
      * Text Rank algorithm constant.
@@ -42,18 +41,16 @@ internal object SentenceSalienceMarker : ChunkReaderSubProcessor {
      */
     private lateinit var similarityMatrix: Array<DoubleArray>
 
-    override val name: String = "Sentence Salience Marker"
-
     /**
      * Obtain a random sentence id from the [annotatedSentences].
      */
-    private val randomSentenceID: Int
-        get() = (Math.random() * annotatedSentences.size).toInt()
+    private val randomSentenceID: Int get() = (Math.random() * annotatedSentences.size).toInt()
 
     /**
      * A helper method to find the index of [beginOffset] from an array of begin offsets that
      * represents ranges of sentence.
      */
+    @JvmStatic
     private fun IntArray.getBeginOffsetIndex(beginOffset: Int): Int {
         val rawIndex = Arrays.binarySearch(this, beginOffset)
         if (rawIndex >= 0) {
@@ -69,6 +66,7 @@ internal object SentenceSalienceMarker : ChunkReaderSubProcessor {
      * Calculate the similarity of two sentences, specified by their IDs ([sentence1], [sentence2])
      * as a [Double].
      */
+    @JvmStatic
     private fun computeSimilarity(sentence1: Int, sentence2: Int): Double {
         val numCommon = Sets.intersection(
                 keywordsArray[sentence1], keywordsArray[sentence2]).size
@@ -93,6 +91,7 @@ internal object SentenceSalienceMarker : ChunkReaderSubProcessor {
      * Build the given sentences and entities into a data structure like a graph that allows the
      * random walk along the sentences graph from the incoming [analyzer] and a [textKey].
      */
+    @JvmStatic
     private fun initSentenceGraph(analyzer: NLPAPIAnalyzer, textKey: Key) {
         /*
          * Sort the sentence by its beginning index, so that the list
@@ -147,6 +146,7 @@ internal object SentenceSalienceMarker : ChunkReaderSubProcessor {
      * Compare the current salience value in [annotatedSentences] to a previous value to check
      * whether they are convergent.
      */
+    @JvmStatic
     private fun convergent(previousSalienceArray: DoubleArray): Boolean {
         for (i in previousSalienceArray.indices) {
             val diff = previousSalienceArray[i] - annotatedSentences[i].salience
@@ -161,6 +161,7 @@ internal object SentenceSalienceMarker : ChunkReaderSubProcessor {
      * Use the Text Rank algorithm to randomly visit the sentence graph until the their annotated
      * salience value has converge.
      */
+    @JvmStatic
     private fun randomVisit() {
         val num = annotatedSentences.size
         if (num == 1) {
@@ -225,7 +226,12 @@ internal object SentenceSalienceMarker : ChunkReaderSubProcessor {
         }
     }
 
-    override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
+    /**
+     * [mark] uses the information from [NLPAPIAnalyzer] and [textKey] to mark salience values for
+     * sentences.
+     */
+    @JvmStatic
+    fun mark(analyzer: NLPAPIAnalyzer, textKey: Key) {
         initSentenceGraph(analyzer = analyzer, textKey = textKey)
         randomVisit()
         Database.insertEntities(entities = annotatedSentences.stream())

@@ -18,8 +18,7 @@ object AnalyzedArticles {
      */
     fun get(user: FirebaseUser, printer: Consumer<List<AnalyzedArticle>>) =
             Database.query(
-                    kind = "ChunkReaderText",
-                    filter = eq("userEmail", user.email),
+                    kind = "ChunkReaderText", filter = eq("userEmail", user.email),
                     orderBy = desc("date")
             ) { s ->
                 s.map { AnalyzedArticle(entity = it, fullDetail = false) }

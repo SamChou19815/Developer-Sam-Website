@@ -1,7 +1,6 @@
 package com.developersam.chunkreader
 
 import com.google.cloud.language.v1beta2.AnalyzeSyntaxResponse
-import com.google.cloud.language.v1beta2.ClassificationCategory
 import com.google.cloud.language.v1beta2.Document
 import com.google.cloud.language.v1beta2.Document.Type
 import com.google.cloud.language.v1beta2.EncodingType.UTF16
@@ -9,95 +8,100 @@ import com.google.cloud.language.v1beta2.Entity
 import com.google.cloud.language.v1beta2.LanguageServiceClient
 import com.google.cloud.language.v1beta2.Sentence
 import com.google.cloud.language.v1beta2.Sentiment
-import java.util.Collections.emptyList
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.logging.Logger
 
 /**
  * A [NLPAPIAnalyzer] using Google Cloud NLP API directly.
  *
  * It should be constructed from the text needed to analyze.
  */
-internal class NLPAPIAnalyzer private constructor(text: String) {
+internal class NLPAPIAnalyzer(text: String) {
 
     /**
-     * Sentiment of the entire document.
+     * [doc] is the document sent to Google.
+     */
+    private val doc: Document = Document.newBuilder()
+            .setContent(text).setType(Type.PLAIN_TEXT).build()
+    /**
+     * [service] is the thread poll for this analyzer.
+     */
+    private val service = Executors.newFixedThreadPool(3)
+    /**
+     * [latch] is the latch for coordination.
+     */
+    private val latch = CountDownLatch(3)
+
+    /**
+     * [sentiment] is the sentiment of the entire document.
+     */
+    val sentiment: Sentiment
+    /**
+     * [entities] is a list of entities extracted from the text.
+     */
+    val entities: List<Entity>
+    /**
+     * [sentences] is a list of sentences extracted from the text.
+     */
+    val sentences: List<Sentence>
+    /**
+     * [tokenCount] is number of tokens in the sentence.
+     */
+    val tokenCount: Int
+
+    /**
+     * [_sentiment] is the backing field of [sentiment].
      */
     @Volatile
-    lateinit var sentiment: Sentiment
-        private set
+    private lateinit var _sentiment: Sentiment
     /**
-     * List of entities extracted from the text.
+     * [_entities] is the backing field of [entities].
      */
     @Volatile
-    lateinit var entities: List<Entity>
-        private set
+    private lateinit var _entities: List<Entity>
     /**
-     * List of sentences extracted from the text.
+     * [_sentences] is the backing field of [sentences].
      */
     @Volatile
-    lateinit var sentences: List<Sentence>
-        private set
+    private lateinit var _sentences: List<Sentence>
     /**
-     * List of categories extracted from the text.
-     */
-    lateinit var categories: List<ClassificationCategory>
-        private set
-    /**
-     * Number of tokens in the sentence.
+     * [tokenCount] is the backing field of [tokenCount].
      */
     @Volatile
-    internal var tokenCount: Int = 0
-        private set
+    private var _tokenCount: Int = 0
 
     init {
-        LanguageServiceClient.create().use { client ->
-            val doc = Document.newBuilder()
-                    .setContent(text)
-                    .setType(Type.PLAIN_TEXT).build()
-            val service = Executors.newFixedThreadPool(3)
-            val latch = CountDownLatch(3)
-            service.submit {
-                sentiment = client.analyzeSentiment(doc).documentSentiment
-                latch.countDown()
+        val client = LanguageServiceClient.create()
+        try {
+            service.submitWithCountdown {
+                _sentiment = client.analyzeSentiment(doc).documentSentiment
             }
-            service.submit {
-                entities = ArrayList(
-                        client.analyzeEntitySentiment(doc, UTF16).entitiesList)
-                latch.countDown()
+            service.submitWithCountdown {
+                _entities = client.analyzeEntitySentiment(doc, UTF16).entitiesList
             }
-            service.submit {
+            service.submitWithCountdown {
                 val r: AnalyzeSyntaxResponse = client.analyzeSyntax(doc, UTF16)
-                tokenCount = r.tokensCount
-                sentences = ArrayList(r.sentencesList)
-                // Analyze Categories
-                categories = if (tokenCount > 25) {
-                    // Google's limitation
-                    ArrayList(client.classifyText(doc).categoriesList)
-                } else {
-                    emptyList()
-                }
-                latch.countDown()
+                _sentences = r.sentencesList
+                _tokenCount = r.tokensCount
             }
             latch.await()
+            sentiment = _sentiment
+            entities = _entities
+            sentences = _sentences
+            tokenCount = _tokenCount
+        } finally {
+            client.close()
+            service.shutdown()
         }
     }
 
-    companion object {
-        /**
-         * [analyze] creates an analyzer that has already analyzed the text.
-         *
-         * @param text text to be analyzed.
-         * @return the analysis result, or `null` if the API request failed.
-         */
-        fun analyze(text: String): NLPAPIAnalyzer? =
-                try {
-                    NLPAPIAnalyzer(text)
-                } catch (e: Exception) {
-                    Logger.getGlobal().throwing("NLPAPIAnalyzer", "analyze", e)
-                    null
-                }
+    /**
+     * [ExecutorService.submitWithCountdown] execute [f] with this [ExecutorService] and make the
+     * latch count down by one.
+     */
+    private inline fun ExecutorService.submitWithCountdown(crossinline f: () -> Unit) {
+        submit { f(); latch.countDown() }
     }
 
 }

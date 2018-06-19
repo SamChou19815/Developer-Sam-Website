@@ -4,7 +4,6 @@ import com.developersam.main.Database
 import com.developersam.web.auth.FirebaseUser
 import com.developersam.web.database.safeGetLong
 import com.developersam.web.database.safeGetString
-import com.developersam.web.database.toDate
 import com.google.cloud.datastore.Entity
 import com.google.common.base.MoreObjects
 import java.util.Date
@@ -71,24 +70,20 @@ class SchedulerItem internal constructor(
      * [belongsTo] reports whether the [SchedulerItem] belongs to another
      * [user].
      */
-    internal fun belongsTo(user: FirebaseUser) = user.email == entity.getString("userEmail")
+    internal fun belongsTo(user: FirebaseUser): Boolean =
+            user.email == entity.getString("userEmail")
 
     /**
      * [markAs] marks the item as completed or not, as decided by [completed].
      * This operation does not check whether the operation is legal.
      * It is the client's responsibility to call [belongsTo] to ensure that.
      */
-    internal fun markAs(completed: Boolean) {
-        Database.update(entity = entity, updater = { it.set("completed", completed) })
-    }
+    internal fun markAs(completed: Boolean): Unit =
+            Database.update(entity = entity, updater = { it.set("completed", completed) })
 
     override fun compareTo(other: SchedulerItem): Int {
         val c: Int = isCompleted.compareTo(other = other.isCompleted)
-        return if (c != 0) {
-            c
-        } else {
-            totalHoursLeft.compareTo(other = other.totalHoursLeft)
-        }
+        return if (c == 0) totalHoursLeft.compareTo(other = other.totalHoursLeft) else c
     }
 
     override fun toString(): String {
@@ -111,7 +106,9 @@ class SchedulerItem internal constructor(
          * Construct a scheduler item fromKey a unique [key], which may fail due to invalid
          * key and return a `null`.
          */
+        @JvmStatic
         fun fromKey(key: String): SchedulerItem? = Database[key]?.let { SchedulerItem(it) }
 
     }
+
 }

@@ -20,8 +20,8 @@ object Scheduler {
      * Requires:
      * - The given [user] must exist.
      */
-    fun getAllSchedulerItems(user: FirebaseUser,
-                             printer: Consumer<List<SchedulerItem>>) {
+    @JvmStatic
+    fun getAllSchedulerItems(user: FirebaseUser, printer: Consumer<List<SchedulerItem>>) {
         val filterUser = PropertyFilter.eq("userEmail", user.email)
         val filterDeadline = PropertyFilter.ge("deadline", Timestamp.of(yesterday))
         val filter = filterUser and filterDeadline
@@ -38,6 +38,7 @@ object Scheduler {
      * [delete] removes a scheduler item from database with a given [key] if
      * the item really belongs to the given [user].
      */
+    @JvmStatic
     fun delete(user: FirebaseUser, key: String) {
         Database.deleteEntity(keyString = key) {
             SchedulerItem.fromKey(key = it)?.belongsTo(user) == true
@@ -49,6 +50,7 @@ object Scheduler {
      * by the given [key] and the desired new completion status [completed] if
      * the item really belongs to the given [user].
      */
+    @JvmStatic
     fun markAs(user: FirebaseUser, key: String, completed: Boolean) {
         SchedulerItem.fromKey(key = key)
                 ?.takeIf { it.belongsTo(user) }

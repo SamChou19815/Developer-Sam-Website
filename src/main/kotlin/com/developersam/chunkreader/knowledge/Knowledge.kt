@@ -2,7 +2,6 @@
 
 package com.developersam.chunkreader.knowledge
 
-import com.developersam.chunkreader.ChunkReaderSubProcessor
 import com.developersam.chunkreader.NLPAPIAnalyzer
 import com.developersam.main.Database
 import com.developersam.web.database.BuildableEntity
@@ -60,31 +59,30 @@ internal class KnowledgePoint private constructor(
 
     override fun hashCode(): Int = name.hashCode() * 31 + type.hashCode()
 
-    companion object {
+    /**
+     * [GraphBuilder] is responsible for building a graph.
+     */
+    object GraphBuilder {
 
         /**
-         * [graphBuilder] is used to help build a knowledge graph.
-         * It will extract useful information from the API and store them into the database.
+         * [build] uses the information from [NLPAPIAnalyzer] and [textKey] to build the
+         * knowledge graph for the given text.
          */
-        val graphBuilder = object : ChunkReaderSubProcessor {
-
-            override val name: String = "Knowledge Graph Builder"
-
-            override fun process(analyzer: NLPAPIAnalyzer, textKey: Key) {
-                val s = analyzer.entities
-                        .parallelStream()
-                        .map {
-                            KnowledgePoint(
-                                    textKey = textKey,
-                                    name = it.name,
-                                    type = KnowledgeType.from(it.type),
-                                    url = it.metadataMap["wikipedia_url"],
-                                    salience = it.salience.toDouble()
-                            )
-                        }
-                        .distinct()
-                Database.insertEntities(entities = s)
-            }
+        @JvmStatic
+        fun build(analyzer: NLPAPIAnalyzer, textKey: Key) {
+            val s = analyzer.entities
+                    .stream()
+                    .map {
+                        KnowledgePoint(
+                                textKey = textKey,
+                                name = it.name,
+                                type = KnowledgeType.from(it.type),
+                                url = it.metadataMap["wikipedia_url"],
+                                salience = it.salience.toDouble()
+                        )
+                    }
+                    .distinct()
+            Database.insertEntities(entities = s)
         }
 
     }
@@ -110,8 +108,7 @@ internal class RetrievedKnowledgeGraph(textKey: Key) {
      * Fetch an array of top keywords.
      */
     val asKeywords: Array<String> =
-            knowledgePoints
-                    .stream().limit(3).map { it.name }
+            knowledgePoints.stream().limit(3).map { it.name }
                     .toArray { size -> arrayOfNulls<String>(size) }
 
     /**

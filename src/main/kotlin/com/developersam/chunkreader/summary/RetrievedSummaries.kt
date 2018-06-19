@@ -8,15 +8,6 @@ import com.google.cloud.datastore.StructuredQuery.OrderBy.desc
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter.hasAncestor
 
 /**
- * Commonly used kind of the entities.
- */
-private const val kind = "ChunkReaderTextSummary"
-/**
- * Commonly used order.
- */
-private val orderBy = desc("salience")
-
-/**
  * [RetrievedSummaries] is used to fetch a list of summaries for a common text key for a given limit
  * (defaults to 5), which will be auto-corrected to 1 if it is below 1.
  */
@@ -26,7 +17,14 @@ class RetrievedSummaries internal constructor(private val textKey: Key, limit: I
      * The actual limit applied.
      */
     private val actualLimit = if (limit > 0) limit else 1
+    /**
+     * The common filter.
+     */
     private val filter = hasAncestor(textKey)
+    /**
+     * The common ordering mechanism.
+     */
+    private val orderBy = desc("salience")
 
     /**
      * Fetch a list of sentences in pure string form associated with the text key given in
@@ -43,7 +41,7 @@ class RetrievedSummaries internal constructor(private val textKey: Key, limit: I
      * [printList] fetches a list of sentences in pure string form associated with the text key
      * given in constructor. It gives the result in [printer].
      */
-    fun printList(printer: Consumer<List<String>>) =
+    fun printList(printer: Consumer<List<String>>): Unit =
             Database.query(kind, filter, orderBy, actualLimit) { s ->
                 s.map { AnnotatedSentence(entity = it) }
                         .sortedBy { it.beginOffset }
@@ -55,9 +53,15 @@ class RetrievedSummaries internal constructor(private val textKey: Key, limit: I
     companion object {
 
         /**
+         * Commonly used kind of the entities.
+         */
+        private const val kind = "ChunkReaderTextSummary"
+
+        /**
          * Construct a [RetrievedSummaries] from a [SummaryRequest], which may
          * fail and return `null` due to bad key value.
          */
+        @JvmStatic
         fun from(summaryRequest: SummaryRequest): RetrievedSummaries? {
             val keyString = summaryRequest.keyString ?: return null
             val key = Key.fromUrlSafe(keyString)
@@ -65,4 +69,5 @@ class RetrievedSummaries internal constructor(private val textKey: Key, limit: I
         }
 
     }
+
 }

@@ -23,7 +23,7 @@ internal class AnnotatedSentence(
     /**
      * Construct itself from an [Entity] from the database. Used during information retrieval.
      */
-    internal constructor(entity: Entity) : this(
+    constructor(entity: Entity) : this(
             textKey = entity.key.parent,
             sentence = entity.getValue<StringValue>("sentence").get(),
             beginOffset = entity.getLong("begin_offset"),

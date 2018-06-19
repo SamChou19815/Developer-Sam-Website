@@ -11,30 +11,19 @@ import java.util.Date
 /**
  * A simple data class of scheduler item that can be easily written into database. It is also a
  * simplified object for JSON transmission.
+ *
+ * @param keyString An optional field of the key, which essentially tells the difference between
+ * a new scheduler item or an old one.
+ * @param description description of the item.
+ * @param deadline deadline of the item.
+ * @param deadlineHour the optional deadline hour.
+ * @param detail optional detail of the item.
  */
-class SchedulerItemData private constructor() {
-
-    /**
-     * An optional field that that essentially tells the difference between
-     * a new scheduler item or an old one.
-     */
-    private val keyString: String? = null
-    /**
-     * Description of the item.
-     */
-    private val description: String? = null
-    /**
-     * Deadline of the item.
-     */
-    private val deadline: Date? = null
-    /**
-     * The optional deadline hour.
-     */
-    private val deadlineHour: Long? = null
-    /**
-     * Optional detail of the item.
-     */
-    private var detail: String? = null
+data class SchedulerItemData(
+        private val keyString: String? = null, private val description: String? = null,
+        private val deadline: Date? = null, private val deadlineHour: Long? = null,
+        private val detail: String? = null
+) {
 
     /**
      * [sanityCheck] returns whether the given inputs are all valid.
@@ -61,10 +50,9 @@ class SchedulerItemData private constructor() {
             return
         }
         val userEmail = user.email
-        val key = keyString?.let(Key::fromUrlSafe)
+        val key = keyString?.let(block = Key::fromUrlSafe)
         Database.upsertEntity(
-                kind = "SchedulerItem",
-                key = key,
+                kind = "SchedulerItem", key = key,
                 validator = { it.getString("userEmail") == userEmail }
         ) {
             it.apply {

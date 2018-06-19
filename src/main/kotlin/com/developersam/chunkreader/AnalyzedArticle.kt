@@ -2,7 +2,6 @@ package com.developersam.chunkreader
 
 import com.developersam.chunkreader.knowledge.KnowledgePoint
 import com.developersam.chunkreader.knowledge.KnowledgeType
-import com.developersam.chunkreader.knowledge.RetrievedKnowledgeGraph
 import com.developersam.chunkreader.summary.RetrievedSummaries
 import com.developersam.main.Database
 import com.google.cloud.datastore.Entity
@@ -53,7 +52,7 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
     /**
      * An array of article keywords.
      */
-    private val keywords: Array<String>?
+    private val keywords: List<String>?
     /**
      * A map of knowledge type to list of knowledge points
      */
@@ -73,7 +72,7 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
             val magnitude = sentimentMagnitude / Math.log(tokenCount.toDouble())
             textType = getTextType(score, magnitude).toString()
             // Advanced Info (Knowledge, Summary, Category)
-            val retrievedKnowledgeGraph = RetrievedKnowledgeGraph(textKey)
+            val retrievedKnowledgeGraph = KnowledgePoint.RetrievedKnowledgeGraph(textKey)
             keywords = retrievedKnowledgeGraph.asKeywords
             knowledgeMap = retrievedKnowledgeGraph.asMap
             summaries = RetrievedSummaries(textKey).asList

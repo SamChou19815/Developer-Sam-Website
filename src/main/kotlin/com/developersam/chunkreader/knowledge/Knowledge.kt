@@ -1,5 +1,3 @@
-@file:JvmName(name = "Knowledge")
-
 package com.developersam.chunkreader.knowledge
 
 import com.developersam.chunkreader.NLPAPIAnalyzer
@@ -10,12 +8,8 @@ import com.developersam.web.database.setString
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter.hasAncestor
+import kotlin.streams.toList
 import com.google.cloud.language.v1beta2.Entity as LanguageEntity
-
-/**
- * Commonly used kind of the entities.
- */
-private const val kind = "ChunkReaderKnowledgeGraph"
 
 /**
  * The [KnowledgePoint] data class represents an entity that the user may have
@@ -59,6 +53,13 @@ internal class KnowledgePoint private constructor(
 
     override fun hashCode(): Int = name.hashCode() * 31 + type.hashCode()
 
+    companion object {
+        /**
+         * Commonly used kind of the entities.
+         */
+        private const val kind = "ChunkReaderKnowledgeGraph"
+    }
+
     /**
      * [GraphBuilder] is responsible for building a graph.
      */
@@ -87,40 +88,38 @@ internal class KnowledgePoint private constructor(
 
     }
 
-}
-
-/**
- * [RetrievedKnowledgeGraph] used to fetch a list of knowledge points.
- *
- * @constructor creates itself from a common text key.
- */
-internal class RetrievedKnowledgeGraph(textKey: Key) {
-
     /**
-     * A list of all knowledge points.
+     * [RetrievedKnowledgeGraph] used to fetch a list of knowledge points.
      */
-    private val knowledgePoints: List<KnowledgePoint> =
-            Database.blockingQuery(
-                    kind = kind, filter = hasAncestor(textKey)
-            ).map(::KnowledgePoint).sortedByDescending { it.salience }.toList()
+    class RetrievedKnowledgeGraph(textKey: Key) {
 
-    /**
-     * Fetch an array of top keywords.
-     */
-    val asKeywords: Array<String> =
-            knowledgePoints.stream().limit(3).map { it.name }
-                    .toArray { size -> arrayOfNulls<String>(size) }
+        /**
+         * A list of all knowledge points.
+         */
+        private val knowledgePoints: List<KnowledgePoint> =
+                Database.blockingQuery(
+                        kind = kind, filter = hasAncestor(textKey)
+                ).map(::KnowledgePoint).sortedByDescending { it.salience }.toList()
 
-    /**
-     * Fetch an organized map from small finite known [KnowledgeType] to a list of [KnowledgePoint]
-     * objects associated with the text key given in  constructor.
-     */
-    val asMap: Map<KnowledgeType, List<KnowledgePoint>> =
-            knowledgePoints.asSequence().groupBy { it.type }
-                    .onEach { (_, v) ->
-                        v.sortedByDescending {
-                            it.salience
+        /**
+         * Fetch an array of top keywords.
+         */
+        val asKeywords: List<String> =
+                knowledgePoints.stream().limit(3).map { it.name }
+                        .toList()
+
+        /**
+         * Fetch an organized map from small finite known [KnowledgeType] to a list of
+         * [KnowledgePoint] objects associated with the text key given in  constructor.
+         */
+        val asMap: Map<KnowledgeType, List<KnowledgePoint>> =
+                knowledgePoints.asSequence().groupBy { it.type }
+                        .onEach { (_, v) ->
+                            v.sortedByDescending {
+                                it.salience
+                            }
                         }
-                    }
+
+    }
 
 }

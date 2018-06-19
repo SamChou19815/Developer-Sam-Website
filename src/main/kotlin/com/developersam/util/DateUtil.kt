@@ -1,5 +1,3 @@
-@file:JvmName(name = "DateUtil")
-
 package com.developersam.util
 
 import java.text.ParseException

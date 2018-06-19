@@ -1,5 +1,3 @@
-@file:JvmName(name = "GsonUtil")
-
 package com.developersam.util
 
 import com.google.gson.Gson

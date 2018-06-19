@@ -31,8 +31,7 @@ class Trie {
          * Report whether the current node has no children, which is a sign that the node can be
          * removed safely.
          */
-        val hasNoChildren
-            get() = map.isEmpty()
+        val hasNoChildren get() = map.isEmpty()
 
         companion object {
             /**

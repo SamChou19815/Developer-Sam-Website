@@ -1,5 +1,3 @@
-@file:JvmName(name = "RouteUtil")
-
 package com.developersam.util
 
 import com.developersam.web.auth.FirebaseUser

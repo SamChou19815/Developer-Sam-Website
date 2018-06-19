@@ -19,17 +19,16 @@ export interface AnalyzedArticle {
   readonly keywords?: string[];
   readonly knowledgeMap?: KnowledgeGraph;
   summaries?: string[];
-  readonly categories?: string[];
 }
 
 export interface KnowledgeGraph {
-  PERSON: KnowledgePoint[];
-  LOCATION: KnowledgePoint[];
-  ORGANIZATION: KnowledgePoint[];
-  EVENT: KnowledgePoint[];
-  WORK_OF_ART: KnowledgePoint[];
-  CONSUMER_GOOD: KnowledgePoint[];
-  UNKNOWN: KnowledgePoint[];
+  readonly PERSON: KnowledgePoint[];
+  readonly LOCATION: KnowledgePoint[];
+  readonly ORGANIZATION: KnowledgePoint[];
+  readonly EVENT: KnowledgePoint[];
+  readonly WORK_OF_ART: KnowledgePoint[];
+  readonly CONSUMER_GOOD: KnowledgePoint[];
+  readonly UNKNOWN: KnowledgePoint[];
 }
 
 /**

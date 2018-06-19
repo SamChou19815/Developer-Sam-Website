@@ -2,14 +2,6 @@
   <mat-card>
     <mat-card-title>Text Type: {{articleDetail.textType}}</mat-card-title>
   </mat-card>
-  <mat-card *ngIf="articleDetail.categories.length > 0">
-    <mat-card-title>Categories</mat-card-title>
-    <mat-card-content>
-      <ul>
-        <li *ngFor="let category of articleDetail.categories">{{category}}</li>
-      </ul>
-    </mat-card-content>
-  </mat-card>
   <mat-card>
     <mat-card-title>Knowledge Graph</mat-card-title>
     <mat-card-content>

@@ -1,6 +1,5 @@
 package com.developersam.chunkreader
 
-import com.developersam.chunkreader.knowledge.Knowledge
 import com.developersam.chunkreader.summary.SentenceSalienceMarker
 import com.developersam.main.Database
 import com.developersam.web.auth.FirebaseUser
@@ -50,8 +49,6 @@ object ChunkReaderProcessor {
                         set("date", Timestamp.now())
                         set("title", title)
                         set("content", buildStringValue(content))
-                        set("sentimentScore", analyzer.sentiment.score.toDouble())
-                        set("sentimentMagnitude", analyzer.sentiment.magnitude.toDouble())
                         set("tokenCount", analyzer.tokenCount.toLong())
                     }
                 }) { textKey ->
@@ -64,7 +61,7 @@ object ChunkReaderProcessor {
             }
             services.submit {
                 val runningTime = measureTimeMillis {
-                    SentenceSalienceMarker.mark(analyzer = analyzer, textKey = textKey)
+                    SentenceSalienceMarker(analyzer = analyzer, textKey = textKey).mark()
                 }
                 println("Sentence Salience Marker finished in $runningTime ms.")
             }

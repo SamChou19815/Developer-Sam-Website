@@ -15,7 +15,6 @@ export interface AnalyzedArticle {
   readonly title: string;
   readonly tokenCount: number;
   readonly content?: string;
-  readonly textType?: string;
   readonly keywords?: string[];
   readonly knowledgeMap?: KnowledgeGraph;
   summaries?: string[];

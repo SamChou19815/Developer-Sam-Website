@@ -11,46 +11,91 @@ import java.util.Arrays
 /**
  * [SentenceSalienceMarker] is used to mark each sentence with a salience value by Text Rank
  * algorithm.
- * It will use the processed data from the API to help further analyze the importance of each
- * sentence.
+ * It will use the processed data from the [NLPAPIAnalyzer] and the [Key] from parent to help
+ * further analyze the importance of each sentence.
+ *
+ * @constructor constructed by the given `analyzer` and a `textKey` as parent.
  */
-internal object SentenceSalienceMarker {
+internal class SentenceSalienceMarker(analyzer: NLPAPIAnalyzer, private val textKey: Key) {
 
-    /**
-     * Text Rank algorithm constant.
-     */
-    private const val D = 0.85
-    /**
-     * The threshold for convergence.
-     */
-    private const val CONVERGENCE_THRESHOLD = 1e-3
     /**
      * A list of [AnnotatedSentence] to be written into database.
      */
-    private lateinit var annotatedSentences: MutableList<AnnotatedSentence>
+    private val annotatedSentences: Array<AnnotatedSentence>
     /**
      * An array that represents the ranges of each sentence.
      */
-    private lateinit var sentenceRanges: IntArray
+    private val sentenceRanges: IntArray
     /**
      * An array of sets of keywords of each sentence.
      */
-    private lateinit var keywordsArray: Array<MutableSet<String>>
+    private val keywordsArray: Array<MutableSet<String>>
     /**
      * The similarity matrix between sentences.
      */
-    private lateinit var similarityMatrix: Array<DoubleArray>
+    private val similarityMatrix: Array<DoubleArray>
+
+    init {
+        /*
+         * Sort the sentence by its beginning index, so that the list
+         * represents the entire paragraph.
+         */
+        val sentences = analyzer.sentences.sortedBy { it.text.beginOffset }
+        val num = sentences.size
+        // Late-init instance variables
+        annotatedSentences = Array(size = num) { i -> sentences[i].toAnnotated() }
+        // Build an array of sentence ranges.
+        sentenceRanges = IntArray(size = num) { i -> sentences[i].text.beginOffset }
+        keywordsArray = Array(size = num) { HashSet<String>() }
+        similarityMatrix = Array(size = num) { DoubleArray(num) }
+        // Build the keywords array to find keywords mapped to each sentence.\
+        analyzer.entities.forEach { entity ->
+            entity.mentionsList.forEach { entityMention ->
+                val entityText: TextSpan = entityMention.text
+                val sentenceID: Int = sentenceRanges.getBeginOffsetIndex(
+                        beginOffset = entityText.beginOffset
+                )
+                keywordsArray[sentenceID].add(element = entityText.content)
+            }
+        }
+        // Build the similarity matrix
+        for (i in 0 until (num - 1)) {
+            for (j in (i + 1) until num) {
+                val similarity = computeSimilarity(s1 = i, s2 = j)
+                similarityMatrix[i][j] = similarity
+                similarityMatrix[j][i] = similarity
+            }
+        }
+    }
 
     /**
-     * Obtain a random sentence id from the [annotatedSentences].
+     * [Sentence.toAnnotated] converts the given sentence in the receiver to annotated sentence in
+     * the initialized form.
      */
-    private val randomSentenceID: Int get() = (Math.random() * annotatedSentences.size).toInt()
+    private fun Sentence.toAnnotated(): AnnotatedSentence = AnnotatedSentence(
+            textKey = textKey,
+            sentence = text.content,
+            beginOffset = text.beginOffset.toLong(),
+            salience = Math.random() // Random init salience
+    )
+
+    /**
+     * Obtain a random sentence id from the [annotatedSentences], which can have an optional
+     * forbidden value.
+     */
+    private fun getRandomSentenceID(forbiddenValue: Int = -1): Int {
+        while (true) {
+            val randomValue = (Math.random() * annotatedSentences.size).toInt()
+            if (randomValue != forbiddenValue) {
+                return randomValue
+            }
+        }
+    }
 
     /**
      * A helper method to find the index of [beginOffset] from an array of begin offsets that
      * represents ranges of sentence.
      */
-    @JvmStatic
     private fun IntArray.getBeginOffsetIndex(beginOffset: Int): Int {
         val rawIndex = Arrays.binarySearch(this, beginOffset)
         if (rawIndex >= 0) {
@@ -63,82 +108,20 @@ internal object SentenceSalienceMarker {
     }
 
     /**
-     * Calculate the similarity of two sentences, specified by their IDs ([sentence1], [sentence2])
+     * Calculate the similarity of two sentences, specified by their IDs ([s1], [s2])
      * as a [Double].
      */
-    @JvmStatic
-    private fun computeSimilarity(sentence1: Int, sentence2: Int): Double {
-        val numCommon = Sets.intersection(
-                keywordsArray[sentence1], keywordsArray[sentence2]).size
-        val sentence1Length = annotatedSentences[sentence1].sentence.length
-        val sentence2Length = annotatedSentences[sentence2].sentence.length
-        if (sentence1Length == 0 || sentence2Length == 0) {
-            throw RuntimeException("Zero length sentence!")
-        }
-        if (sentence1Length == 1) {
-            throw RuntimeException("Abnormal sentence: "
-                    + annotatedSentences[sentence1].sentence)
-        }
-        if (sentence2Length == 1) {
-            throw RuntimeException("Abnormal sentence: "
-                    + annotatedSentences[sentence2].sentence)
-        }
-        return numCommon.toDouble() / (Math.log(sentence1Length.toDouble() +
-                Math.log(sentence2Length.toDouble())))
-    }
-
-    /**
-     * Build the given sentences and entities into a data structure like a graph that allows the
-     * random walk along the sentences graph from the incoming [analyzer] and a [textKey].
-     */
-    @JvmStatic
-    private fun initSentenceGraph(analyzer: NLPAPIAnalyzer, textKey: Key) {
-        /*
-         * Sort the sentence by its beginning index, so that the list
-         * represents the entire paragraph.
-         */
-        val sentences = analyzer.sentences.sortedBy { it.text.beginOffset }
-        val num = sentences.size
-        // Late-init instance variables
-        annotatedSentences = ArrayList(num)
-        sentenceRanges = IntArray(num)
-        keywordsArray = Array(size = num) { HashSet<String>() }
-        similarityMatrix = Array(size = num) {
-            DoubleArray(num)
-        }
-        for (i in 0 until num) {
-            val sentence: Sentence = sentences[i]
-            val text: TextSpan = sentence.text
-            val beginOffset: Int = text.beginOffset
-            // Build a list of annotated sentences.
-            annotatedSentences.add(AnnotatedSentence(
-                    textKey = textKey,
-                    sentence = text.content,
-                    beginOffset = beginOffset.toLong(),
-                    salience = Math.random() // Random init salience
-            ))
-            // Build an array of sentence ranges.
-            sentenceRanges[i] = beginOffset
-        }
-        // Build the keywords array to find keywords mapped to each sentence.
-        for (entity in analyzer.entities) {
-            for (entityMention in entity.mentionsList) {
-                val entityText: TextSpan = entityMention.text
-                val sentenceID: Int = sentenceRanges.getBeginOffsetIndex(
-                        entityText.beginOffset)
-                keywordsArray[sentenceID].add(entityText.content)
-            }
-        }
-        // Build the similarity matrix
-        for (i in 0 until (num - 1)) {
-            for (j in (i + 1) until num) {
-                if (i == j) {
-                    continue
-                }
-                val similarity = computeSimilarity(sentence1 = i, sentence2 = j)
-                similarityMatrix[i][j] = similarity
-                similarityMatrix[j][i] = similarity
-            }
+    private fun computeSimilarity(s1: Int, s2: Int): Double {
+        val numCommon = Sets.intersection(keywordsArray[s1], keywordsArray[s2]).size
+        val sentence1 = annotatedSentences[s1].sentence
+        val sentence2 = annotatedSentences[s2].sentence
+        val s1Length = sentence1.length
+        val s2Length = sentence2.length
+        return when {
+            s1Length <= 1 -> throw RuntimeException("Abnormal sentence: $sentence1")
+            s2Length <= 1 -> throw RuntimeException("Abnormal sentence: $sentence2")
+            else -> numCommon.toDouble() / (Math.log(s1Length.toDouble() +
+                    Math.log(s2Length.toDouble())))
         }
     }
 
@@ -146,7 +129,6 @@ internal object SentenceSalienceMarker {
      * Compare the current salience value in [annotatedSentences] to a previous value to check
      * whether they are convergent.
      */
-    @JvmStatic
     private fun convergent(previousSalienceArray: DoubleArray): Boolean {
         for (i in previousSalienceArray.indices) {
             val diff = previousSalienceArray[i] - annotatedSentences[i].salience
@@ -158,83 +140,82 @@ internal object SentenceSalienceMarker {
     }
 
     /**
+     * [computeNewSalience] calculates and returns the new salience value among [num] sentences,
+     * according to TextRank algorithm with respect to the current [startSentenceIndex].
+     */
+    private fun computeNewSalience(num: Int, startSentenceIndex: Int): Double {
+        var sum = 0.0
+        for (i in 0 until num) {
+            if (i == startSentenceIndex) {
+                continue
+            }
+            val anotherSentence = annotatedSentences[i]
+            val numerator = similarityMatrix[i][startSentenceIndex]
+            var denominator = 0.0
+            for (j in 0 until num) {
+                if (i == j) {
+                    continue
+                }
+                denominator += similarityMatrix[i][j]
+            }
+            if (denominator < 0) {
+                throw RuntimeException("Bad addition!")
+            }
+            if (denominator > 1e-6) {
+                sum += numerator / denominator * anotherSentence.salience
+            }
+        }
+        return (1 - D) + D * sum
+    }
+
+    /**
      * Use the Text Rank algorithm to randomly visit the sentence graph until the their annotated
      * salience value has converge.
      */
-    @JvmStatic
     private fun randomVisit() {
         val num = annotatedSentences.size
-        if (num == 1) {
-            // No need to run the program, always the selected sentence.
-            return
-        }
-        var startSentenceIndex = randomSentenceID
+        var startSentenceIndex = getRandomSentenceID()
         var start = annotatedSentences[startSentenceIndex]
         var counter = 0
-        val previousSalienceArray = DoubleArray(size = num) {
-            Short.MIN_VALUE.toDouble()
-        }
+        val previousSalienceArray = DoubleArray(size = num) { Short.MIN_VALUE.toDouble() }
         while (true) {
-            if (counter % num == 0) {
+            if (counter % 100 == 0) {
                 // Check convergence every `num` times
                 if (convergent(previousSalienceArray = previousSalienceArray)) {
                     return
                 }
-                // Record for future use?
+                // Record for future use.
                 for (i in 0 until num) {
                     previousSalienceArray[i] = annotatedSentences[i].salience
                 }
             }
-            /**
-             * The following block of code computes a new salience according to
-             * Text Rank algorithm.
-             */
-            var sum = 0.0
-            for (i in 0 until num) {
-                if (i == startSentenceIndex) {
-                    continue
-                }
-                val anotherSentence = annotatedSentences[i]
-                val numerator = similarityMatrix[i][startSentenceIndex]
-                var denominator = 0.0
-                for (j in 0 until num) {
-                    if (i == j) {
-                        continue
-                    }
-                    denominator += similarityMatrix[i][j]
-                }
-                if (denominator < 0) {
-                    throw RuntimeException("Bad addition!")
-                }
-                if (denominator > 1e-6) {
-                    sum += numerator / denominator * anotherSentence.salience
-                }
-            }
-            val newSalience = (1 - D) + D * sum
             // Update with a better salience value
-            start.salience = newSalience
+            start.salience = computeNewSalience(num = num, startSentenceIndex = startSentenceIndex)
             counter++
             // Randomly choose another sentence to continue the loop.
-            while (true) {
-                val i = randomSentenceID
-                if (i != startSentenceIndex) {
-                    startSentenceIndex = i
-                    start = annotatedSentences[i]
-                    break
-                }
-            }
+            val i = getRandomSentenceID(forbiddenValue = startSentenceIndex)
+            startSentenceIndex = i
+            start = annotatedSentences[i]
         }
     }
 
     /**
-     * [mark] uses the information from [NLPAPIAnalyzer] and [textKey] to mark salience values for
-     * sentences.
+     * [mark] does the job of marking the sentences.
      */
-    @JvmStatic
-    fun mark(analyzer: NLPAPIAnalyzer, textKey: Key) {
-        initSentenceGraph(analyzer = analyzer, textKey = textKey)
+    fun mark() {
         randomVisit()
-        Database.insertEntities(entities = annotatedSentences.stream())
+        Database.insertEntities(entities = Arrays.stream(annotatedSentences))
+    }
+
+    companion object {
+        /**
+         * Text Rank algorithm constant.
+         */
+        private const val D = 0.85
+        /**
+         * The threshold for convergence.
+         */
+        private const val CONVERGENCE_THRESHOLD = 1e-3
     }
 
 }

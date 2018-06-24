@@ -1,6 +1,5 @@
-package com.developersam.chunkreader.knowledge
+package com.developersam.chunkreader
 
-import com.developersam.chunkreader.NLPAPIAnalyzer
 import com.developersam.main.Database
 import com.developersam.web.database.BuildableEntity
 import com.developersam.web.database.safeGetString
@@ -17,7 +16,7 @@ import com.google.cloud.language.v1beta2.Entity as LanguageEntity
 internal class Knowledge private constructor(
         @field:Transient private val textKey: Key? = null,
         internal val name: String,
-        @field:Transient internal val type: KnowledgeType,
+        @field:Transient internal val type: Type,
         internal val url: String?,
         @field:Transient internal val salience: Double
 ) : BuildableEntity {
@@ -28,7 +27,7 @@ internal class Knowledge private constructor(
      */
     internal constructor(entity: Entity) : this(
             name = entity.getString("name"),
-            type = KnowledgeType.valueOf(entity.getString("type")),
+            type = Type.valueOf(entity.getString("type")),
             url = entity.safeGetString("url"),
             salience = entity.getDouble("salience")
     )
@@ -52,17 +51,39 @@ internal class Knowledge private constructor(
 
     override fun hashCode(): Int = name.hashCode() * 31 + type.hashCode()
 
+    /**
+     * A collection of all known knowledge entity types.
+     */
+    enum class Type { PERSON, LOCATION, ORGANIZATION, EVENT, WORK_OF_ART, CONSUMER_GOOD, UNKNOWN }
+
     companion object {
         /**
          * Commonly used kind of the entities.
          */
         private const val kind = "ChunkReaderKnowledgeGraph"
+
+        /**
+         * Convert an [entityType] from GCP to a [Type] in the system.
+         */
+        private fun convertKnowledgeType(entityType: LanguageEntity.Type): Type =
+                when (entityType) {
+                    LanguageEntity.Type.PERSON -> Type.PERSON
+                    LanguageEntity.Type.LOCATION -> Type.LOCATION
+                    LanguageEntity.Type.ORGANIZATION -> Type.ORGANIZATION
+                    LanguageEntity.Type.EVENT -> Type.EVENT
+                    LanguageEntity.Type.WORK_OF_ART -> Type.WORK_OF_ART
+                    LanguageEntity.Type.CONSUMER_GOOD -> Type.CONSUMER_GOOD
+                    LanguageEntity.Type.OTHER,
+                    LanguageEntity.Type.UNKNOWN,
+                    LanguageEntity.Type.UNRECOGNIZED -> Type.UNKNOWN
+                }
+
     }
 
     /**
      * [GraphBuilder] is responsible for building a graph.
      */
-    object GraphBuilder {
+    internal object GraphBuilder {
 
         /**
          * [build] uses the information from [NLPAPIAnalyzer] and [textKey] to build the
@@ -76,7 +97,7 @@ internal class Knowledge private constructor(
                         Knowledge(
                                 textKey = textKey,
                                 name = it.name,
-                                type = KnowledgeType.from(it.type),
+                                type = convertKnowledgeType(entityType = it.type),
                                 url = it.metadataMap["wikipedia_url"],
                                 salience = it.salience.toDouble()
                         )
@@ -111,7 +132,7 @@ internal class Knowledge private constructor(
          * Fetch an organized map from small finite known [KnowledgeType] to a list of
          * [Knowledge] objects associated with the text key given in  constructor.
          */
-        val asMap: Map<KnowledgeType, List<Knowledge>> =
+        val asMap: Map<Type, List<Knowledge>> =
                 knowledgePoints.asSequence().groupBy { it.type }
                         .onEach { (_, v) ->
                             v.sortedByDescending {

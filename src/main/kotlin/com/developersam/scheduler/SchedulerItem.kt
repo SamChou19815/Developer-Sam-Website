@@ -5,7 +5,6 @@ import com.developersam.web.auth.FirebaseUser
 import com.developersam.web.database.safeGetLong
 import com.developersam.web.database.safeGetString
 import com.google.cloud.datastore.Entity
-import com.google.common.base.MoreObjects
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -84,20 +83,6 @@ class SchedulerItem internal constructor(
     override fun compareTo(other: SchedulerItem): Int {
         val c: Int = isCompleted.compareTo(other = other.isCompleted)
         return if (c == 0) totalHoursLeft.compareTo(other = other.totalHoursLeft) else c
-    }
-
-    override fun toString(): String {
-        return MoreObjects.toStringHelper(this)
-                .add("entity", entity)
-                .add("keyString", keyString)
-                .add("description", description)
-                .add("deadline", deadline)
-                .add("daysLeft", daysLeft)
-                .add("deadlineHour", deadlineHour)
-                .add("hoursLeft", hoursLeft)
-                .add("completed", isCompleted)
-                .add("detail", detail)
-                .toString()
     }
 
     companion object {

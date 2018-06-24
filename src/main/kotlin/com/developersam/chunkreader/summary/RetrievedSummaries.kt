@@ -61,7 +61,6 @@ class RetrievedSummaries internal constructor(private val textKey: Key, limit: I
          * Construct a [RetrievedSummaries] from a [SummaryRequest], which may
          * fail and return `null` due to bad key value.
          */
-        @JvmStatic
         fun from(summaryRequest: SummaryRequest): RetrievedSummaries? {
             val keyString = summaryRequest.keyString ?: return null
             val key = Key.fromUrlSafe(keyString)

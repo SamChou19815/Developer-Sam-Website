@@ -7,7 +7,6 @@ import com.google.cloud.language.v1beta2.EncodingType.UTF16
 import com.google.cloud.language.v1beta2.Entity
 import com.google.cloud.language.v1beta2.LanguageServiceClient
 import com.google.cloud.language.v1beta2.Sentence
-import com.google.cloud.language.v1beta2.Sentiment
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -19,24 +18,6 @@ import java.util.concurrent.Executors
  */
 internal class NLPAPIAnalyzer(text: String) {
 
-    /**
-     * [doc] is the document sent to Google.
-     */
-    private val doc: Document = Document.newBuilder()
-            .setContent(text).setType(Type.PLAIN_TEXT).build()
-    /**
-     * [service] is the thread poll for this analyzer.
-     */
-    private val service = Executors.newFixedThreadPool(3)
-    /**
-     * [latch] is the latch for coordination.
-     */
-    private val latch = CountDownLatch(3)
-
-    /**
-     * [sentiment] is the sentiment of the entire document.
-     */
-    val sentiment: Sentiment
     /**
      * [entities] is a list of entities extracted from the text.
      */
@@ -51,10 +32,14 @@ internal class NLPAPIAnalyzer(text: String) {
     val tokenCount: Int
 
     /**
-     * [_sentiment] is the backing field of [sentiment].
+     * [service] is the thread poll for this analyzer.
      */
-    @Volatile
-    private lateinit var _sentiment: Sentiment
+    private val service = Executors.newFixedThreadPool(3)
+    /**
+     * [latch] is the latch for coordination.
+     */
+    private val latch = CountDownLatch(2)
+
     /**
      * [_entities] is the backing field of [entities].
      */
@@ -74,9 +59,8 @@ internal class NLPAPIAnalyzer(text: String) {
     init {
         val client = LanguageServiceClient.create()
         try {
-            service.submitWithCountdown {
-                _sentiment = client.analyzeSentiment(doc).documentSentiment
-            }
+            val doc: Document = Document.newBuilder()
+                    .setContent(text).setType(Type.PLAIN_TEXT).build()
             service.submitWithCountdown {
                 _entities = client.analyzeEntitySentiment(doc, UTF16).entitiesList
             }
@@ -86,7 +70,6 @@ internal class NLPAPIAnalyzer(text: String) {
                 _tokenCount = r.tokensCount
             }
             latch.await()
-            sentiment = _sentiment
             entities = _entities
             sentences = _sentences
             tokenCount = _tokenCount

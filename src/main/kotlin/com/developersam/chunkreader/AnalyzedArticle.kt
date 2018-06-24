@@ -1,7 +1,5 @@
 package com.developersam.chunkreader
 
-import com.developersam.chunkreader.knowledge.Knowledge
-import com.developersam.chunkreader.knowledge.KnowledgeType
 import com.developersam.chunkreader.summary.RetrievedSummaries
 import com.developersam.main.Database
 import com.google.cloud.datastore.Entity
@@ -48,17 +46,13 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
      */
     private val content: String?
     /**
-     * Type of the recognized text.
-     */
-    private val textType: String?
-    /**
      * An array of article keywords.
      */
     private val keywords: List<String>?
     /**
      * A map of knowledge type to list of knowledge points
      */
-    private val knowledgeMap: Map<KnowledgeType, List<Knowledge>>?
+    private val knowledgeMap: Map<Knowledge.Type, List<Knowledge>>?
     /**
      * A list of summaries of the content.
      */
@@ -68,11 +62,6 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
         if (fullDetail) {
             // Basic Info (Type)
             content = entity.getValue<StringValue>("content").get()
-            val sentimentScore = entity.getDouble("sentimentScore")
-            val sentimentMagnitude = entity.getDouble("sentimentMagnitude")
-            val score = sentimentScore / Math.log(tokenCount.toDouble())
-            val magnitude = sentimentMagnitude / Math.log(tokenCount.toDouble())
-            textType = getTextType(score, magnitude).toString()
             // Advanced Info (Knowledge, Summary, Category)
             val retrievedKnowledgeGraph = Knowledge.RetrievedKnowledgeGraph(textKey)
             keywords = retrievedKnowledgeGraph.asKeywords
@@ -80,7 +69,6 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
             summaries = RetrievedSummaries(textKey).asList
         } else {
             content = null
-            textType = null
             keywords = null
             knowledgeMap = null
             summaries = null
@@ -88,38 +76,6 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
     }
 
     companion object {
-
-        /**
-         * The threshold for a biased sentiment.
-         */
-        private const val scoreThreshold: Double = 0.05
-        /**
-         * The threshold for a strong sentiment.
-         */
-        private const val magnitudeThreshold: Double = 0.84
-
-        /**
-         * Infer [TextType] from scaled sentiment [score] and sentiment [magnitude].
-         */
-        private fun getTextType(score: Double, magnitude: Double): TextType {
-            return when {
-                score < -scoreThreshold -> if (magnitude < magnitudeThreshold) {
-                    TextType.SLIGHT_OPPOSITION
-                } else {
-                    TextType.STRONG_OPPOSITION
-                }
-                score < scoreThreshold -> if (magnitude < magnitudeThreshold) {
-                    TextType.CONCEPT
-                } else {
-                    TextType.MIXED
-                }
-                else -> if (magnitude < magnitudeThreshold) {
-                    TextType.SLIGHT_SUPPORT
-                } else {
-                    TextType.STRONG_SUPPORT
-                }
-            }
-        }
 
         /**
          * Create a [AnalyzedArticle] with full detail from a [keyString], which may not be

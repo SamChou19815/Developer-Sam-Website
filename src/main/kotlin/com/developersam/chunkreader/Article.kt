@@ -10,7 +10,6 @@ import com.developersam.typestore.toUTCMillis
 import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
-import java.util.concurrent.Executors
 import kotlin.system.measureTimeMillis
 import com.google.cloud.language.v1beta2.Entity as LanguageEntity
 
@@ -68,6 +67,7 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
      * [ArticleEntity] is the entity definition for the [Article]'s raw text part.
      */
     private class ArticleEntity(entity: Entity) : TypedEntity<Table>(entity = entity) {
+        val userId: String = Table.userId.delegatedValue
         val time: Long = Table.time.delegatedValue.toUTCMillis()
         val title = Table.title.delegatedValue
         val tokenCount = Table.tokenCount.delegatedValue
@@ -112,14 +112,11 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
          * processing has succeeded without error.
          */
         @JvmStatic
-        fun process(user: FirebaseUser, article: RawArticle): Boolean {
-            val (title, content) = article.takeIf(RawArticle::isValid) ?: run {
-                println("Article is not valid!")
-                return false
-            }
+        fun process(user: FirebaseUser, article: RawArticle) {
+            val (title, content) = article
             val analyzer = runAnalyzerWithLog(content = content) ?: run {
                 println("Processing failed!")
-                return false
+                return
             }
             val textKey = Db.insert {
                 it[Table.userId] = user.uid
@@ -138,12 +135,17 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
                         entities = analyzer.entities
                 )
             }.also { println("Sentence Salience Marker finished in $it ms.") }
-            return true
         }
 
     }
 
     companion object {
+
+        /**
+         * [userCanAccess] reports whether a [user] can access an article with this [key].
+         */
+        fun userCanAccess(user: FirebaseUser, key: Key): Boolean =
+                Db[key]?.let { it.userId == user.uid } ?: false
 
         /**
          * [get] returns a list of articles associated with the given [user].
@@ -156,10 +158,12 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
 
         /**
          * [get] returns a [Article] with full detail from a [key], which may not exist due to a
-         * wrong key.
+         * wrong key. It also checks whether the [user] has the permission.
          */
-        operator fun get(key: Key): Article? =
-                Db[key]?.let { Article(article = it, fullDetail = true) }
+        operator fun get(user: FirebaseUser, key: Key): Article? =
+                Db[key]?.takeIf { it.userId == user.uid }?.let { article ->
+                    Article(article = article, fullDetail = true)
+                }
 
     }
 

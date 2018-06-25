@@ -16,6 +16,7 @@ import com.google.cloud.datastore.Key
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.StaticHandler
+import kotlin.concurrent.thread
 
 /**
  * Globally used firebase service.
@@ -71,19 +72,24 @@ private val chunkReaderRouter: Router = Router.router(vertx).apply {
     // Load Items
     get("/load").blockingRequestHandler { _, user -> Article[user] }
     // Display Article Detail
-    get("/article_detail").blockingRequestHandler { req, _ ->
+    get("/article_detail").blockingRequestHandler { req, user ->
         val key = Key.fromUrlSafe(req.getParam("key"))
-        Article[key]
+        Article[user, key]
     }
     // Adjust Amount of Summary
-    post("/adjust_summary").blockingRequestHandler { req, _ ->
+    post("/adjust_summary").blockingRequestHandler { req, user ->
         val key = Key.fromUrlSafe(req.getParam("key"))
-        req.getParam("limit")?.toInt()
-                ?.let { limit -> Summary[key, limit] } ?: Summary[key]
+        if (Article.userCanAccess(user = user, key = key)) {
+            val limit = req.getParam("limit").toInt()
+            Summary[key, limit]
+        } else emptyList()
     }
     // Analyze An Item
     post("/analyze").blockingJsonHandler<RawArticle> { article, user ->
-        Article.Processor.process(user = user, article = article)
+        if (article.isValid) {
+            thread(start = true) { Article.Processor.process(user = user, article = article) }
+            true
+        } else false
     }
 }
 

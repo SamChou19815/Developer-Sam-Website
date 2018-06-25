@@ -1,7 +1,7 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormControl } from "@angular/forms";
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { SchedulerItemData } from '../scheduler-item';
+import { SchedulerItem } from '../scheduler-item';
 
 @Component({
   selector: 'app-write-scheduler-item-dialog',
@@ -10,49 +10,58 @@ import { SchedulerItemData } from '../scheduler-item';
 })
 export class WriteSchedulerItemDialogComponent implements OnInit {
 
-  /**
-   * Description field input.
-   */
-  @ViewChild('descriptionInput') descriptionInput: NgModel;
-  /**
-   * Deadline field input.
-   */
-  @ViewChild('deadlineInput') deadlineInput: NgModel;
-  /**
-   * Data of scheduler item.
-   */
-  schedulerItemData: SchedulerItemData;
+  readonly key: string | undefined;
+  title: string;
+  date: FormControl;
+  hour: number;
+  private readonly isCompleted: boolean;
+  detail: string;
 
-  /**
-   * Inject data to the dialog.
-   *
-   * @param data injected data.
-   */
   constructor(@Inject(MAT_DIALOG_DATA) data: any) {
-    this.schedulerItemData = data;
+    const item = data as SchedulerItem;
+    this.key = item.key;
+    this.title = item.title;
+    const d = item.deadlineDate;
+    this.date = new FormControl(new Date(d.getTime()));
+    this.hour = d.getHours();
+    this.isCompleted = item.isCompleted;
+    this.detail = item.detail;
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
-  /**
-   * Report whether the submit button should be disabled.
-   *
-   * @returns {boolean} whether the submit button should be disabled.
-   */
+  private get deadline(): number {
+    const d: Date = this.date.value;
+    d.setHours(this.hour, 0, 0, 0);
+    return d.getTime();
+  }
+
+  // noinspection JSMethodCanBeStatic
+  get possibleHours(): number[] {
+    const array = Array<number>(24);
+    for (let i = 0; i < 24; i++) {
+      array[i] = i;
+    }
+    return array;
+  }
+
   get submitDisabled(): boolean {
-    const basicCheck = !this.descriptionInput.valid || !this.deadlineInput.valid;
-    if (basicCheck) {
+    try {
+      return this.title.trim().length === 0 || new Date().getTime() - this.deadline > 0;
+    } catch (e) {
       return true;
     }
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const dayCheck = yesterday.getTime() - new Date(this.schedulerItemData.deadline).getTime() > 0;
-    if (dayCheck) {
-      return true;
-    }
-    return this.schedulerItemData.deadlineHour !== null && this.schedulerItemData.deadlineHour !== undefined
-      && !Number.isInteger(this.schedulerItemData.deadlineHour)
-      && (this.schedulerItemData.deadlineHour <= 0 || this.schedulerItemData.deadlineHour > 24);
+  }
+
+  get generatedItem(): SchedulerItem {
+    return <SchedulerItem>{
+      key: this.key,
+      title: this.detail,
+      deadline: this.deadline,
+      isCompleted: this.isCompleted,
+      detail: this.detail
+    };
   }
 
 }

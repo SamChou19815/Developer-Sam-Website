@@ -40,39 +40,31 @@ internal class NLPAPIAnalyzer(text: String) {
      */
     private val latch = CountDownLatch(2)
 
-    /**
-     * [_entities] is the backing field of [entities].
-     */
-    @Volatile
-    private lateinit var _entities: List<Entity>
-    /**
-     * [_sentences] is the backing field of [sentences].
-     */
-    @Volatile
-    private lateinit var _sentences: List<Sentence>
-    /**
-     * [tokenCount] is the backing field of [tokenCount].
-     */
-    @Volatile
-    private var _tokenCount: Int = 0
-
     init {
         val client = LanguageServiceClient.create()
         try {
             val doc: Document = Document.newBuilder()
                     .setContent(text).setType(Type.PLAIN_TEXT).build()
+            var entities = emptyList<Entity>()
+            var sentences = emptyList<Sentence>()
+            var tokenCount = 0
             service.submitWithCountdown {
-                _entities = client.analyzeEntitySentiment(doc, UTF16).entitiesList
+                val temp = client.analyzeEntitySentiment(doc, UTF16).entitiesList
+                synchronized(client) {
+                    entities = temp
+                }
             }
             service.submitWithCountdown {
                 val r: AnalyzeSyntaxResponse = client.analyzeSyntax(doc, UTF16)
-                _sentences = r.sentencesList
-                _tokenCount = r.tokensCount
+                synchronized(client) {
+                    sentences = r.sentencesList
+                    tokenCount = r.tokensCount
+                }
             }
             latch.await()
-            entities = _entities
-            sentences = _sentences
-            tokenCount = _tokenCount
+            this.entities = entities
+            this.sentences = sentences
+            this.tokenCount = tokenCount
         } finally {
             client.close()
             service.shutdown()

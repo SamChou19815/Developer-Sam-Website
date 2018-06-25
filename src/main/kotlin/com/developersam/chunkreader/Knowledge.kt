@@ -57,6 +57,7 @@ internal class Knowledge private constructor(
     enum class Type { PERSON, LOCATION, ORGANIZATION, EVENT, WORK_OF_ART, CONSUMER_GOOD, UNKNOWN }
 
     companion object {
+
         /**
          * Commonly used kind of the entities.
          */

@@ -1,6 +1,6 @@
-<app-scheduler-item *ngFor="let item of schedulerItems"
+<app-scheduler-item *ngFor="let item of items"
                     [schedulerItem]="item"
-                    (editClicked)="openWriteItemDialog(item)"
+                    (editClicked)="editItem(item)"
                     (deleteClicked)="deleteItem(item)"
                     (markAsClicked)="markAs($event, item)"></app-scheduler-item>
-<button color="primary" mat-fab (click)="openAddItemDialog()">+</button>
+<button color="primary" mat-fab (click)="addItem()">+</button>

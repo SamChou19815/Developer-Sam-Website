@@ -2,9 +2,12 @@ package com.developersam.chunkreader
 
 import com.developersam.chunkreader.summary.RetrievedSummaries
 import com.developersam.main.Database
+import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.StringValue
+import com.google.cloud.datastore.StructuredQuery.OrderBy.desc
+import com.google.cloud.datastore.StructuredQuery.PropertyFilter.eq
 import java.util.Date
 
 /**
@@ -77,12 +80,18 @@ class AnalyzedArticle(entity: Entity, fullDetail: Boolean = false) {
 
     companion object {
 
+        operator fun get(user: FirebaseUser): List<AnalyzedArticle> =
+                Database.blockingQuery(
+                        kind = "ChunkReaderText", filter = eq("userEmail", user.email),
+                        orderBy = desc("date")
+                ).map { AnalyzedArticle(entity = it, fullDetail = false) }.toList()
+
         /**
-         * Create a [AnalyzedArticle] with full detail from a [keyString], which may not be
+         * Create a [AnalyzedArticle] with full detail from a [key], which may not be
          * created due to a wrong key.
          */
-        fun fromKey(keyString: String?): AnalyzedArticle? =
-                keyString?.let { k ->
+        fun fromKey(key: String?): AnalyzedArticle? =
+                key?.let { k ->
                     Database[k]?.let {
                         AnalyzedArticle(entity = it, fullDetail = true)
                     }

@@ -1,60 +1,47 @@
 import { NgModule } from '@angular/core';
 import {
+  MatBadgeModule,
   MatButtonModule,
-  MatCardModule, MatCheckboxModule, MatDatepickerModule, MatDialogModule, MatFormFieldModule,
-  MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatNativeDateModule, MatProgressBarModule,
+  MatCardModule,
+  MatCheckboxModule,
+  MatChipsModule,
+  MatDatepickerModule,
+  MatDialogModule,
+  MatDividerModule,
+  MatFormFieldModule,
+  MatIconModule,
+  MatInputModule,
+  MatListModule,
+  MatMenuModule,
+  MatNativeDateModule,
+  MatProgressBarModule,
   MatProgressSpinnerModule,
   MatRadioModule,
   MatSelectModule,
-  MatSidenavModule, MatSliderModule,
+  MatSidenavModule,
+  MatSliderModule,
+  MatTableModule,
   MatTabsModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatTooltipModule
 } from '@angular/material';
 
 @NgModule({
   imports: [
-    MatSidenavModule,
-    MatToolbarModule,
-    MatProgressSpinnerModule,
-    MatTabsModule,
-    MatIconModule,
-    MatListModule,
-    MatMenuModule,
-    MatCardModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatRadioModule,
-    MatSelectModule,
-    MatNativeDateModule,
-    MatDatepickerModule,
-    MatSliderModule,
-    MatProgressBarModule,
-    MatDialogModule
+    MatSidenavModule, MatToolbarModule, MatProgressSpinnerModule, MatTabsModule,
+    MatIconModule, MatListModule, MatMenuModule, MatCardModule, MatBadgeModule, MatButtonModule,
+    MatCheckboxModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatRadioModule,
+    MatSelectModule, MatNativeDateModule, MatDatepickerModule, MatSliderModule, MatTableModule,
+    MatProgressBarModule, MatDialogModule, MatChipsModule, MatTooltipModule
   ],
   exports: [
-    MatSidenavModule,
-    MatToolbarModule,
-    MatProgressSpinnerModule,
-    MatTabsModule,
-    MatIconModule,
-    MatListModule,
-    MatMenuModule,
-    MatCardModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatRadioModule,
-    MatSelectModule,
-    MatNativeDateModule,
-    MatDatepickerModule,
-    MatSliderModule,
-    MatProgressBarModule,
-    MatDialogModule
+    MatSidenavModule, MatToolbarModule, MatProgressSpinnerModule, MatTabsModule,
+    MatIconModule, MatListModule, MatMenuModule, MatCardModule, MatBadgeModule, MatButtonModule,
+    MatCheckboxModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatRadioModule,
+    MatSelectModule, MatNativeDateModule, MatDatepickerModule, MatSliderModule, MatTableModule,
+    MatProgressBarModule, MatDialogModule, MatChipsModule, MatTooltipModule
   ],
   declarations: []
 })
-export class MaterialModule {}
-
+export class MaterialModule {
+}

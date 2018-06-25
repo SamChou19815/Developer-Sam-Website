@@ -24,35 +24,33 @@ private typealias BlockingJsonHandler<T> = (T, user: FirebaseUser) -> Any?
 private typealias BlockingRequestHandler = (req: HttpServerRequest, user: FirebaseUser) -> Any?
 
 /**
- * [RoutingContext.toJson] converts the body of the `RoutingContext` to a parsed json object, with
- * type specified by [clazz].
+ * [RoutingContext.toJson] converts the body of the `RoutingContext` to a parsed json object.
  */
-private fun <T> RoutingContext.toJson(clazz: Class<T>): T =
-        gson.fromJson(InputStreamReader(ByteBufInputStream(body.byteBuf)), clazz)
+inline fun <reified T> RoutingContext.toJson(): T =
+        gson.fromJson(InputStreamReader(ByteBufInputStream(body.byteBuf)), T::class.java)
 
 /**
  * [RoutingContext.printer] creates a printer that can be used to print structured data to the
  * response stream.
  */
-private val RoutingContext.printer: Printer
+val RoutingContext.printer: Printer
     get() = {
-        if (it === Unit) {
-            response().end()
-        } else {
-            response().end(gson.toJson(it))
+        when {
+            it === Unit -> response().end()
+            it is String -> response().end(it)
+            else -> response().end(gson.toJson(it))
         }
     }
 
 /**
- * [Route.functionalHandler] creates a handler that lets the router handle a request with an object
- * of type [c].
+ * [Route.functionalHandler] creates a handler that lets the router handle a request with an object.
  * [f] should directly gives back the result.
  *
  * The handler is blocking.
  */
-fun <T> Route.functionalHandler(c: Class<T>, f: FunctionalHandler<T>): Route =
+inline fun <reified T> Route.functionalHandler(crossinline f: FunctionalHandler<T>): Route =
         blockingHandler {
-            val req = it.toJson(clazz = c)
+            val req: T = it.toJson<T>()
             val res = f(req)
             it.response().end(gson.toJson(res))
         }
@@ -71,8 +69,8 @@ fun Route.userHandler(h: UserHandler): Route = handler { h(it.user().firebaseUse
  *
  * The handler should be non-blocking.
  */
-fun <T> Route.jsonHandler(c: Class<T>, h: JsonHandler<T>): Route =
-        handler { h(it.toJson(clazz = c), it.user().firebaseUser, it.printer) }
+inline fun <reified T> Route.jsonHandler(crossinline h: JsonHandler<T>): Route =
+        handler { h(it.toJson(), it.user().firebaseUser, it.printer) }
 
 /**
  * [Route.blockingHandler] creates a handler that lets the router handle a request with a known
@@ -81,9 +79,9 @@ fun <T> Route.jsonHandler(c: Class<T>, h: JsonHandler<T>): Route =
  *
  * The handler is blocking.
  */
-fun <T> Route.blockingJsonHandler(c: Class<T>, h: BlockingJsonHandler<T>): Route =
+inline fun <reified T> Route.blockingJsonHandler(crossinline h: BlockingJsonHandler<T>): Route =
         blockingHandler {
-            val res = h(it.toJson(clazz = c), it.user().firebaseUser)
+            val res = h(it.toJson(), it.user().firebaseUser)
             it.response().end(gson.toJson(res))
         }
 

@@ -19,7 +19,7 @@ plugins {
 
 apply plugin: 'com.google.cloud.tools.appengine'
 
-group = 'com.developersam.web'
+group = 'com.developersam'
 version = '4.0.0'
 
 sourceCompatibility = 1.8  // App Engine Standard uses Java 8
@@ -44,18 +44,15 @@ repositories {
     maven {
         url 'https://jitpack.io'
     }
-    maven {
-        url 'https://maven-central.storage.googleapis.com'
-    }
 }
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     testImplementation 'junit:junit:4.12'
     // Vert.x
-    implementation 'io.vertx:vertx-core:+'
-    implementation 'io.vertx:vertx-web:+'
-    implementation 'io.vertx:vertx-lang-kotlin:+'
+    implementation 'io.vertx:vertx-core:3.5.2'
+    implementation 'io.vertx:vertx-web:3.5.2'
+    implementation 'io.vertx:vertx-lang-kotlin:3.5.2'
     // Google Cloud API
     implementation 'com.google.cloud:google-cloud-datastore:+'
     implementation 'com.google.cloud:google-cloud-language:+'
@@ -64,12 +61,12 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'org.danilopianini:gson-extras:0.2.1'
     // Logging
-    implementation 'org.slf4j:slf4j-api:+'
-    implementation 'org.slf4j:jcl-over-slf4j:+'
-    implementation 'org.slf4j:slf4j-log4j12:+'
-    implementation 'log4j:log4j:+'
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'org.slf4j:jcl-over-slf4j:1.7.25'
+    implementation 'org.slf4j:slf4j-log4j12:1.7.25'
+    implementation 'log4j:log4j:1.2.17'
     // My Libraries
-    implementation 'com.github.SamChou19815:TypedStore:master-SNAPSHOT'
+    implementation 'com.github.SamChou19815:TypedStore:c71d42a55f'
     implementation 'com.github.SamChou19815:vert-fire:0.3.0'
     implementation 'com.github.SamChou19815:vertx-gcp-datastore:0.2.0'
     // Apps Backend
@@ -105,4 +102,3 @@ appengine {
     }
 
 }
-

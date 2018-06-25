@@ -10,8 +10,8 @@ import { SchedulerNetworkService } from '../scheduler-network.service';
 export class SchedulerItemComponent implements OnInit {
 
   @Input() schedulerItem: SchedulerItem;
-  @Output() editClicked = new EventEmitter<void>();
-  @Output() deleteClicked = new EventEmitter<void>();
+  @Output() editClicked = new EventEmitter<undefined>();
+  @Output() deleteClicked = new EventEmitter<undefined>();
   @Output() markAsClicked = new EventEmitter<boolean>();
 
   /**
@@ -22,16 +22,6 @@ export class SchedulerItemComponent implements OnInit {
   constructor(private schedulerNetworkService: SchedulerNetworkService) { }
 
   ngOnInit() {}
-
-  /**
-   * A helper property to output the string for the deadline.
-   *
-   * @returns {string} the formatted string for the deadline.
-   */
-  get deadline(): string {
-    const actualDeadlineHour: number = this.schedulerItem.deadlineHour ? this.schedulerItem.deadlineHour : 24;
-    return `${this.schedulerItem.deadline} ${actualDeadlineHour - 1}:59`;
-  }
 
   /**
    * Compute style class of the component.
@@ -49,29 +39,6 @@ export class SchedulerItemComponent implements OnInit {
     } else {
       return 'level-3-urgent';
     }
-  }
-
-  /**
-   * Edit itself.
-   */
-  editMyself(): void {
-    this.editClicked.emit(null);
-  }
-
-  /**
-   * Delete itself from the server.
-   */
-  deleteMyself(): void {
-    this.deleteClicked.emit(null);
-  }
-
-  /**
-   * Try to mark itself as completed or uncompleted.
-   *
-   * @param {boolean} completed true => completed, false => uncompleted.
-   */
-  markAs(completed: boolean): void {
-    this.markAsClicked.emit(completed);
   }
 
 }

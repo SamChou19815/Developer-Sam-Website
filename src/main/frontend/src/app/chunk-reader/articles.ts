@@ -10,8 +10,8 @@ export interface RawArticle {
  * Defines the shape of an analyzed article.
  */
 export interface AnalyzedArticle {
-  readonly keyString: string;
-  readonly date: string;
+  readonly key: string;
+  readonly time: number;
   readonly title: string;
   readonly tokenCount: number;
   readonly content?: string;

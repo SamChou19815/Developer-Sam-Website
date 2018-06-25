@@ -1,6 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import {
+  PUSHED_CONTROLLER_DATA,
+  PushedControllerOverlayRef
+} from '../../overlay/push-controller.service';
 import { PushedControllerOverlayComponent } from '../../overlay/pushed-controller-overlay.component';
-import { PUSHED_CONTROLLER_DATA, PushedControllerOverlayRef } from '../../overlay/push-controller.service';
 import { AnalyzedArticle } from '../articles';
 import { ChunkReaderNetworkService } from '../chunk-reader-network.service';
 
@@ -9,7 +12,8 @@ import { ChunkReaderNetworkService } from '../chunk-reader-network.service';
   templateUrl: './chunk-reader-article-detail.component.html',
   styleUrls: ['../../overlay/pushed-controller-overlay.component.scss', './chunk-reader-article-detail.component.css']
 })
-export class ChunkReaderArticleDetailComponent extends PushedControllerOverlayComponent implements OnInit {
+export class ChunkReaderArticleDetailComponent extends PushedControllerOverlayComponent
+  implements OnInit {
 
   readonly articleDetail: AnalyzedArticle;
 
@@ -19,29 +23,19 @@ export class ChunkReaderArticleDetailComponent extends PushedControllerOverlayCo
     this.articleDetail = data as AnalyzedArticle;
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+  }
 
-  /**
-   * Adjust the limit of summary.
-   *
-   * @param {number} limit the number of sentences at most.
-   */
   private adjustSummary(limit: number): void {
-    this.chunkReaderNetworkService.adjustSummary(this.articleDetail.keyString, limit,
+    this.chunkReaderNetworkService.adjustSummary(this.articleDetail.key, limit,
       summaries => this.articleDetail.summaries = summaries);
   }
 
-  /**
-   * Request for less summary.
-   */
   less(): void {
     const newLimit = this.articleDetail.summaries.length - 1;
     this.adjustSummary(newLimit);
   }
 
-  /**
-   * Request for more summary.
-   */
   more(): void {
     const newLimit = this.articleDetail.summaries.length + 1;
     this.adjustSummary(newLimit);

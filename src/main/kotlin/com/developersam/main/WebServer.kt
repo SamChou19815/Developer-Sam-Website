@@ -2,23 +2,17 @@
 
 package com.developersam.main
 
-import com.developersam.chunkreader.AnalyzedArticle
-import com.developersam.chunkreader.AnalyzedArticles
-import com.developersam.chunkreader.ChunkReaderProcessor
+import com.developersam.chunkreader.Article
 import com.developersam.chunkreader.RawArticle
-import com.developersam.chunkreader.summary.RetrievedSummaries
-import com.developersam.chunkreader.summary.SummaryRequest
+import com.developersam.chunkreader.Summary
 import com.developersam.game.ten.Board.Companion.respond
 import com.developersam.scheduler.SchedulerItem
 import com.developersam.util.blockingJsonHandler
 import com.developersam.util.blockingRequestHandler
 import com.developersam.util.functionalHandler
-import com.developersam.util.jsonHandler
-import com.developersam.util.requestHandler
-import com.developersam.util.userHandler
 import com.developersam.web.auth.FirebaseAuthHandler
 import com.developersam.web.firebase.FirebaseService
-import com.google.protobuf.util.JsonFormat.printer
+import com.google.cloud.datastore.Key
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.StaticHandler
@@ -51,20 +45,20 @@ private val schedulerRouter: Router = Router.router(vertx).apply {
     // Load items
     get("/load").blockingRequestHandler { _, user -> SchedulerItem[user] }
     // Write an item
-    post("/write").jsonHandler<SchedulerItem> { item, user, printer ->
-        printer(item.upsert(user = user)?.toUrlSafe())
+    post("/write").blockingJsonHandler<SchedulerItem> { item, user ->
+        item.upsert(user = user)?.toUrlSafe()
     }
     // Delete an item
     delete("/delete").blockingRequestHandler { req, user ->
         val key: String = req.getParam("key")
-        SchedulerItem.delete(user = user, key = key)
+        SchedulerItem.delete(user = user, key = Key.fromUrlSafe(key))
     }
     // Mark as complete
     post("/mark_as").blockingRequestHandler { req, user ->
         val key: String? = req.getParam("key")
         val completed: Boolean? = req.getParam("completed")?.toBoolean()
         if (key != null && completed != null) {
-            SchedulerItem.markAs(user = user, key = key, isCompleted = completed)
+            SchedulerItem.markAs(user = user, key = Key.fromUrlSafe(key), isCompleted = completed)
         }
     }
 }
@@ -75,18 +69,21 @@ private val schedulerRouter: Router = Router.router(vertx).apply {
 private val chunkReaderRouter: Router = Router.router(vertx).apply {
     route().blockingHandler(authHandler)
     // Load Items
-    get("/load").blockingRequestHandler { _, user -> AnalyzedArticle[user] }
+    get("/load").blockingRequestHandler { _, user -> Article[user] }
     // Display Article Detail
-    get("/articleDetail").blockingRequestHandler { req, _ ->
-        AnalyzedArticle.fromKey(key = req.getParam("key"))
+    get("/article_detail").blockingRequestHandler { req, _ ->
+        val key = Key.fromUrlSafe(req.getParam("key"))
+        Article[key]
     }
     // Adjust Amount of Summary
-    post("/adjustSummary").jsonHandler<SummaryRequest> { r, _, p ->
-        RetrievedSummaries.from(summaryRequest = r)?.printList(printer = p) ?: p(Unit)
+    post("/adjust_summary").blockingRequestHandler { req, _ ->
+        val key = Key.fromUrlSafe(req.getParam("key"))
+        req.getParam("limit")?.toInt()
+                ?.let { limit -> Summary[key, limit] } ?: Summary[key]
     }
-    // Analyze An Item: TIME CONSUMING!
+    // Analyze An Item
     post("/analyze").blockingJsonHandler<RawArticle> { article, user ->
-        ChunkReaderProcessor.process(user = user, article = article)
+        Article.Processor.process(user = user, article = article)
     }
 }
 

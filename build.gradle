@@ -66,9 +66,8 @@ dependencies {
     implementation 'org.slf4j:slf4j-log4j12:1.7.25'
     implementation 'log4j:log4j:1.2.17'
     // My Libraries
-    implementation 'com.github.SamChou19815:TypedStore:c71d42a55f'
+    implementation 'com.github.SamChou19815:TypedStore:80befecd10'
     implementation 'com.github.SamChou19815:vert-fire:0.3.0'
-    implementation 'com.github.SamChou19815:vertx-gcp-datastore:0.2.0'
     // Apps Backend
     implementation 'com.developersam:game-ten:1.0.1'
 }

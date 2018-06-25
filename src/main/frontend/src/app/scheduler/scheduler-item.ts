@@ -38,12 +38,12 @@ export class SchedulerItem {
     return this.deadlineDate.toLocaleDateString();
   }
 
-  get daysLeft(): string {
-    return (this.totalHoursLeft / 24).toFixed(0);
+  get daysLeft(): number {
+    return Math.floor(this.totalHoursLeft / 24);
   }
 
-  get hoursLeft(): string {
-    return (this.totalHoursLeft % 24).toFixed(0);
+  get hoursLeft(): number {
+    return Math.floor(this.totalHoursLeft % 24);
   }
 
 }

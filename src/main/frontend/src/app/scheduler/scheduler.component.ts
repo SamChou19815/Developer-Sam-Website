@@ -20,14 +20,10 @@ export class SchedulerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.googleUserService.doTaskAfterSignedIn(() => setTimeout(() => {
+    this.googleUserService.afterSignedIn(() => setTimeout(() => {
       this.networkService.loadItems(items => this.items =
         items.map(i => new SchedulerItem(i)))
     }, 50));
-  }
-
-  addItem(): void {
-    this.editItem();
   }
 
   editItem(item?: SchedulerItem) {

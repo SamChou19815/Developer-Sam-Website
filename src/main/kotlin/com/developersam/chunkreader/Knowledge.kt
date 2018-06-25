@@ -1,73 +1,61 @@
 package com.developersam.chunkreader
 
-import com.developersam.main.Database
-import com.developersam.web.database.BuildableEntity
-import com.developersam.web.database.safeGetString
-import com.developersam.web.database.setString
+import com.developersam.typestore.TypedEntity
+import com.developersam.typestore.TypedEntityCompanion
+import com.developersam.typestore.TypedTable
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
-import com.google.cloud.datastore.StructuredQuery.PropertyFilter.hasAncestor
-import kotlin.streams.toList
 import com.google.cloud.language.v1beta2.Entity as LanguageEntity
 
 /**
  * The [Knowledge] data class represents an entity that the user may have some interest in.
+ *
+ * @property name name of the knowledge keyword.
+ * @property type type of the knowledge keyword.
+ * @property url an optional Wikipedia link.
+ * @property salience the importance of the field.
  */
-internal class Knowledge private constructor(
-        @field:Transient private val textKey: Key? = null,
-        internal val name: String,
-        @field:Transient internal val type: Type,
-        internal val url: String?,
-        @field:Transient internal val salience: Double
-) : BuildableEntity {
-
-    /**
-     * Construct itself from a database [entity].
-     * Used during information retrieval.
-     */
-    internal constructor(entity: Entity) : this(
-            name = entity.getString("name"),
-            type = Type.valueOf(entity.getString("type")),
-            url = entity.safeGetString("url"),
-            salience = entity.getDouble("salience")
-    )
-
-    override fun toEntityBuilder(): Entity.Builder =
-            Database.createEntityBuilder(kind = kind, parent = textKey)
-                    .set("name", name)
-                    .set("type", type.name)
-                    .setString("URL", url)
-                    .set("salience", salience)
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
-        if (other !is Knowledge) {
-            return false
-        }
-        return name == other.name && type == other.type
-    }
-
-    override fun hashCode(): Int = name.hashCode() * 31 + type.hashCode()
+internal data class Knowledge(
+        private val name: String, private val type: Type,
+        private val url: String?, private val salience: Double
+) {
 
     /**
      * A collection of all known knowledge entity types.
      */
     enum class Type { PERSON, LOCATION, ORGANIZATION, EVENT, WORK_OF_ART, CONSUMER_GOOD, UNKNOWN }
 
+    /**
+     * [Table] is the table definition for [Knowledge].
+     */
+    private object Table : TypedTable<Table>(tableName = "ChunkReaderKnowledge") {
+        val name = stringProperty(name = "name")
+        val type = enumProperty(name = "type", clazz = Type::class.java)
+        val url = nullableStringProperty(name = "url")
+        val salience = doubleProperty(name = "salience")
+    }
+
+    private class KnowledgeEntity(entity: Entity) : TypedEntity<Table>(entity = entity) {
+        val name: String = Table.name.delegatedValue
+        val type: Type = Table.type.delegatedValue
+        val url: String? = Table.url.delegatedValue
+        val salience: Double = Table.salience.delegatedValue
+
+        val asKnowledge: Knowledge
+            get() = Knowledge(name = name, type = type, url = url, salience = salience)
+
+        companion object : TypedEntityCompanion<Table, KnowledgeEntity>(table = Table) {
+            override fun create(entity: Entity): KnowledgeEntity = KnowledgeEntity(entity = entity)
+        }
+    }
+
     companion object {
 
         /**
-         * Commonly used kind of the entities.
+         * Convert an type from GCP to a [Type] in the system.
          */
-        private const val kind = "ChunkReaderKnowledgeGraph"
-
-        /**
-         * Convert an [entityType] from GCP to a [Type] in the system.
-         */
-        private fun convertKnowledgeType(entityType: LanguageEntity.Type): Type =
-                when (entityType) {
+        private fun LanguageEntity.Type.toType(): Type =
+                when (this) {
                     LanguageEntity.Type.PERSON -> Type.PERSON
                     LanguageEntity.Type.LOCATION -> Type.LOCATION
                     LanguageEntity.Type.ORGANIZATION -> Type.ORGANIZATION
@@ -79,67 +67,27 @@ internal class Knowledge private constructor(
                     LanguageEntity.Type.UNRECOGNIZED -> Type.UNKNOWN
                 }
 
-    }
-
-    /**
-     * [GraphBuilder] is responsible for building a graph.
-     */
-    internal object GraphBuilder {
+        /**
+         * [get] returns a map of categorized knowledge list for the given [textKey].
+         */
+        operator fun get(textKey: Key): Map<Type, List<Knowledge>> = KnowledgeEntity
+                .query(ancestor = textKey) { order = Table.salience.desc() }
+                .map { it.asKnowledge }
+                .groupBy { it.type }
+                .mapValues { (_, v) -> v.distinctBy { it.name } }
 
         /**
-         * [build] uses the information from [NLPAPIAnalyzer] and [textKey] to build the
+         * [buildKnowledgeGraph] uses the information from [textKey] and [entities] to build the
          * knowledge graph for the given text.
          */
-        @JvmStatic
-        fun build(analyzer: NLPAPIAnalyzer, textKey: Key) {
-            val s = analyzer.entities
-                    .stream()
-                    .map {
-                        Knowledge(
-                                textKey = textKey,
-                                name = it.name,
-                                type = convertKnowledgeType(entityType = it.type),
-                                url = it.metadataMap["wikipedia_url"],
-                                salience = it.salience.toDouble()
-                        )
-                    }
-                    .distinct()
-            Database.insertEntities(entities = s)
+        fun buildKnowledgeGraph(textKey: Key, entities: List<LanguageEntity>) {
+            KnowledgeEntity.batchInsert(parent = textKey, source = entities) { t, entity ->
+                t[Table.name] = entity.name
+                t[Table.type] = entity.type.toType()
+                t[Table.url] = entity.metadataMap["wikipedia_url"]
+                t[Table.salience] = entity.salience.toDouble()
+            }
         }
-
-    }
-
-    /**
-     * [RetrievedKnowledgeGraph] used to fetch a list of knowledge points.
-     */
-    class RetrievedKnowledgeGraph(textKey: Key) {
-
-        /**
-         * A list of all knowledge points.
-         */
-        private val knowledgePoints: List<Knowledge> =
-                Database.blockingQuery(
-                        kind = kind, filter = hasAncestor(textKey)
-                ).map(::Knowledge).sortedByDescending { it.salience }.toList()
-
-        /**
-         * Fetch an array of top keywords.
-         */
-        val asKeywords: List<String> =
-                knowledgePoints.stream().limit(3).map { it.name }
-                        .toList()
-
-        /**
-         * Fetch an organized map from small finite known [KnowledgeType] to a list of
-         * [Knowledge] objects associated with the text key given in  constructor.
-         */
-        val asMap: Map<Type, List<Knowledge>> =
-                knowledgePoints.asSequence().groupBy { it.type }
-                        .onEach { (_, v) ->
-                            v.sortedByDescending {
-                                it.salience
-                            }
-                        }
 
     }
 

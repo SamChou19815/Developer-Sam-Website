@@ -2,8 +2,7 @@ package com.developersam.chunkreader
 
 import com.google.cloud.language.v1beta2.AnalyzeSyntaxResponse
 import com.google.cloud.language.v1beta2.Document
-import com.google.cloud.language.v1beta2.Document.Type
-import com.google.cloud.language.v1beta2.EncodingType.UTF16
+import com.google.cloud.language.v1beta2.EncodingType
 import com.google.cloud.language.v1beta2.Entity
 import com.google.cloud.language.v1beta2.LanguageServiceClient
 import com.google.cloud.language.v1beta2.Sentence
@@ -44,18 +43,18 @@ internal class NLPAPIAnalyzer(text: String) {
         val client = LanguageServiceClient.create()
         try {
             val doc: Document = Document.newBuilder()
-                    .setContent(text).setType(Type.PLAIN_TEXT).build()
+                    .setContent(text).setType(Document.Type.PLAIN_TEXT).build()
             var entities = emptyList<Entity>()
             var sentences = emptyList<Sentence>()
             var tokenCount = 0
             service.submitWithCountdown {
-                val temp = client.analyzeEntitySentiment(doc, UTF16).entitiesList
+                val temp = client.analyzeEntitySentiment(doc, EncodingType.UTF16).entitiesList
                 synchronized(client) {
                     entities = temp
                 }
             }
             service.submitWithCountdown {
-                val r: AnalyzeSyntaxResponse = client.analyzeSyntax(doc, UTF16)
+                val r: AnalyzeSyntaxResponse = client.analyzeSyntax(doc, EncodingType.UTF16)
                 synchronized(client) {
                     sentences = r.sentencesList
                     tokenCount = r.tokensCount

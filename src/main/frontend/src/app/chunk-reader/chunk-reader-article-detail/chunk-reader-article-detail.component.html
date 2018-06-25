@@ -1,12 +1,6 @@
 <app-closable-controller [title]="articleDetail.title" (closeClicked)="popController()">
   <mat-card>
     <mat-card-title>Knowledge Graph</mat-card-title>
-    <mat-card-content>
-      Keywords:
-      <ul>
-        <li *ngFor="let keyword of articleDetail.keywords">{{keyword}}</li>
-      </ul>
-    </mat-card-content>
     <mat-card-content *ngIf="articleDetail.knowledgeMap.PERSON">
       People Mentioned:
       <ul>
@@ -40,7 +34,9 @@
     <mat-card-content *ngIf="articleDetail.knowledgeMap.CONSUMER_GOOD">
       Consumer Goods Mentioned:
       <ul>
-        <li *ngFor="let consumerGood of articleDetail.knowledgeMap.CONSUMER_GOOD">{{consumerGood.name}}</li>
+        <li *ngFor="let consumerGood of articleDetail.knowledgeMap.CONSUMER_GOOD">
+          {{consumerGood.name}}
+        </li>
       </ul>
     </mat-card-content>
     <mat-card-content *ngIf="articleDetail.knowledgeMap.UNKNOWN">
@@ -56,7 +52,10 @@
       <div class="sentence" *ngFor="let sentence of articleDetail.summaries">{{sentence}}</div>
     </mat-card-content>
     <mat-card-actions>
-      <button color="primary" [disabled]="articleDetail.summaries.length <= 1" mat-button (click)="less()">Less</button>
+      <button color="primary" [disabled]="articleDetail.summaries.length <= 1"
+              mat-button (click)="less()">
+        Less
+      </button>
       <button color="primary" mat-button (click)="more()">More</button>
     </mat-card-actions>
   </mat-card>

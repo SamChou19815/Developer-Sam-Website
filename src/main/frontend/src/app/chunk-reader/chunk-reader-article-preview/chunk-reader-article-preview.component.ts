@@ -11,9 +11,15 @@ export class ChunkReaderArticlePreviewComponent implements OnInit {
   @Input() articlePreview: AnalyzedArticle;
   @Output() viewDetailClicked = new EventEmitter<void>();
 
-  constructor() { }
+  constructor() {
+  }
 
-  ngOnInit() { }
+  ngOnInit() {
+  }
+
+  get time(): string {
+    return new Date(this.articlePreview.time).toLocaleDateString()
+  }
 
   /**
    * Edit itself.

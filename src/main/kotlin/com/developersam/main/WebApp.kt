@@ -116,7 +116,7 @@ object WebApp {
         // Scheduler
         get(path = "/apis/scheduler/load") { _ -> SchedulerItem[user] }
         post(path = "/apis/scheduler/write") { _ ->
-            toJson<SchedulerItem>().upsert(user = user) ?: halt(code = 400)
+            toJson<SchedulerItem>().upsert(user = user)?.toUrlSafe() ?: halt(code = 400)
         }
         delete(path = "/apis/scheduler/delete") { _ ->
             val key: String? = queryParams("key")

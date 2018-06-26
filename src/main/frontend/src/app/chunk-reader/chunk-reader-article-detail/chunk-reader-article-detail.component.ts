@@ -4,7 +4,7 @@ import {
   PushedControllerOverlayRef
 } from '../../overlay/push-controller.service';
 import { PushedControllerOverlayComponent } from '../../overlay/pushed-controller-overlay.component';
-import { AnalyzedArticle } from '../articles';
+import { AnalyzedArticle, FullAnalyzedArticle } from '../articles';
 import { ChunkReaderNetworkService } from '../chunk-reader-network.service';
 
 @Component({
@@ -14,7 +14,7 @@ import { ChunkReaderNetworkService } from '../chunk-reader-network.service';
 })
 export class ChunkReaderArticleDetailComponent extends PushedControllerOverlayComponent implements OnInit {
 
-  readonly articleDetail: AnalyzedArticle;
+  readonly articleDetail: FullAnalyzedArticle;
 
   constructor(ref: PushedControllerOverlayRef, @Inject(PUSHED_CONTROLLER_DATA) data: any,
               private chunkReaderNetworkService: ChunkReaderNetworkService) {

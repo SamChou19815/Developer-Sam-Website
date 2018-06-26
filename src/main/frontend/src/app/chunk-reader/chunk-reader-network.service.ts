@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from "@angular/material";
 import { AlertComponent } from "../alert/alert.component";
 import { LoadingOverlayService } from '../overlay/loading-overlay.service';
-import { AnalyzedArticle, RawArticle } from './articles';
+import { AnalyzedArticle, FullAnalyzedArticle, RawArticle } from './articles';
 
 @Injectable()
 export class ChunkReaderNetworkService {
@@ -23,11 +23,11 @@ export class ChunkReaderNetworkService {
     });
   }
 
-  loadArticleDetail(key: string, success: (article: AnalyzedArticle) => void): void {
+  loadArticleDetail(key: string, success: (article: FullAnalyzedArticle) => void): void {
     const token = localStorage.getItem('token');
     const ref = this.loadingService.open();
     const url = `/apis/chunkreader/article_detail?token=${token}&key=${key}`;
-    this.http.get<AnalyzedArticle>(url, { withCredentials: true }).subscribe(a => {
+    this.http.get<FullAnalyzedArticle>(url, { withCredentials: true }).subscribe(a => {
       ref.close();
       success(a);
     });

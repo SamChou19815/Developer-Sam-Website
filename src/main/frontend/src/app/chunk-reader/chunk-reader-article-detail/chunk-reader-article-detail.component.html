@@ -28,7 +28,9 @@
     <mat-card-content *ngIf="articleDetail.knowledgeMap.WORK_OF_ART">
       Work of Art Mentioned:
       <ul>
-        <li *ngFor="let workOfArt of articleDetail.knowledgeMap.WORK_OF_ART">{{workOfArt.name}}</li>
+        <li *ngFor="let workOfArt of articleDetail.knowledgeMap.WORK_OF_ART">
+          {{workOfArt.name}}
+        </li>
       </ul>
     </mat-card-content>
     <mat-card-content *ngIf="articleDetail.knowledgeMap.CONSUMER_GOOD">

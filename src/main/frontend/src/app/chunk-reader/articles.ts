@@ -8,14 +8,17 @@ export interface AnalyzedArticle {
   readonly time: number;
   readonly title: string;
   readonly tokenCount: number;
-  readonly content?: string;
-  readonly keywords?: string[];
-  readonly knowledgeMap?: KnowledgeGraph;
-  summaries?: string[];
 }
 
 export namespace AnalyzedArticle {
   export const defaultValue = <AnalyzedArticle>{ key: '', time: 0, title: '', tokenCount: 0 };
+}
+
+export interface FullAnalyzedArticle extends AnalyzedArticle{
+  readonly content: string;
+  readonly keywords: string[];
+  readonly knowledgeMap: KnowledgeGraph;
+  summaries: string[];
 }
 
 export interface KnowledgeGraph {

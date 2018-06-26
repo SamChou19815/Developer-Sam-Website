@@ -1,7 +1,6 @@
 package com.developersam.util
 
-import com.developersam.web.auth.FirebaseUser
-import com.developersam.web.auth.firebaseUser
+import com.developersam.auth.FirebaseUser
 import io.netty.buffer.ByteBufInputStream
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.ext.web.Route

@@ -7,7 +7,7 @@ import com.developersam.typestore.defaultDatastore
 import com.developersam.typestore.toLocalDateTimeInUTC
 import com.developersam.typestore.toUTCMillis
 import com.developersam.typestore.transaction
-import com.developersam.web.auth.FirebaseUser
+import com.developersam.auth.FirebaseUser
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import java.time.LocalDateTime

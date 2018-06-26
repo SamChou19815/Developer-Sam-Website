@@ -7,7 +7,7 @@ import com.developersam.typestore.TypedEntityCompanion
 import com.developersam.typestore.TypedTable
 import com.developersam.typestore.nowInUTC
 import com.developersam.typestore.toUTCMillis
-import com.developersam.web.auth.FirebaseUser
+import com.developersam.auth.FirebaseUser
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import kotlin.system.measureTimeMillis

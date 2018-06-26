@@ -3,7 +3,7 @@ package com.developersam.chunkreader
 import com.developersam.typestore.TypedEntity
 import com.developersam.typestore.TypedEntityCompanion
 import com.developersam.typestore.TypedTable
-import com.developersam.web.auth.FirebaseUser
+import com.developersam.auth.FirebaseUser
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.Entity
 import com.google.cloud.language.v1beta2.Entity as LanguageEntity

@@ -1,6 +1,6 @@
 package com.developersam.chunkreader
 
-import com.developersam.web.auth.FirebaseUser
+import com.developersam.auth.FirebaseUser
 import kotlin.concurrent.thread
 
 /**

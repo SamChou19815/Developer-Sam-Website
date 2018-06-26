@@ -56,7 +56,8 @@ dependencies {
     // Google Cloud API
     implementation 'com.google.cloud:google-cloud-datastore:+'
     implementation 'com.google.cloud:google-cloud-language:+'
-    // Add your dependencies here.
+    // Firebase
+    implementation 'com.google.firebase:firebase-admin:6.2.0'
     // GSON
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'org.danilopianini:gson-extras:0.2.1'
@@ -67,7 +68,6 @@ dependencies {
     implementation 'log4j:log4j:1.2.17'
     // My Libraries
     implementation 'com.github.SamChou19815:TypedStore:80befecd10'
-    implementation 'com.github.SamChou19815:vert-fire:0.3.0'
     // Apps Backend
     implementation 'com.developersam:game-ten:1.0.1'
 }

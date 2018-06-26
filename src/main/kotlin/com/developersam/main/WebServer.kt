@@ -2,6 +2,7 @@
 
 package com.developersam.main
 
+import com.developersam.auth.FirebaseAuthHandler
 import com.developersam.chunkreader.Article
 import com.developersam.chunkreader.RawArticle
 import com.developersam.chunkreader.Summary
@@ -10,25 +11,25 @@ import com.developersam.scheduler.SchedulerItem
 import com.developersam.util.blockingJsonHandler
 import com.developersam.util.blockingRequestHandler
 import com.developersam.util.functionalHandler
-import com.developersam.web.auth.FirebaseAuthHandler
-import com.developersam.web.firebase.FirebaseService
+import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.datastore.Key
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
+import com.google.firebase.auth.FirebaseAuth
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.StaticHandler
 
-/**
- * Globally used firebase service.
- */
-private val firebaseService = FirebaseService(
-        adminSDKConfig = System::class.java.getResourceAsStream(
-                "/secret/firebase-adminsdk.json"
-        )
-)
+
 /**
  * Global Authentication Handler.
  */
-private val authHandler = FirebaseAuthHandler(firebaseService = firebaseService)
+private val authHandler = System::class.java
+        .getResourceAsStream("/secret/firebase-adminsdk.json")
+        .let { GoogleCredentials.fromStream(it) }
+        .let { FirebaseOptions.Builder().setCredentials(it).build() }
+        .let { FirebaseApp.initializeApp(it) }
+        .let { FirebaseAuthHandler(firebaseAuth = FirebaseAuth.getInstance(it)) }
 
 /**
  * Assemble together routers for app TEN.

@@ -7,18 +7,11 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class ClosableControllerComponent implements OnInit {
 
-  @Input() title: string;
-  @Output() closeClicked = new EventEmitter<void>();
+  @Input() title: string = '';
+  @Output() closeClicked = new EventEmitter<undefined>();
 
   constructor() { }
 
   ngOnInit() { }
-
-  /**
-   * To report close clicked.
-   */
-  closeMe(): void {
-    this.closeClicked.emit(null);
-  }
 
 }

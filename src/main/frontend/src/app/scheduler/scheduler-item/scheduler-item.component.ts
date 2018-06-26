@@ -9,7 +9,7 @@ import { SchedulerNetworkService } from '../scheduler-network.service';
 })
 export class SchedulerItemComponent implements OnInit {
 
-  @Input() schedulerItem: SchedulerItem;
+  @Input() schedulerItem: SchedulerItem = new SchedulerItem();
   @Output() editClicked = new EventEmitter<undefined>();
   @Output() deleteClicked = new EventEmitter<undefined>();
   @Output() markAsClicked = new EventEmitter<boolean>();

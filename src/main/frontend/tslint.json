@@ -29,7 +29,7 @@
     "label-position": true,
     "max-line-length": [
       true,
-      120
+      100
     ],
     "member-access": false,
     "member-ordering": [
@@ -87,7 +87,7 @@
       true,
       "single"
     ],
-    "radix": false,
+    "radix": true,
     "semicolon": [
       true,
       "always"
@@ -106,7 +106,6 @@
         "variable-declaration": "nospace"
       }
     ],
-    "typeof-compare": true,
     "unified-signatures": true,
     "variable-name": false,
     "whitespace": [

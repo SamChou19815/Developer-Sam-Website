@@ -14,7 +14,7 @@ import { ChunkReaderNetworkService } from './chunk-reader-network.service';
 })
 export class ChunkReaderComponent implements OnInit {
 
-  articlesPreview: AnalyzedArticle[];
+  articlesPreview: AnalyzedArticle[] = [];
 
   constructor(private chunkReaderNetworkService: ChunkReaderNetworkService,
               private googleUserService: GoogleUserService,

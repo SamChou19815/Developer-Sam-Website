@@ -20,7 +20,7 @@ plugins {
 apply plugin: 'com.google.cloud.tools.appengine'
 
 group = 'com.developersam'
-version = '4.0.0'
+version = '5.0.0'
 
 sourceCompatibility = 1.8  // App Engine Standard uses Java 8
 targetCompatibility = 1.8  // App Engine Standard uses Java 8
@@ -49,10 +49,9 @@ repositories {
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     testImplementation 'junit:junit:4.12'
-    // Vert.x
-    implementation 'io.vertx:vertx-core:3.5.2'
-    implementation 'io.vertx:vertx-web:3.5.2'
-    implementation 'io.vertx:vertx-lang-kotlin:3.5.2'
+    // Spark
+    implementation "com.sparkjava:spark-core:2.7.2"
+    implementation "com.sparkjava:spark-kotlin:1.0.0-alpha"
     // Google Cloud API
     implementation 'com.google.cloud:google-cloud-datastore:+'
     implementation 'com.google.cloud:google-cloud-language:+'
@@ -72,11 +71,20 @@ dependencies {
     implementation 'com.developersam:game-ten:1.0.1'
 }
 
-shadowJar {
-    baseName = "Developer-Sam-Website"
-    version = 4.0
+jar {
     manifest {
-        attributes 'Main-Class': 'com.developersam.main.WebServer'
+        attributes 'Main-Class': 'com.developersam.main.WebApp'
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+shadowJar {
+    baseName = "website"
+    version = 5.0
+    manifest {
+        attributes 'Main-Class': 'com.developersam.main.WebApp'
     }
 }
 
@@ -91,13 +99,13 @@ test {
 appengine {
 
     stage {
-        artifact = "build/libs/Developer-Sam-Website-4.0-all.jar"
+        artifact = "build/libs/website-5.0-all.jar"
     }
 
     deploy {
         stopPreviousVersion = true
         promote = true
-        version = 4
+        version = 5
     }
 
 }

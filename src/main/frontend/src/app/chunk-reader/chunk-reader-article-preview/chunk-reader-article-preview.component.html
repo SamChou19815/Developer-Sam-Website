@@ -3,6 +3,6 @@
   <mat-card-content>
     <span>Submitted Time: {{time}}</span>
     <span>Word Count: {{articlePreview.tokenCount}}</span>
-    <button color="accent" mat-button (click)="viewDetail()">Details</button>
+    <button color="accent" mat-button (click)="viewDetailClicked.emit()">Details</button>
   </mat-card-content>
 </mat-card>

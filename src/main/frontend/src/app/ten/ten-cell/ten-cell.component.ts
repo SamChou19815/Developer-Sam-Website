@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { TenService } from '../ten.service';
 import { CellState } from '../cell-state';
+import { TenService } from '../ten.service';
 
 @Component({
   selector: 'app-ten-cell',
@@ -12,24 +12,26 @@ export class TenCellComponent implements OnInit {
   /**
    * The cell state of itself.
    */
-  @Input() state: CellState;
+  @Input() state: CellState = new CellState();
   /**
    * The index of the big square.
    */
-  @Input() bigSquare: number;
+  @Input() bigSquare: number = 0;
   /**
    * The index of the small square inside the big square.
    */
-  @Input() smallSquare: number;
+  @Input() smallSquare: number = 0;
 
   /**
    * Construct itself by injecting a submit move service.
    *
    * @param {TenService} tenService the ten service used to submit move.
    */
-  constructor(private tenService: TenService) { }
+  constructor(private tenService: TenService) {
+  }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   /**
    * Submit the move.

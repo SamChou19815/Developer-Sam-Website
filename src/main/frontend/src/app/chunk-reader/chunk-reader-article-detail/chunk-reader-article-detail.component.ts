@@ -12,15 +12,17 @@ import { ChunkReaderNetworkService } from '../chunk-reader-network.service';
   templateUrl: './chunk-reader-article-detail.component.html',
   styleUrls: ['../../overlay/pushed-controller-overlay.component.scss', './chunk-reader-article-detail.component.css']
 })
-export class ChunkReaderArticleDetailComponent extends PushedControllerOverlayComponent
-  implements OnInit {
+export class ChunkReaderArticleDetailComponent extends PushedControllerOverlayComponent implements OnInit {
 
   readonly articleDetail: AnalyzedArticle;
 
   constructor(ref: PushedControllerOverlayRef, @Inject(PUSHED_CONTROLLER_DATA) data: any,
               private chunkReaderNetworkService: ChunkReaderNetworkService) {
     super(ref);
-    this.articleDetail = data as AnalyzedArticle;
+    if (data == null) {
+      throw new Error();
+    }
+    this.articleDetail = data;
   }
 
   ngOnInit() {
@@ -32,12 +34,20 @@ export class ChunkReaderArticleDetailComponent extends PushedControllerOverlayCo
   }
 
   less(): void {
-    const newLimit = this.articleDetail.summaries.length - 1;
+    const summary = this.articleDetail.summaries;
+    if (summary == null) {
+      throw new Error();
+    }
+    const newLimit = summary.length - 1;
     this.adjustSummary(newLimit);
   }
 
   more(): void {
-    const newLimit = this.articleDetail.summaries.length + 1;
+    const summary = this.articleDetail.summaries;
+    if (summary == null) {
+      throw new Error();
+    }
+    const newLimit = summary.length + 1;
     this.adjustSummary(newLimit);
   }
 

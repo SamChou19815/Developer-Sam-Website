@@ -8,8 +8,8 @@ import { AnalyzedArticle } from '../articles';
 })
 export class ChunkReaderArticlePreviewComponent implements OnInit {
 
-  @Input() articlePreview: AnalyzedArticle;
-  @Output() viewDetailClicked = new EventEmitter<void>();
+  @Input() articlePreview: AnalyzedArticle = AnalyzedArticle.defaultValue;
+  @Output() viewDetailClicked = new EventEmitter<undefined>();
 
   constructor() {
   }
@@ -25,7 +25,7 @@ export class ChunkReaderArticlePreviewComponent implements OnInit {
    * Edit itself.
    */
   viewDetail(): void {
-    this.viewDetailClicked.emit(null);
+    this.viewDetailClicked.emit();
   }
 
 }

@@ -30,7 +30,7 @@ export class AppComponent implements AfterViewInit {
   /**
    * The drawer embed in the component.
    */
-  @ViewChild('drawer') private drawer: MatDrawer;
+  @ViewChild('drawer') private drawer: MatDrawer | undefined;
   /**
    * Title of the component.
    * @type {string}
@@ -95,8 +95,9 @@ export class AppComponent implements AfterViewInit {
     this.tenSelected = ten;
     this.titleService.setTitle(elementName as string);
     this.title = elementName as string;
-    // noinspection JSIgnoredPromiseFromCall
-    this.drawer.close();
+    if (this.drawer != null) {
+      this.drawer.close().then(() => {});
+    }
   }
 
   ngAfterViewInit(): void {

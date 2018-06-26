@@ -35,8 +35,9 @@ export class SchedulerComponent implements OnInit {
           return;
         }
         const edited = value as SchedulerItem;
-        const handler = key => {
-          const itemWithOldRemoved = this.items.filter(i => i.key !== item.key);
+        const handler = (key: string) => {
+          const itemWithOldRemoved = item == null
+            ? this.items : this.items.filter(i => i.key !== item.key);
           itemWithOldRemoved.push(new SchedulerItem(<SchedulerItem>{ ...edited, key: key }));
           this.items = itemWithOldRemoved.sort((a, b) => a.deadline - b.deadline);
         };
@@ -45,11 +46,17 @@ export class SchedulerComponent implements OnInit {
   }
 
   deleteItem(item: SchedulerItem) {
+    if (item.key == null) {
+      return;
+    }
     this.networkService.deleteItem(item.key, () =>
       this.items = this.items.filter(i => i.key !== item.key));
   }
 
   markAs(completed: boolean, item: SchedulerItem) {
+    if (item.key == null) {
+      return;
+    }
     this.networkService.markAs(completed, item.key, () => item.isCompleted = completed);
   }
 

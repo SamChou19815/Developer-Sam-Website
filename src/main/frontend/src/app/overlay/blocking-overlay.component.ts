@@ -13,15 +13,24 @@ import { Component, HostBinding, Input, OnInit } from "@angular/core";
   }`]
 })
 export class BlockingOverlayComponent implements OnInit {
+  get width(): string {
+    return this._width;
+  }
 
-  @HostBinding("style.width") private width: string;
+  set width(value: string) {
+    this._width = value;
+  }
 
-  constructor() { }
+  @HostBinding('style.width') private _width: string = '100%';
 
-  ngOnInit() {}
+  constructor() {
+  }
+
+  ngOnInit() {
+  }
 
   @Input() set active(active: boolean) {
-    this.width = active ? "100%" : "0";
+    this._width = active ? "100%" : "0";
   }
 
 }

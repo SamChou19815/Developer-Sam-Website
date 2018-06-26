@@ -8,8 +8,7 @@ export class SchedulerItem {
 
   constructor(another?: SchedulerItem) {
     if (another == null) {
-      this.key = null;
-      this.title = "";
+      this.title = '';
       const nowDate = new Date();
       nowDate.setDate(nowDate.getDate() + 1);
       nowDate.setHours(0, 0, 0, 0);
@@ -35,7 +34,7 @@ export class SchedulerItem {
   }
 
   get deadlineString(): string {
-    return this.deadlineDate.toLocaleDateString();
+    return this.deadlineDate.toLocaleString();
   }
 
   get daysLeft(): number {

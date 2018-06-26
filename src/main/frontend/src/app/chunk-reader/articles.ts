@@ -1,14 +1,8 @@
-/**
- * Defines the shape of a raw, not analyzed article.
- */
 export interface RawArticle {
   title: string;
   content: string;
 }
 
-/**
- * Defines the shape of an analyzed article.
- */
 export interface AnalyzedArticle {
   readonly key: string;
   readonly time: number;
@@ -18,6 +12,10 @@ export interface AnalyzedArticle {
   readonly keywords?: string[];
   readonly knowledgeMap?: KnowledgeGraph;
   summaries?: string[];
+}
+
+export namespace AnalyzedArticle {
+  export const defaultValue = <AnalyzedArticle>{ key: '', time: 0, title: '', tokenCount: 0 };
 }
 
 export interface KnowledgeGraph {
@@ -30,9 +28,6 @@ export interface KnowledgeGraph {
   readonly UNKNOWN: KnowledgePoint[];
 }
 
-/**
- * Defines the shape of an knowledge point.
- */
 export interface KnowledgePoint {
   readonly name: string;
   readonly url?: string;

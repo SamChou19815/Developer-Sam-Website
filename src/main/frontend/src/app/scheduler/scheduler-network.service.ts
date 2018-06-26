@@ -11,9 +11,12 @@ export class SchedulerNetworkService {
 
   loadItems(success: (items: SchedulerItem[]) => void): void {
     const token = localStorage.getItem('token');
+    if (token == null) {
+      throw new Error();
+    }
     const ref = this.loadingService.open();
-    this.http.get<SchedulerItem[]>('/apis/scheduler/load?token=' + token, {
-      withCredentials: true
+    this.http.get<SchedulerItem[]>('/apis/user/scheduler/load', {
+      withCredentials: true, headers: { 'Firebase-Auth-Token': token }
     }).subscribe(items => {
       ref.close();
       success(items);
@@ -22,10 +25,12 @@ export class SchedulerNetworkService {
 
   editItem(data: SchedulerItem, success: (key: string) => void): void {
     const token = localStorage.getItem('token');
+    if (token == null) {
+      throw new Error();
+    }
     const ref = this.loadingService.open();
-    this.http.post('/apis/scheduler/write?token=' + token, data, {
-      responseType: 'text',
-      withCredentials: true
+    this.http.post('/apis/user/scheduler/write', data, {
+      responseType: 'text', withCredentials: true, headers: { 'Firebase-Auth-Token': token }
     }).subscribe(key => {
       ref.close();
       if (key == null) {
@@ -37,10 +42,13 @@ export class SchedulerNetworkService {
 
   deleteItem(key: string, success: () => void): void {
     const token = localStorage.getItem('token');
+    if (token == null) {
+      throw new Error();
+    }
     const ref = this.loadingService.open();
-    this.http.delete<string>('/apis/scheduler/delete?token=' + token, {
-      params: new HttpParams().set('key', key),
-      withCredentials: true
+    this.http.delete<string>('/apis/user/scheduler/delete', {
+      params: new HttpParams().set('key', key), withCredentials: true,
+      headers: { 'Firebase-Auth-Token': token }
     }).subscribe(() => {
       ref.close();
       success();
@@ -49,10 +57,13 @@ export class SchedulerNetworkService {
 
   markAs(completed: boolean, key: string, success: () => void): void {
     const token = localStorage.getItem('token');
+    if (token == null) {
+      throw new Error();
+    }
     const ref = this.loadingService.open();
-    this.http.post('/apis/scheduler/mark_as?token=' + token, '', {
+    this.http.post('/apis/user/scheduler/mark_as', '', {
       params: new HttpParams().set('key', key).set('completed', String(completed)),
-      withCredentials: true
+      withCredentials: true, headers: { 'Firebase-Auth-Token': token }
     }).subscribe(() => {
       ref.close();
       success();

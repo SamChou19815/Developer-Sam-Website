@@ -1,4 +1,4 @@
-@file:JvmName("WebServer")
+@file:JvmName(name = "WebServer")
 
 package com.developersam.main
 
@@ -46,13 +46,13 @@ private val schedulerRouter: Router = Router.router(vertx).apply {
     // Load items
     get("/load").blockingRequestHandler { _, user -> SchedulerItem[user] }
     // Write an item
-    post("/write").blockingJsonHandler<SchedulerItem> { item, user ->
-        item.upsert(user = user)?.toUrlSafe()
-    }
+    post("/write").blockingJsonHandler<SchedulerItem> { item, user -> item.upsert(user = user) }
     // Delete an item
     delete("/delete").blockingRequestHandler { req, user ->
-        val key: String = req.getParam("key")
-        SchedulerItem.delete(user = user, key = Key.fromUrlSafe(key))
+        val key: String? = req.getParam("key")
+        if (key != null) {
+            SchedulerItem.delete(user = user, key = Key.fromUrlSafe(key))
+        }
     }
     // Mark as complete
     post("/mark_as").blockingRequestHandler { req, user ->

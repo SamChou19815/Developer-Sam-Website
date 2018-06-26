@@ -21,7 +21,7 @@ import java.time.LocalDateTime
  * @property isCompleted whether this item
  */
 data class SchedulerItem(
-        private val key: String? = null, private val title: String = "",
+        private val key: Key? = null, private val title: String = "",
         private val deadline: Long = 0, private val isCompleted: Boolean = false,
         private val detail: String = ""
 ) {
@@ -32,7 +32,7 @@ data class SchedulerItem(
         if (!isValid) {
             return null
         }
-        val entityOpt = key?.let { SchedulerItemEntity[Key.fromUrlSafe(it)] }
+        val entityOpt = key?.let { SchedulerItemEntity[it] }
         if (entityOpt != null && entityOpt.userId != user.uid) {
             return null // Illegal Access
         }
@@ -69,7 +69,7 @@ data class SchedulerItem(
 
         val asSchedulerItem: SchedulerItem
             get() = SchedulerItem(
-                    key = key.toUrlSafe(), title = title, deadline = deadline.toUTCMillis(),
+                    key = key, title = title, deadline = deadline.toUTCMillis(),
                     isCompleted = isCompleted, detail = detail
             )
 

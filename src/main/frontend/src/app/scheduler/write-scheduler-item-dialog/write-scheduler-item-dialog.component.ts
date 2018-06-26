@@ -57,7 +57,7 @@ export class WriteSchedulerItemDialogComponent implements OnInit {
   get generatedItem(): SchedulerItem {
     return <SchedulerItem>{
       key: this.key,
-      title: this.detail,
+      title: this.title,
       deadline: this.deadline,
       isCompleted: this.isCompleted,
       detail: this.detail

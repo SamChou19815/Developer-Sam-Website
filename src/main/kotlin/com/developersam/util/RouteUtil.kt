@@ -13,6 +13,16 @@ private typealias BlockingJsonHandler<T> = (T, user: FirebaseUser) -> Any?
 private typealias BlockingRequestHandler = (req: HttpServerRequest, user: FirebaseUser) -> Any?
 
 /**
+ * [asJson] converts an object to a string for a web server in expected ways.
+ */
+val Any?.asJson: String
+    get() = when {
+        this == Unit -> ""
+        this is String -> this
+        else -> gson.toJson(this)
+    }
+
+/**
  * [RoutingContext.toJson] converts the body of the `RoutingContext` to a parsed json object.
  */
 inline fun <reified T> RoutingContext.toJson(): T =
@@ -25,11 +35,7 @@ inline fun <reified T> RoutingContext.toJson(): T =
  * The handler is blocking.
  */
 inline fun <reified T> Route.functionalHandler(crossinline f: FunctionalHandler<T>): Route =
-        blockingHandler {
-            val req: T = it.toJson<T>()
-            val res = f(req)
-            it.response().end(gson.toJson(res))
-        }
+        blockingHandler { it.response().end(f(it.toJson()).asJson) }
 
 /**
  * [Route.blockingHandler] creates a handler that lets the router handle a request with a known
@@ -39,10 +45,7 @@ inline fun <reified T> Route.functionalHandler(crossinline f: FunctionalHandler<
  * The handler is blocking.
  */
 inline fun <reified T> Route.blockingJsonHandler(crossinline h: BlockingJsonHandler<T>): Route =
-        blockingHandler {
-            val res = h(it.toJson(), it.user().firebaseUser)
-            it.response().end(gson.toJson(res))
-        }
+        blockingHandler { it.response().end(h(it.toJson(), it.user().firebaseUser).asJson) }
 
 /**
  * [Route.blockingRequestHandler] creates a handler that lets the router handle a request with a
@@ -51,8 +54,5 @@ inline fun <reified T> Route.blockingJsonHandler(crossinline h: BlockingJsonHand
  *
  * The handler is blocking.
  */
-fun Route.blockingRequestHandler(h: BlockingRequestHandler): Route =
-        handler {
-            val res = h(it.request(), it.user().firebaseUser)
-            it.response().end(gson.toJson(res))
-        }
+inline fun Route.blockingRequestHandler(crossinline h: BlockingRequestHandler): Route =
+        handler { it.response().end(h(it.request(), it.user().firebaseUser).asJson) }

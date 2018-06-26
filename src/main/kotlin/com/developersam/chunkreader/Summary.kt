@@ -3,6 +3,7 @@ package com.developersam.chunkreader
 import com.developersam.typestore.TypedEntity
 import com.developersam.typestore.TypedEntityCompanion
 import com.developersam.typestore.TypedTable
+import com.developersam.web.auth.FirebaseUser
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.Entity
 import com.google.cloud.language.v1beta2.Entity as LanguageEntity
@@ -249,14 +250,26 @@ class Summary private constructor() {
         private const val CONVERGENCE_THRESHOLD = 1e-3
 
         /**
-         * [get] returns a list of sentences with [limit] (defaults to 5) associated with [textKey],
-         * with sentences sorted according to their sequence in the original article.
+         * [getFromKey] returns a list of sentences with [limit] (defaults to 5) associated with
+         * [textKey], with sentences sorted according to their sequence in the original article.
          */
-        operator fun get(textKey: Key, limit: Int = 5): List<String> =
+        internal fun getFromKey(textKey: Key, limit: Int = 5): List<String> =
                 SentenceEntity.query(ancestor = textKey) {
                     this.order = Table.salience.desc()
                     this.limit = limit
                 }.sortedBy { it.beginOffset }.map { it.text }.toList()
+
+        /**
+         * [get] returns a list of sentences with [limit] (defaults to 5) associated with [textKey],
+         * with sentences sorted according to their sequence in the original article. If the given
+         * [user] cannot access the article with [textKey], it will return an empty list.
+         */
+        operator fun get(user: FirebaseUser, textKey: Key, limit: Int): List<String> =
+                if (Article.userCanAccess(user = user, key = textKey)) {
+                    getFromKey(textKey = textKey, limit = limit)
+                } else {
+                    emptyList()
+                }
 
         /**
          * [markSentenceSalience] marks the salience of each sentence for a common [textKey],

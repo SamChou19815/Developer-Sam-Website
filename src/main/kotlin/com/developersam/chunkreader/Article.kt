@@ -50,7 +50,8 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
     /**
      * [summaries] is a list of summaries of the content.
      */
-    private val summaries: List<String>? = if (fullDetail) Summary[article.key] else null
+    private val summaries: List<String>? =
+            if (fullDetail) Summary.getFromKey(textKey = article.key) else null
 
     /**
      * [Table] is the table definition for the [Article]'s raw text part.
@@ -85,7 +86,7 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
      * [Processor] calls all the other sub-processors to complete the chunk reader
      * pre-processing.
      */
-    object Processor {
+    internal object Processor {
 
         /**
          * [runAnalyzerWithLog] runs the google NLP analyzer on [content] and logs its running time.

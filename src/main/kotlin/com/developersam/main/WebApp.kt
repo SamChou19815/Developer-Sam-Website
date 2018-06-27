@@ -1,3 +1,5 @@
+@file:JvmName(name = "WebApp")
+
 package com.developersam.main
 
 import com.developersam.auth.FirebaseUser
@@ -24,148 +26,155 @@ import spark.kotlin.halt
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-/**
- * [WebApp] is the entry point of the Spark based web server.
+/*
+ * ------------------------------------------------------------------------------------------
+ * Part 1: Config
+ * ------------------------------------------------------------------------------------------
  */
-object WebApp {
 
-    /**
-     * The global Authentication Handler.
-     */
-    private val firebaseAuth: FirebaseAuth = System::class.java
-            .getResourceAsStream("/secret/firebase-adminsdk.json")
-            .let { GoogleCredentials.fromStream(it) }
-            .let { FirebaseOptions.Builder().setCredentials(it).build() }
-            .let { FirebaseApp.initializeApp(it) }
-            .let { FirebaseAuth.getInstance(it) }
+/**
+ * The global Authentication Handler.
+ */
+private val firebaseAuth: FirebaseAuth = System::class.java
+        .getResourceAsStream("/secret/firebase-adminsdk.json")
+        .let { GoogleCredentials.fromStream(it) }
+        .let { FirebaseOptions.Builder().setCredentials(it).build() }
+        .let { FirebaseApp.initializeApp(it) }
+        .let { FirebaseAuth.getInstance(it) }
 
-    /**
-     * [SecurityFilters] can be used to create security filters.
-     */
-    private object SecurityFilters : FirebaseUser.SecurityFilters(firebaseAuth = firebaseAuth)
+/**
+ * [SecurityFilters] can be used to create security filters.
+ */
+private object SecurityFilters : FirebaseUser.SecurityFilters(firebaseAuth = firebaseAuth)
 
-    /**
-     * [transformer] transforms the response to correct form.
-     */
-    @JvmStatic
-    private val transformer: ResponseTransformer = ResponseTransformer { r ->
-        val s = when (r) {
-            Unit -> ""; is String -> r; else -> gson.toJson(r)
+/*
+ * ------------------------------------------------------------------------------------------
+ * Part 2: Common Helper Functions
+ * ------------------------------------------------------------------------------------------
+ */
+
+/**
+ * [transformer] transforms the response to correct form.
+ */
+private val transformer: ResponseTransformer = ResponseTransformer { r ->
+    val s = when (r) {
+        Unit -> ""; is String -> r; else -> gson.toJson(r)
+    }
+    s
+}
+
+/**
+ * [Request.toJson] converts the body of the `Request` to a parsed json object.
+ */
+private inline fun <reified T> Request.toJson(): T = gson.fromJson(body(), T::class.java)
+
+/**
+ * [before] registers a before security filter with [path] and a user given [authorizer].
+ */
+private fun before(path: String, authorizer: (WebContext, FirebaseUser) -> Boolean): Unit =
+        Spark.before(path, SecurityFilters.create(authorizer = authorizer))
+
+/**
+ * [get] registers a GET handler with [path] and a user given function [f].
+ */
+private inline fun get(path: String, crossinline f: Request.(Response) -> Any?): Unit =
+        Spark.get(path, Route { request, response -> request.f(response) }, transformer)
+
+/**
+ * [post] registers a POST handler with [path] and a user given function [f].
+ */
+private inline fun post(path: String, crossinline f: Request.(Response) -> Any?): Unit =
+        Spark.post(path, Route { request, response -> request.f(response) }, transformer)
+
+/**
+ * [delete] registers a DELETE handler with [path] and a user function [f].
+ */
+private inline fun delete(path: String, crossinline f: Request.(Response) -> Any?): Unit =
+        Spark.delete(path, Route { request, response -> request.f(response) }, transformer)
+
+/*
+ * ------------------------------------------------------------------------------------------
+ * Part 4: Route Declarations
+ * ------------------------------------------------------------------------------------------
+ */
+
+/**
+ * [initializeApiHandlers] initializes a list of handlers.
+ */
+private fun initializeApiHandlers() {
+    path("/apis/public", ::initializePublicApiHandlers)
+    path("/apis/user", ::initializeUserApiHandlers)
+}
+
+/**
+ * [initializePublicApiHandlers] initializes a list of public API handlers.
+ */
+private fun initializePublicApiHandlers() {
+    // TEN
+    post(path = "/ten/response") { Board.respond(toJson()) }
+}
+
+/**
+ * [initializeUserApiHandlers] initializes a list of user API handlers.
+ */
+private fun initializeUserApiHandlers() {
+    // Scheduler
+    before(path = "/*") { _, _ -> true }
+    path("/scheduler") {
+        get(path = "/load") { SchedulerItem[user] }
+        post(path = "/write") { _ ->
+            toJson<SchedulerItem>().upsert(user = user)?.toUrlSafe() ?: halt(code = 400)
         }
-        s
-    }
-
-    /**
-     * [Request.toJson] converts the body of the `Request` to a parsed json object.
-     */
-    @JvmStatic
-    private inline fun <reified T> Request.toJson(): T = gson.fromJson(body(), T::class.java)
-
-    /**
-     * [before] registers a before security filter with [path] and a user given [authorizer].
-     */
-    @JvmStatic
-    private fun before(path: String, authorizer: (WebContext, FirebaseUser) -> Boolean): Unit =
-            Spark.before(path, SecurityFilters.create(authorizer = authorizer))
-
-    /**
-     * [get] registers a GET handler with [path] and a user given function [f].
-     */
-    @JvmStatic
-    private inline fun get(path: String, crossinline f: Request.(Response) -> Any?): Unit =
-            Spark.get(path, Route { request, response -> request.f(response) }, transformer)
-
-    /**
-     * [post] registers a POST handler with [path] and a user given function [f].
-     */
-    @JvmStatic
-    private inline fun post(path: String, crossinline f: Request.(Response) -> Any?): Unit =
-            Spark.post(path, Route { request, response -> request.f(response) }, transformer)
-
-    /**
-     * [delete] registers a DELETE handler with [path] and a user function [f].
-     */
-    @JvmStatic
-    private inline fun delete(path: String, crossinline f: Request.(Response) -> Any?): Unit =
-            Spark.delete(path, Route { request, response -> request.f(response) }, transformer)
-
-    /**
-     * [main] is the entry point of [WebApp].
-     *
-     * @param args these info will be ignored right now.
-     */
-    @JvmStatic
-    fun main(args: Array<String>) {
-        Spark.port(8080)
-        Spark.staticFileLocation("/public")
-        Spark.notFound { _, resp ->
-            resp.status(200)
-            WebApp::class.java.getResourceAsStream("/public/index.html")
-                    .let { BufferedReader(InputStreamReader(it)) }
-                    .lineSequence()
-                    .joinToString(separator = "\n")
-        }
-        initializeApiHandlers()
-    }
-
-    /**
-     * [initializeApiHandlers] initializes a list of handlers.
-     */
-    @JvmStatic
-    private fun initializeApiHandlers() {
-        path("/apis/public", ::initializePublicApiHandlers)
-        path("/apis/user", ::initializeUserApiHandlers)
-    }
-
-    /**
-     * [initializePublicApiHandlers] initializes a list of public API handlers.
-     */
-    @JvmStatic
-    private fun initializePublicApiHandlers() {
-        // TEN
-        post(path = "/ten/response") { Board.respond(toJson()) }
-    }
-
-    /**
-     * [initializeUserApiHandlers] initializes a list of user API handlers.
-     */
-    @JvmStatic
-    private fun initializeUserApiHandlers() {
-        // Scheduler
-        before(path = "/*") { _, _ -> true }
-        path("/scheduler") {
-            get(path = "/load") { SchedulerItem[user] }
-            post(path = "/write") { _ ->
-                toJson<SchedulerItem>().upsert(user = user)?.toUrlSafe() ?: halt(code = 400)
-            }
-            delete(path = "/delete") { _ ->
-                val key: String? = queryParams("key")
-                if (key != null) {
-                    SchedulerItem.delete(user = user, key = Key.fromUrlSafe(key))
-                }
-            }
-            post(path = "/mark_as") { _ ->
-                val key: String? = queryParams("key")
-                val completed: Boolean? = queryParams("completed")?.toBoolean()
-                if (key != null && completed != null) {
-                    SchedulerItem.markAs(user, Key.fromUrlSafe(key), completed)
-                }
+        delete(path = "/delete") { _ ->
+            val key: String? = queryParams("key")
+            if (key != null) {
+                SchedulerItem.delete(user = user, key = Key.fromUrlSafe(key))
             }
         }
-        // ChunkReader
-        path("/chunkreader") {
-            get(path = "/load") { Article[user] }
-            post(path = "/analyze") { toJson<RawArticle>().process(user = user) }
-            get(path = "/article_detail") { _ ->
-                val key = Key.fromUrlSafe(queryParams("key"))
-                Article[user, key]
-            }
-            post(path = "/adjust_summary") { _ ->
-                val key = Key.fromUrlSafe(queryParams("key"))
-                val limit = queryParams("limit").toInt()
-                Summary[user, key, limit]
+        post(path = "/mark_as") { _ ->
+            val key: String? = queryParams("key")
+            val completed: Boolean? = queryParams("completed")?.toBoolean()
+            if (key != null && completed != null) {
+                SchedulerItem.markAs(user, Key.fromUrlSafe(key), completed)
             }
         }
     }
+    // ChunkReader
+    path("/chunkreader") {
+        get(path = "/load") { Article[user] }
+        post(path = "/analyze") { toJson<RawArticle>().process(user = user) }
+        get(path = "/article_detail") { _ ->
+            val key = Key.fromUrlSafe(queryParams("key"))
+            Article[user, key]
+        }
+        post(path = "/adjust_summary") { _ ->
+            val key = Key.fromUrlSafe(queryParams("key"))
+            val limit = queryParams("limit").toInt()
+            Summary[user, key, limit]
+        }
+    }
+}
 
+/*
+ * ------------------------------------------------------------------------------------------
+ * Part 5: Main
+ * ------------------------------------------------------------------------------------------
+ */
+
+/**
+ * [main] is the entry point.
+ *
+ * @param args these info will be ignored right now.
+ */
+fun main(args: Array<String>) {
+    Spark.port(8080)
+    Spark.staticFileLocation("/public")
+    Spark.notFound { _, resp ->
+        resp.status(200)
+        SecurityFilters::class.java.getResourceAsStream("/public/index.html")
+                .let { BufferedReader(InputStreamReader(it)) }
+                .lineSequence()
+                .joinToString(separator = "\n")
+    }
+    initializeApiHandlers()
 }

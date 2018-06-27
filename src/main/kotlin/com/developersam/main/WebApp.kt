@@ -1,25 +1,24 @@
 package com.developersam.main
 
 import com.developersam.auth.FirebaseUser
+import com.developersam.auth.FirebaseUser.SecurityFilters.Companion.user
 import com.developersam.chunkreader.Article
 import com.developersam.chunkreader.RawArticle
 import com.developersam.chunkreader.Summary
 import com.developersam.game.ten.Board
 import com.developersam.scheduler.SchedulerItem
-import com.developersam.util.asJson
-import com.developersam.util.toJson
+import com.developersam.util.gson
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.datastore.Key
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
-import org.pac4j.core.config.Config
 import org.pac4j.sparkjava.SecurityFilter
 import spark.Request
 import spark.Response
 import spark.ResponseTransformer
 import spark.Route
-import spark.Spark
+import spark.Spark.before
 import spark.Spark.delete
 import spark.Spark.get
 import spark.Spark.notFound
@@ -37,7 +36,7 @@ import java.io.InputStreamReader
 object WebApp {
 
     /**
-     * Global Authentication Handler.
+     * The global Authentication Handler.
      */
     private val firebaseAuth: FirebaseAuth = System::class.java
             .getResourceAsStream("/secret/firebase-adminsdk.json")
@@ -47,17 +46,30 @@ object WebApp {
             .let { FirebaseAuth.getInstance(it) }
 
     /**
-     * [securityConfig] is the global security config.
+     * [SecurityFilters] can be used to create security filters.
      */
-    private val securityConfig: Config = FirebaseUser.AuthConfigFactory(
-            firebaseAuth = firebaseAuth, authorize = { _, _ -> true }
-    ).build()
+    private object SecurityFilters : FirebaseUser.SecurityFilters(firebaseAuth = firebaseAuth)
+
+    /**
+     * [securityFilter] is the global security filter.
+     */
+    private val securityFilter: SecurityFilter = SecurityFilters.create { _, _ -> true }
 
     /**
      * [transformer] transforms the response to correct form.
      */
     @JvmStatic
-    private val transformer: ResponseTransformer = ResponseTransformer { r -> r.asJson }
+    private val transformer: ResponseTransformer = ResponseTransformer { r ->
+        val s = when (r) {
+            Unit -> ""; is String -> r; else -> gson.toJson(r)
+        }
+        s
+    }
+
+    /**
+     * [Request.toJson] converts the body of the `Request` to a parsed json object.
+     */
+    private inline fun <reified T> Request.toJson(): T = gson.fromJson(body(), T::class.java)
 
     /**
      * [get] registers a GET handler with [path] and a user given [function].
@@ -65,10 +77,7 @@ object WebApp {
     @JvmStatic
     private inline fun get(
             path: String, crossinline function: Request.(resp: Response) -> Any?
-    ): Unit = get(path, Route { request, response ->
-        request.attribute("user", FirebaseUser.fromRequest(request, response))
-        request.function(response)
-    }, transformer)
+    ): Unit = get(path, Route { request, response -> request.function(response) }, transformer)
 
     /**
      * [post] registers a POST handler with [path] and a user given [function].
@@ -76,10 +85,7 @@ object WebApp {
     @JvmStatic
     private inline fun post(
             path: String, crossinline function: Request.(resp: Response) -> Any?
-    ): Unit = post(path, Route { request, response ->
-        request.attribute("user", FirebaseUser.fromRequest(request, response))
-        request.function(response)
-    }, transformer)
+    ): Unit = post(path, Route { request, response -> request.function(response) }, transformer)
 
     /**
      * [delete] registers a DELETE handler with [path] and a user given [function].
@@ -87,17 +93,7 @@ object WebApp {
     @JvmStatic
     private inline fun delete(
             path: String, crossinline function: Request.(resp: Response) -> Any?
-    ): Unit = delete(path, Route { request, response ->
-        request.attribute("user", FirebaseUser.fromRequest(request, response))
-        request.function(response)
-    }, transformer)
-
-    /**
-     * [Request.user] returns the [FirebaseUser] detected from the request.
-     */
-    @JvmStatic
-    private val Request.user: FirebaseUser
-        get() = attribute("user") ?: throw halt(code = 401)
+    ): Unit = delete(path, Route { request, response -> request.function(response) }, transformer)
 
     /**
      * [main] is the entry point of [WebApp].
@@ -141,7 +137,7 @@ object WebApp {
      */
     @JvmStatic
     private fun initializeUserApiHandlers() {
-        Spark.before("/*", SecurityFilter(securityConfig, "HeaderClient"))
+        before("/*", securityFilter)
         // Scheduler
         path("/scheduler") {
             get(path = "/load") { _ -> SchedulerItem[user] }
@@ -158,9 +154,7 @@ object WebApp {
                 val key: String? = queryParams("key")
                 val completed: Boolean? = queryParams("completed")?.toBoolean()
                 if (key != null && completed != null) {
-                    SchedulerItem.markAs(
-                            user = user, key = Key.fromUrlSafe(key), isCompleted = completed
-                    )
+                    SchedulerItem.markAs(user, Key.fromUrlSafe(key), completed)
                 }
             }
         }

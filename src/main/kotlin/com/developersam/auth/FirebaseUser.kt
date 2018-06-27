@@ -1,22 +1,21 @@
 package com.developersam.auth
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseToken
 import org.pac4j.core.authorization.authorizer.IsAuthenticatedAuthorizer
-import org.pac4j.core.authorization.authorizer.RequireAnyAttributeAuthorizer
-import org.pac4j.core.authorization.generator.AuthorizationGenerator
+import org.pac4j.core.authorization.authorizer.ProfileAuthorizer
 import org.pac4j.core.client.Clients
 import org.pac4j.core.config.Config
-import org.pac4j.core.config.ConfigFactory
 import org.pac4j.core.context.WebContext
 import org.pac4j.core.credentials.TokenCredentials
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.core.profile.ProfileManager
 import org.pac4j.http.client.direct.HeaderClient
 import org.pac4j.sparkjava.DefaultHttpActionAdapter
+import org.pac4j.sparkjava.SecurityFilter
 import org.pac4j.sparkjava.SparkWebContext
 import spark.Request
 import spark.Response
+import spark.kotlin.halt
 import java.net.URI
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -38,28 +37,15 @@ data class FirebaseUser(
 ) {
 
     /**
-     * Construct from a [FirebaseToken].
-     */
-    private constructor(token: FirebaseToken) : this(
-            uid = token.uid, name = token.name, email = token.email,
-            picture = token.picture, issuer = token.issuer
-    )
-
-    /**
      * [Profile] is the user profile of the firebase user.
      *
      * @constructor created and delegated by a [FirebaseUser] [user].
      */
     private class Profile(val user: FirebaseUser) : CommonProfile() {
-
         override fun getId(): String = user.uid
-
         override fun getEmail(): String = user.email
-
         override fun getDisplayName(): String = user.name
-
         override fun getUsername(): String = user.name
-
         override fun getPictureUrl(): URI = URI(user.picture)
 
         init {
@@ -70,62 +56,99 @@ data class FirebaseUser(
     }
 
     /**
-     * [AuthConfigFactory] is used to produce auth config.
+     * [SecurityFilters] can build different specialized security filters from a common
+     * [firebaseAuth] to extract users.
      *
-     * @property firebaseAuth the auth used to authenticate users.
-     * @property headerName the header name that contains the firebase token, which defaults to
-     * `"Firebase-Auth-Token"`.
-     * @property authorize the authorize function that gives a yes/no permission answer to a
-     * request.
+     * When using it, you should create a singleton from this class.
      */
-    class AuthConfigFactory(
-            private val firebaseAuth: FirebaseAuth,
-            private val headerName: String = "Firebase-Auth-Token",
-            private val authorize: (context: WebContext, user: FirebaseUser) -> Boolean
-    ) : ConfigFactory {
-
-        override fun build(vararg parameters: Any?): Config {
-            val headerClient = HeaderClient(headerName) { credentials, _ ->
-                val idToken = (credentials as? TokenCredentials)?.token ?: return@HeaderClient
-                val firebaseToken = try {
-                    firebaseAuth.verifyIdToken(idToken)
-                } catch (e: Exception) {
-                    Logger.getGlobal().log(Level.SEVERE, e) { "Auth Error" }
-                    return@HeaderClient
-                }
-                val firebaseUser = FirebaseUser(token = firebaseToken)
-                val profile = FirebaseUser.Profile(firebaseUser)
-                credentials.userProfile = profile
-            }
-            val clients = Clients(headerClient).apply {
-                val generator = AuthorizationGenerator<Profile> { context, profile ->
-                    if (authorize(context, profile.user)) {
-                        profile.addPermission("AUTHORIZED")
-                    }
-                    profile
-                }
-                addAuthorizationGenerator(generator)
-            }
-            return Config(clients).apply {
-                addAuthorizer("authenticated", IsAuthenticatedAuthorizer<Profile>())
-                val requiredToBeAuthorized =
-                        RequireAnyAttributeAuthorizer<Profile>("AUTHORIZED")
-                addAuthorizer("authorized", requiredToBeAuthorized)
-                httpActionAdapter = DefaultHttpActionAdapter()
-            }
-        }
-
-    }
-
-    companion object {
+    open class SecurityFilters(private val firebaseAuth: FirebaseAuth) {
 
         /**
-         * [fromRequest] returns a [FirebaseUser] from a [request] and [response].
+         * [headerClient] is the specialized client for processing the firebase token from header.
          */
-        fun fromRequest(request: Request, response: Response): FirebaseUser? {
-            val context = SparkWebContext(request, response)
-            val manager = ProfileManager<Profile>(context)
-            return manager.get(false).orElse(null)?.user
+        private val headerClient = HeaderClient(headerName) { credentials, _ ->
+            val idToken = (credentials as? TokenCredentials)?.token ?: return@HeaderClient
+            val firebaseToken = try {
+                firebaseAuth.verifyIdToken(idToken)
+            } catch (e: Exception) {
+                Logger.getGlobal().log(Level.SEVERE, e) { "Auth Error" }
+                return@HeaderClient
+            }
+            val firebaseUser = FirebaseUser(
+                    uid = firebaseToken.uid, name = firebaseToken.name,
+                    email = firebaseToken.email, picture = firebaseToken.picture,
+                    issuer = firebaseToken.issuer
+            )
+            val profile = FirebaseUser.Profile(firebaseUser)
+            credentials.userProfile = profile
+        }
+
+        /**
+         * [clients] is a set of singleton clients.
+         */
+        private val clients = Clients(headerClient)
+
+        /**
+         * [UserAuthorizer] is the authorizer that authorizes users according to the given
+         * [authorizer].
+         */
+        private class UserAuthorizer(
+                private val authorizer: (WebContext, FirebaseUser) -> Boolean
+        ) : ProfileAuthorizer<Profile>() {
+            override fun isAuthorized(ctx: WebContext, profiles: List<Profile>): Boolean =
+                    isAllAuthorized(ctx, profiles)
+
+            override fun isProfileAuthorized(ctx: WebContext, profile: Profile): Boolean =
+                    authorizer(ctx, profile.user)
+        }
+
+        /**
+         * [UserSecurityFilter] is the [SecurityFilter] that automatically sets the user account in
+         * the attribute for later usage.
+         *
+         * @param config the config constructed above.
+         */
+        private class UserSecurityFilter(config: Config) :
+                SecurityFilter(config, "HeaderClient", "CustomAuthorizer") {
+
+            override fun handle(request: Request, response: Response) {
+                super.handle(request, response)
+                val context = SparkWebContext(request, response)
+                val manager = ProfileManager<Profile>(context)
+                manager.get(false).takeIf { it.isPresent }?.let { profileOpt ->
+                    request.attribute("user", profileOpt.get().user)
+                }
+            }
+
+        }
+
+        /**
+         * [create] returns a newly created specialized security filter according to the authorizer.
+         *
+         * @param authorizer the authorize function that gives a yes/no permission answer to a
+         * request.
+         */
+        fun create(authorizer: (WebContext, FirebaseUser) -> Boolean): SecurityFilter =
+                Config(clients).apply {
+                    addAuthorizer("AuthenticatedAuthorizer", IsAuthenticatedAuthorizer<Profile>())
+                    addAuthorizer("CustomAuthorizer", UserAuthorizer(authorizer))
+                    httpActionAdapter = DefaultHttpActionAdapter()
+                }.let { UserSecurityFilter(config = it) }
+
+        companion object {
+
+            /**
+             * [headerName] is the default name for header.
+             */
+            private const val headerName = "Firebase-Auth-Token"
+
+            /**
+             * [Request.user] returns the [FirebaseUser] detected from the request.
+             * If a user is not found, it will throw halt with 401 error code.
+             */
+            val Request.user: FirebaseUser
+                get() = attribute("user") ?: throw halt(code = 401)
+
         }
 
     }

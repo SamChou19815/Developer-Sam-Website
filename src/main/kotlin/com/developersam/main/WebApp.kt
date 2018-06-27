@@ -13,19 +13,13 @@ import com.google.cloud.datastore.Key
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
-import org.pac4j.sparkjava.SecurityFilter
+import org.pac4j.core.context.WebContext
 import spark.Request
 import spark.Response
 import spark.ResponseTransformer
 import spark.Route
-import spark.Spark.before
-import spark.Spark.delete
-import spark.Spark.get
-import spark.Spark.notFound
+import spark.Spark
 import spark.Spark.path
-import spark.Spark.port
-import spark.Spark.post
-import spark.Spark.staticFileLocation
 import spark.kotlin.halt
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -51,11 +45,6 @@ object WebApp {
     private object SecurityFilters : FirebaseUser.SecurityFilters(firebaseAuth = firebaseAuth)
 
     /**
-     * [securityFilter] is the global security filter.
-     */
-    private val securityFilter: SecurityFilter = SecurityFilters.create { _, _ -> true }
-
-    /**
      * [transformer] transforms the response to correct form.
      */
     @JvmStatic
@@ -69,31 +58,36 @@ object WebApp {
     /**
      * [Request.toJson] converts the body of the `Request` to a parsed json object.
      */
+    @JvmStatic
     private inline fun <reified T> Request.toJson(): T = gson.fromJson(body(), T::class.java)
 
     /**
-     * [get] registers a GET handler with [path] and a user given [function].
+     * [before] registers a before security filter with [path] and a user given [authorizer].
      */
     @JvmStatic
-    private inline fun get(
-            path: String, crossinline function: Request.(resp: Response) -> Any?
-    ): Unit = get(path, Route { request, response -> request.function(response) }, transformer)
+    private fun before(path: String, authorizer: (WebContext, FirebaseUser) -> Boolean): Unit =
+            Spark.before(path, SecurityFilters.create(authorizer = authorizer))
 
     /**
-     * [post] registers a POST handler with [path] and a user given [function].
+     * [get] registers a GET handler with [path] and a user given function [f].
      */
     @JvmStatic
-    private inline fun post(
-            path: String, crossinline function: Request.(resp: Response) -> Any?
-    ): Unit = post(path, Route { request, response -> request.function(response) }, transformer)
+    private inline fun get(path: String, crossinline f: Request.(Response) -> Any?): Unit =
+            Spark.get(path, Route { request, response -> request.f(response) }, transformer)
 
     /**
-     * [delete] registers a DELETE handler with [path] and a user given [function].
+     * [post] registers a POST handler with [path] and a user given function [f].
      */
     @JvmStatic
-    private inline fun delete(
-            path: String, crossinline function: Request.(resp: Response) -> Any?
-    ): Unit = delete(path, Route { request, response -> request.function(response) }, transformer)
+    private inline fun post(path: String, crossinline f: Request.(Response) -> Any?): Unit =
+            Spark.post(path, Route { request, response -> request.f(response) }, transformer)
+
+    /**
+     * [delete] registers a DELETE handler with [path] and a user function [f].
+     */
+    @JvmStatic
+    private inline fun delete(path: String, crossinline f: Request.(Response) -> Any?): Unit =
+            Spark.delete(path, Route { request, response -> request.f(response) }, transformer)
 
     /**
      * [main] is the entry point of [WebApp].
@@ -102,9 +96,9 @@ object WebApp {
      */
     @JvmStatic
     fun main(args: Array<String>) {
-        port(8080)
-        staticFileLocation("/public")
-        notFound { _, resp ->
+        Spark.port(8080)
+        Spark.staticFileLocation("/public")
+        Spark.notFound { _, resp ->
             resp.status(200)
             WebApp::class.java.getResourceAsStream("/public/index.html")
                     .let { BufferedReader(InputStreamReader(it)) }
@@ -129,7 +123,7 @@ object WebApp {
     @JvmStatic
     private fun initializePublicApiHandlers() {
         // TEN
-        post(path = "/ten/response") { _ -> Board.respond(toJson()) }
+        post(path = "/ten/response") { Board.respond(toJson()) }
     }
 
     /**
@@ -137,10 +131,10 @@ object WebApp {
      */
     @JvmStatic
     private fun initializeUserApiHandlers() {
-        before("/*", securityFilter)
         // Scheduler
+        before(path = "/*") { _, _ -> true }
         path("/scheduler") {
-            get(path = "/load") { _ -> SchedulerItem[user] }
+            get(path = "/load") { SchedulerItem[user] }
             post(path = "/write") { _ ->
                 toJson<SchedulerItem>().upsert(user = user)?.toUrlSafe() ?: halt(code = 400)
             }
@@ -160,7 +154,8 @@ object WebApp {
         }
         // ChunkReader
         path("/chunkreader") {
-            get(path = "/load") { _ -> Article[user] }
+            get(path = "/load") { Article[user] }
+            post(path = "/analyze") { toJson<RawArticle>().process(user = user) }
             get(path = "/article_detail") { _ ->
                 val key = Key.fromUrlSafe(queryParams("key"))
                 Article[user, key]
@@ -170,7 +165,6 @@ object WebApp {
                 val limit = queryParams("limit").toInt()
                 Summary[user, key, limit]
             }
-            post(path = "/analyze") { _ -> toJson<RawArticle>().process(user = user) }
         }
     }
 

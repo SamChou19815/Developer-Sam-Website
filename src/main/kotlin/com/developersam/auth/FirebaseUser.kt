@@ -98,13 +98,13 @@ data class FirebaseUser(
          * [authorizer].
          */
         private class UserAuthorizer(
-                private val authorizer: (WebContext, FirebaseUser) -> Boolean
+                private val authorizer: (Request, FirebaseUser) -> Boolean
         ) : ProfileAuthorizer<Profile>() {
             override fun isAuthorized(ctx: WebContext, profiles: List<Profile>): Boolean =
                     isAllAuthorized(ctx, profiles)
 
             override fun isProfileAuthorized(ctx: WebContext, profile: Profile): Boolean =
-                    authorizer(ctx, profile.user)
+                    authorizer((ctx as SparkWebContext).sparkRequest, profile.user)
         }
 
         /**
@@ -133,7 +133,7 @@ data class FirebaseUser(
          * @param authorizer the authorize function that gives a yes/no permission answer to a
          * request.
          */
-        fun create(authorizer: (WebContext, FirebaseUser) -> Boolean): SecurityFilter =
+        fun create(authorizer: (Request, FirebaseUser) -> Boolean): SecurityFilter =
                 Config(clients).apply {
                     addAuthorizer(AUTHENTICATED_AUTHORIZER_NAME, AuthenticatedAuthorizer)
                     addAuthorizer(CUSTOM_AUTHORIZER_NAME, UserAuthorizer(authorizer))

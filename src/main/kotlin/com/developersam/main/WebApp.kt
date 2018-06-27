@@ -15,7 +15,6 @@ import com.google.cloud.datastore.Key
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
-import org.pac4j.core.context.WebContext
 import spark.Request
 import spark.Response
 import spark.ResponseTransformer
@@ -71,7 +70,7 @@ private inline fun <reified T> Request.toJson(): T = gson.fromJson(body(), T::cl
 /**
  * [before] registers a before security filter with [path] and a user given [authorizer].
  */
-private fun before(path: String, authorizer: (WebContext, FirebaseUser) -> Boolean): Unit =
+private fun before(path: String, authorizer: (Request, FirebaseUser) -> Boolean): Unit =
         Spark.before(path, SecurityFilters.create(authorizer = authorizer))
 
 /**

@@ -21,6 +21,7 @@ import spark.ResponseTransformer
 import spark.Route
 import spark.Spark
 import spark.Spark.path
+import spark.kotlin.before
 import spark.kotlin.halt
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -42,9 +43,14 @@ private val firebaseAuth: FirebaseAuth = System::class.java
         .let { FirebaseAuth.getInstance(it) }
 
 /**
+ * [Roles] defines a set of roles supported by the system.
+ */
+private enum class Role { USER, ADMIN }
+
+/**
  * [SecurityFilters] can be used to create security filters.
  */
-private object SecurityFilters : FirebaseUser.SecurityFilters(firebaseAuth = firebaseAuth)
+private object SecurityFilters : FirebaseUser.SecurityFilters<Role>(firebaseAuth, { Role.USER })
 
 /*
  * ------------------------------------------------------------------------------------------
@@ -68,10 +74,10 @@ private val transformer: ResponseTransformer = ResponseTransformer { r ->
 private inline fun <reified T> Request.toJson(): T = gson.fromJson(body(), T::class.java)
 
 /**
- * [before] registers a before security filter with [path] and a user given [authorizer].
+ * [before] registers a before security filter with [path] and a user given a required [role].
  */
-private fun before(path: String, authorizer: (Request, FirebaseUser) -> Boolean): Unit =
-        Spark.before(path, SecurityFilters.create(authorizer = authorizer))
+private fun before(path: String, role: Role): Unit =
+        Spark.before(path, SecurityFilters.withRole(role = role))
 
 /**
  * [get] registers a GET handler with [path] and a user given function [f].
@@ -118,7 +124,7 @@ private fun initializePublicApiHandlers() {
  */
 private fun initializeUserApiHandlers() {
     // Scheduler
-    before(path = "/*") { _, _ -> true }
+    before(path = "/*", role = Role.USER)
     path("/scheduler") {
         get(path = "/load") { SchedulerItem[user] }
         post(path = "/write") { _ ->

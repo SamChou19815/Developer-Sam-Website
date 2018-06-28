@@ -1,11 +1,12 @@
 package com.developersam.auth
 
 import com.google.firebase.auth.FirebaseAuth
-import org.pac4j.core.authorization.authorizer.IsAuthenticatedAuthorizer
-import org.pac4j.core.authorization.authorizer.ProfileAuthorizer
+import org.pac4j.core.authorization.authorizer.RequireAllRolesAuthorizer
+import org.pac4j.core.authorization.generator.AuthorizationGenerator
 import org.pac4j.core.client.Clients
 import org.pac4j.core.config.Config
-import org.pac4j.core.context.WebContext
+import org.pac4j.core.context.DefaultAuthorizers.CSRF
+import org.pac4j.core.context.DefaultAuthorizers.SECURITYHEADERS
 import org.pac4j.core.credentials.TokenCredentials
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.core.profile.ProfileManager
@@ -58,15 +59,26 @@ data class FirebaseUser(
     /**
      * [SecurityFilters] can build different specialized security filters from a common
      * [firebaseAuth] to extract users.
+     * Best practice: when using it, you should create a singleton from this class.
      *
-     * When using it, you should create a singleton from this class.
+     * @param R the enum type of user role.
      */
-    open class SecurityFilters(private val firebaseAuth: FirebaseAuth) {
+    open class SecurityFilters<R : Enum<R>>(
+            private val firebaseAuth: FirebaseAuth,
+            private val roleAssigner: (FirebaseUser) -> R
+    ) {
+
+        /**
+         * [authorizationGenerator] is the generator used to assign roles to users.
+         */
+        private val authorizationGenerator = AuthorizationGenerator<CommonProfile> { _, p ->
+            p.apply { addRole(roleAssigner((p as Profile).user).name) }
+        }
 
         /**
          * [headerClient] is the specialized client for processing the firebase token from header.
          */
-        private val headerClient = HeaderClient(HEADER_NAME) { credentials, _ ->
+        private val headerClient: HeaderClient = HeaderClient(HEADER_NAME) { credentials, _ ->
             val idToken = (credentials as? TokenCredentials)?.token ?: return@HeaderClient
             val firebaseToken = try {
                 firebaseAuth.verifyIdToken(idToken)
@@ -81,31 +93,12 @@ data class FirebaseUser(
             )
             val profile = FirebaseUser.Profile(firebaseUser)
             credentials.userProfile = profile
-        }
+        }.apply { addAuthorizationGenerator(authorizationGenerator) }
 
         /**
          * [clients] is a set of singleton clients.
          */
         private val clients = Clients(headerClient)
-
-        /**
-         * [AuthenticatedAuthorizer] is the authorizer that authorizes if the user is authenticated.
-         */
-        private object AuthenticatedAuthorizer : IsAuthenticatedAuthorizer<Profile>()
-
-        /**
-         * [UserAuthorizer] is the authorizer that authorizes users according to the given
-         * [authorizer].
-         */
-        private class UserAuthorizer(
-                private val authorizer: (Request, FirebaseUser) -> Boolean
-        ) : ProfileAuthorizer<Profile>() {
-            override fun isAuthorized(ctx: WebContext, profiles: List<Profile>): Boolean =
-                    isAllAuthorized(ctx, profiles)
-
-            override fun isProfileAuthorized(ctx: WebContext, profile: Profile): Boolean =
-                    authorizer((ctx as SparkWebContext).sparkRequest, profile.user)
-        }
 
         /**
          * [UserSecurityFilter] is the [SecurityFilter] that automatically sets the user account in
@@ -114,7 +107,7 @@ data class FirebaseUser(
          * @param config the config constructed above.
          */
         private class UserSecurityFilter(config: Config) :
-                SecurityFilter(config, HEADER_CLIENT_NAME, CUSTOM_AUTHORIZER_NAME) {
+                SecurityFilter(config, HEADER_CLIENT_NAME, AUTHORIZER_NAMES) {
 
             override fun handle(request: Request, response: Response) {
                 super.handle(request, response)
@@ -128,15 +121,12 @@ data class FirebaseUser(
         }
 
         /**
-         * [create] returns a newly created specialized security filter according to the authorizer.
-         *
-         * @param authorizer the authorize function that gives a yes/no permission answer to a
-         * request.
+         * [withRole] returns a new security filter that requires the user to have certain [role].
          */
-        fun create(authorizer: (Request, FirebaseUser) -> Boolean): SecurityFilter =
+        fun withRole(role: R): SecurityFilter =
                 Config(clients).apply {
-                    addAuthorizer(AUTHENTICATED_AUTHORIZER_NAME, AuthenticatedAuthorizer)
-                    addAuthorizer(CUSTOM_AUTHORIZER_NAME, UserAuthorizer(authorizer))
+                    addAuthorizer(ROLE_AUTHORIZER_NAME,
+                            RequireAllRolesAuthorizer<Profile>(role.name))
                     httpActionAdapter = DefaultHttpActionAdapter()
                 }.let { UserSecurityFilter(config = it) }
 
@@ -153,19 +143,19 @@ data class FirebaseUser(
             private const val HEADER_CLIENT_NAME = "HeaderClient"
 
             /**
-             * [AUTHENTICATED_AUTHORIZER_NAME] is the name of the authenticated authorizer.
+             * [ROLE_AUTHORIZER_NAME] is the name of the authorizer that checks roles.
              */
-            private const val AUTHENTICATED_AUTHORIZER_NAME = "AuthenticatedAuthorizer"
+            private const val ROLE_AUTHORIZER_NAME = "RoleAuthorizer"
 
             /**
-             * [CUSTOM_AUTHORIZER_NAME] is the name of the custom authorizer.
+             * [AUTHORIZER_NAMES] are the names of the used authorizers.
              */
-            private const val CUSTOM_AUTHORIZER_NAME = "CustomAuthorizer"
+            private const val AUTHORIZER_NAMES = "$ROLE_AUTHORIZER_NAME,$SECURITYHEADERS"
 
             /**
              * [USER_ATTRIBUTE_NAME] is the attribute name for user.
              */
-            private const val USER_ATTRIBUTE_NAME = "user"
+            private const val USER_ATTRIBUTE_NAME = "FirebaseUser"
 
             /**
              * [Request.user] returns the [FirebaseUser] detected from the request.

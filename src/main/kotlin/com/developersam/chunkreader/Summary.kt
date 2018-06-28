@@ -1,16 +1,16 @@
 package com.developersam.chunkreader
 
-import com.developersam.typestore.TypedEntity
-import com.developersam.typestore.TypedEntityCompanion
-import com.developersam.typestore.TypedTable
 import com.developersam.auth.FirebaseUser
-import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.Entity
-import com.google.cloud.language.v1beta2.Entity as LanguageEntity
+import com.google.cloud.datastore.Key
 import com.google.cloud.language.v1beta2.Sentence
 import com.google.cloud.language.v1beta2.TextSpan
 import com.google.common.collect.Sets
+import typestore.TypedEntity
+import typestore.TypedEntityCompanion
+import typestore.TypedTable
 import java.util.Arrays
+import com.google.cloud.language.v1beta2.Entity as LanguageEntity
 
 /**
  * [Summary] is used to fetch a list of summaries for a common text key for a given limit

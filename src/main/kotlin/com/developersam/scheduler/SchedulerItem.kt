@@ -1,15 +1,15 @@
 package com.developersam.scheduler
 
-import com.developersam.typestore.TypedEntity
-import com.developersam.typestore.TypedEntityCompanion
-import com.developersam.typestore.TypedTable
-import com.developersam.typestore.defaultDatastore
-import com.developersam.typestore.toLocalDateTimeInUTC
-import com.developersam.typestore.toUTCMillis
-import com.developersam.typestore.transaction
 import com.developersam.auth.FirebaseUser
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
+import typestore.TypedEntity
+import typestore.TypedEntityCompanion
+import typestore.TypedTable
+import typestore.defaultDatastore
+import typestore.toLocalDateTimeInUTC
+import typestore.toUTCMillis
+import typestore.transaction
 import java.time.LocalDateTime
 
 /**

@@ -1,15 +1,15 @@
 package com.developersam.chunkreader
 
+import com.developersam.auth.FirebaseUser
 import com.developersam.chunkreader.Article.Table.content
 import com.developersam.chunkreader.Article.Table.title
-import com.developersam.typestore.TypedEntity
-import com.developersam.typestore.TypedEntityCompanion
-import com.developersam.typestore.TypedTable
-import com.developersam.typestore.nowInUTC
-import com.developersam.typestore.toUTCMillis
-import com.developersam.auth.FirebaseUser
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
+import typestore.TypedEntity
+import typestore.TypedEntityCompanion
+import typestore.TypedTable
+import typestore.nowInUTC
+import typestore.toUTCMillis
 import kotlin.system.measureTimeMillis
 import com.google.cloud.language.v1beta2.Entity as LanguageEntity
 

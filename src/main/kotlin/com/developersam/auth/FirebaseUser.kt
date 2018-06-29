@@ -1,11 +1,11 @@
 package com.developersam.auth
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseToken
 import org.pac4j.core.authorization.authorizer.RequireAllRolesAuthorizer
 import org.pac4j.core.authorization.generator.AuthorizationGenerator
 import org.pac4j.core.client.Clients
 import org.pac4j.core.config.Config
-import org.pac4j.core.context.DefaultAuthorizers.CSRF
 import org.pac4j.core.context.DefaultAuthorizers.SECURITYHEADERS
 import org.pac4j.core.credentials.TokenCredentials
 import org.pac4j.core.profile.CommonProfile
@@ -101,6 +101,16 @@ data class FirebaseUser(
         private val clients = Clients(headerClient)
 
         /**
+         * [withRole] returns a new security filter that requires the user to have certain [role].
+         */
+        fun withRole(role: R): SecurityFilter =
+                Config(clients).apply {
+                    addAuthorizer(ROLE_AUTHORIZER_NAME,
+                            RequireAllRolesAuthorizer<Profile>(role.name))
+                    httpActionAdapter = DefaultHttpActionAdapter()
+                }.let { UserSecurityFilter(config = it) }
+
+        /**
          * [UserSecurityFilter] is the [SecurityFilter] that automatically sets the user account in
          * the attribute for later usage.
          *
@@ -119,16 +129,6 @@ data class FirebaseUser(
             }
 
         }
-
-        /**
-         * [withRole] returns a new security filter that requires the user to have certain [role].
-         */
-        fun withRole(role: R): SecurityFilter =
-                Config(clients).apply {
-                    addAuthorizer(ROLE_AUTHORIZER_NAME,
-                            RequireAllRolesAuthorizer<Profile>(role.name))
-                    httpActionAdapter = DefaultHttpActionAdapter()
-                }.let { UserSecurityFilter(config = it) }
 
         companion object {
 

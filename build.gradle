@@ -47,14 +47,16 @@ repositories {
 }
 
 dependencies {
+    // Kotlin
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    // Test
     testImplementation 'junit:junit:4.12'
     // Spark
     implementation 'com.sparkjava:spark-core:2.7.2'
     implementation 'com.sparkjava:spark-kotlin:1.0.0-alpha'
     // PAC4J
     implementation 'org.pac4j:spark-pac4j:2.2.0'
-    implementation 'org.pac4j:pac4j-http:3.0.1'
+    implementation 'org.pac4j:pac4j-http:2.2.1'
     // Google Cloud API
     implementation 'com.google.cloud:google-cloud-datastore:1.35.0'
     implementation 'com.google.cloud:google-cloud-language:1.35.0'

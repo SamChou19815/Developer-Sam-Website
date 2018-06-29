@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { LoadingOverlayService } from "../../overlay/loading-overlay.service";
 import {
   PUSHED_CONTROLLER_DATA,
   PushedControllerOverlayRef
 } from '../../overlay/push-controller.service';
 import { PushedControllerOverlayComponent } from '../../overlay/pushed-controller-overlay.component';
-import { AnalyzedArticle, FullAnalyzedArticle } from '../articles';
+import { FullAnalyzedArticle } from '../articles';
 import { ChunkReaderNetworkService } from '../chunk-reader-network.service';
 
 @Component({
@@ -17,7 +18,8 @@ export class ChunkReaderArticleDetailComponent extends PushedControllerOverlayCo
   readonly articleDetail: FullAnalyzedArticle;
 
   constructor(ref: PushedControllerOverlayRef, @Inject(PUSHED_CONTROLLER_DATA) data: any,
-              private chunkReaderNetworkService: ChunkReaderNetworkService) {
+              private chunkReaderNetworkService: ChunkReaderNetworkService,
+              private loadingService: LoadingOverlayService) {
     super(ref);
     if (data == null) {
       throw new Error();
@@ -28,9 +30,11 @@ export class ChunkReaderArticleDetailComponent extends PushedControllerOverlayCo
   ngOnInit() {
   }
 
-  private adjustSummary(limit: number): void {
-    this.chunkReaderNetworkService.adjustSummary(this.articleDetail.key, limit,
-      summaries => this.articleDetail.summaries = summaries);
+  private async adjustSummary(limit: number) {
+    const ref = this.loadingService.open();
+    this.articleDetail.summaries = await this.chunkReaderNetworkService.adjustSummary(
+      this.articleDetail.key, limit);
+    ref.close();
   }
 
   less(): void {
@@ -39,7 +43,8 @@ export class ChunkReaderArticleDetailComponent extends PushedControllerOverlayCo
       throw new Error();
     }
     const newLimit = summary.length - 1;
-    this.adjustSummary(newLimit);
+    this.adjustSummary(newLimit).then(() => {
+    });
   }
 
   more(): void {
@@ -48,7 +53,8 @@ export class ChunkReaderArticleDetailComponent extends PushedControllerOverlayCo
       throw new Error();
     }
     const newLimit = summary.length + 1;
-    this.adjustSummary(newLimit);
+    this.adjustSummary(newLimit).then(() => {
+    });
   }
 
 }

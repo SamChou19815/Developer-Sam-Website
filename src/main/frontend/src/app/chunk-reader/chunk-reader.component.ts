@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { AlertComponent } from "../alert/alert.component";
 import { GoogleUserService } from '../google-user/google-user.service';
+import { LoadingOverlayService } from "../overlay/loading-overlay.service";
 import { PushControllerService } from '../overlay/push-controller.service';
 import { AddArticleDialogComponent } from './add-article-dialog/add-article-dialog.component';
 import { AnalyzedArticle, RawArticle } from './articles';
@@ -16,31 +18,38 @@ export class ChunkReaderComponent implements OnInit {
 
   articlesPreview: AnalyzedArticle[] = [];
 
-  constructor(private chunkReaderNetworkService: ChunkReaderNetworkService,
-              private googleUserService: GoogleUserService,
+  constructor(private googleUserService: GoogleUserService,
+              private chunkReaderNetworkService: ChunkReaderNetworkService,
               private pushControllerService: PushControllerService,
+              private loadingService: LoadingOverlayService,
               private dialog: MatDialog) {
   }
 
   ngOnInit() {
-    this.googleUserService.afterSignedIn(() => setTimeout(() => {
-      this.chunkReaderNetworkService.loadArticlesPreview(a => this.articlesPreview = a);
-    }, 50));
+    setTimeout(async () => {
+      const ref = this.loadingService.open();
+      await this.googleUserService.afterSignedIn();
+      this.articlesPreview = await this.chunkReaderNetworkService.loadArticlesPreview();
+      ref.close();
+    }, 50);
   }
 
-  openAddArticleDialog(): void {
-    this.dialog.open(AddArticleDialogComponent).afterClosed().subscribe(value => {
-      if (value === null || value === undefined) {
-        return;
-      }
-      this.chunkReaderNetworkService.analyzeArticle(value as RawArticle);
-    });
+  async openAddArticleDialog(): void {
+    const value: any = await this.dialog.open(AddArticleDialogComponent).afterClosed().toPromise();
+    if (value == null) {
+      return;
+    }
+    const successful = await this.chunkReaderNetworkService.analyzeArticle(value as RawArticle);
+    const message = successful
+      ? `Your article is being analyzed right now. Refresh the page later to see its analysis.`
+      : `Sorry, your article cannot be analyzed for some unknown reasons.
+      The failure has been logged in the system and we will try to figure out why.`;
+    this.dialog.open(AlertComponent, { data: message });
   }
 
-  displayArticleDetails(analyzedArticle: AnalyzedArticle) {
-    this.chunkReaderNetworkService.loadArticleDetail(analyzedArticle.key, article => {
-      this.pushControllerService.open(ChunkReaderArticleDetailComponent, article);
-    });
+  async displayArticleDetails(analyzedArticle: AnalyzedArticle) {
+    const article = await this.chunkReaderNetworkService.loadArticleDetail(analyzedArticle.key);
+    this.pushControllerService.open(ChunkReaderArticleDetailComponent, article);
   }
 
 }

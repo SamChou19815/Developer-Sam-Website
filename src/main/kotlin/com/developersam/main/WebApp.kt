@@ -43,7 +43,7 @@ private val firebaseAuth: FirebaseAuth = System::class.java
         .let { FirebaseAuth.getInstance(it) }
 
 /**
- * [Roles] defines a set of roles supported by the system.
+ * [Role] defines a set of roles supported by the system.
  */
 private enum class Role { USER, ADMIN }
 

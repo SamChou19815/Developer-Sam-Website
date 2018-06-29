@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { GoogleUserService } from '../google-user/google-user.service';
+import { LoadingOverlayService } from "../overlay/loading-overlay.service";
 import { SchedulerItem } from './scheduler-item';
 import { SchedulerNetworkService } from './scheduler-network.service';
 import { WriteSchedulerItemDialogComponent } from './write-scheduler-item-dialog/write-scheduler-item-dialog.component';
@@ -14,50 +15,59 @@ export class SchedulerComponent implements OnInit {
 
   items: SchedulerItem[] = [];
 
-  constructor(private networkService: SchedulerNetworkService,
-              private googleUserService: GoogleUserService,
+  constructor(private googleUserService: GoogleUserService,
+              private networkService: SchedulerNetworkService,
+              private loadingService: LoadingOverlayService,
               private dialog: MatDialog) {
   }
 
-  ngOnInit() {
-    this.googleUserService.afterSignedIn(() => setTimeout(() => {
-      this.networkService.loadItems(items => this.items =
-        items.map(i => new SchedulerItem(i)))
-    }, 50));
+  async ngOnInit() {
+    setTimeout(async () => {
+      const ref = this.loadingService.open();
+      await this.googleUserService.afterSignedIn();
+      const items = await this.networkService.loadItems();
+      this.items = items.map(i => new SchedulerItem(i));
+      ref.close();
+    }, 50);
   }
 
-  editItem(item?: SchedulerItem) {
+  async editItem(item?: SchedulerItem) {
     const toBeEdited = item == null ? new SchedulerItem() : new SchedulerItem(item);
-    this.dialog.open(WriteSchedulerItemDialogComponent, { data: toBeEdited })
+    const value: any = await this.dialog
+      .open(WriteSchedulerItemDialogComponent, { data: toBeEdited })
       .afterClosed()
-      .subscribe(value => {
-        if (value == null) {
-          return;
-        }
-        const edited = value as SchedulerItem;
-        const handler = (key: string) => {
-          const itemWithOldRemoved = item == null
-            ? this.items : this.items.filter(i => i.key !== item.key);
-          itemWithOldRemoved.push(new SchedulerItem(<SchedulerItem>{ ...edited, key: key }));
-          this.items = itemWithOldRemoved.sort((a, b) => a.deadline - b.deadline);
-        };
-        this.networkService.editItem(edited, handler);
-      });
+      .toPromise();
+    if (value == null) {
+      return;
+    }
+    const edited = value as SchedulerItem;
+    const ref = this.loadingService.open();
+    const key = await this.networkService.editItem(edited);
+    ref.close();
+    const itemWithOldRemoved = item == null
+      ? this.items : this.items.filter(i => i.key !== item.key);
+    itemWithOldRemoved.push(new SchedulerItem(<SchedulerItem>{ ...edited, key: key }));
+    this.items = itemWithOldRemoved.sort((a, b) => a.deadline - b.deadline);
   }
 
-  deleteItem(item: SchedulerItem) {
+  async deleteItem(item: SchedulerItem) {
     if (item.key == null) {
       return;
     }
-    this.networkService.deleteItem(item.key, () =>
-      this.items = this.items.filter(i => i.key !== item.key));
+    const ref = this.loadingService.open();
+    await this.networkService.deleteItem(item.key);
+    ref.close();
+    this.items = this.items.filter(i => i.key !== item.key);
   }
 
-  markAs(completed: boolean, item: SchedulerItem) {
+  async markAs(completed: boolean, item: SchedulerItem) {
     if (item.key == null) {
       return;
     }
-    this.networkService.markAs(completed, item.key, () => item.isCompleted = completed);
+    const ref = this.loadingService.open();
+    await this.networkService.markAs(completed, item.key);
+    ref.close();
+    item.isCompleted = completed
   }
 
 }

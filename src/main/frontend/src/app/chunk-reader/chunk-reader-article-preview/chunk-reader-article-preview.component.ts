@@ -21,11 +21,4 @@ export class ChunkReaderArticlePreviewComponent implements OnInit {
     return new Date(this.articlePreview.time).toLocaleDateString()
   }
 
-  /**
-   * Edit itself.
-   */
-  viewDetail(): void {
-    this.viewDetailClicked.emit();
-  }
-
 }

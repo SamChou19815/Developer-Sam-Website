@@ -23,7 +23,7 @@ export class GoogleUserService {
     const userOpt = await this.userPromise();
     if (userOpt == null) {
       try {
-        await this.angularFireAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        await this.angularFireAuth.auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
       } catch (e) {
       }
       return this.afterSignedIn();

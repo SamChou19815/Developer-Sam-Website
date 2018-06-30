@@ -14,6 +14,7 @@ import { environment } from '../environments/environment';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { GoogleUserService } from './google-user/google-user.service';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { GoogleUserService } from './google-user/google-user.service';
     AngularFireAuthModule,
     BrowserAnimationsModule,
     SharedModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [Title, LoadingOverlayService, GoogleUserService],
   bootstrap: [AppComponent],

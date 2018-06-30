@@ -19,7 +19,8 @@
             "assets": [
               "src/assets",
               "src/robots.txt",
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/favicon.ico"
             ],
             "styles": [
               "src/styles.css",

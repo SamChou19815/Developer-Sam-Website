@@ -1,9 +1,11 @@
-import { Injectable } from "@angular/core";
 import { Overlay, OverlayConfig, OverlayRef } from "@angular/cdk/overlay";
 import { ComponentPortal } from "@angular/cdk/portal";
+import { Injectable } from "@angular/core";
 import { LoadingOverlayComponent } from "./loading-overlay.component";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class LoadingOverlayService {
 
   /**
@@ -53,7 +55,8 @@ export class LoadingOverlayRef {
    *
    * @param {OverlayRef} overlayRef the overlay ref from angular.
    */
-  constructor(private overlayRef: OverlayRef) { }
+  constructor(private overlayRef: OverlayRef) {
+  }
 
   /**
    * Close the global loading overlay.

@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LoadingOverlayService } from '../overlay/loading-overlay.service';
 import { AnalyzedArticle, FullAnalyzedArticle, RawArticle } from './articles';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ChunkReaderNetworkService {
 
-  constructor(private http: HttpClient, private loadingService: LoadingOverlayService) {
+  constructor(private http: HttpClient) {
   }
 
   async loadArticlesPreview(): Promise<AnalyzedArticle[]> {

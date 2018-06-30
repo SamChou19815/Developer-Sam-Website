@@ -3,7 +3,9 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { User } from "firebase";
 import * as firebase from 'firebase/app';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class GoogleUserService {
 
   constructor(private angularFireAuth: AngularFireAuth) {

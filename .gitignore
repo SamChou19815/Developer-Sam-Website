@@ -9,14 +9,11 @@
 **/.idea/*
 *.iml
 
-# Exclude Vert.x Temps
-**/.vertx/*
-
 # Exclude Configs
 /src/main/webapp/WEB-INF/*.json
 
 # Exclude node_modules
-/src/main/frontend/node_modules
+frontend/node_modules
 
 # Exclude Compiled Static Web App
 /src/main/resources/public/*

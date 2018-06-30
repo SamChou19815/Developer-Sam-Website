@@ -34,7 +34,7 @@ export class ChunkReaderComponent implements OnInit {
     }, 50);
   }
 
-  async openAddArticleDialog(): void {
+  async openAddArticleDialog() {
     const value: any = await this.dialog.open(AddArticleDialogComponent).afterClosed().toPromise();
     if (value == null) {
       return;

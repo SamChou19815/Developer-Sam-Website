@@ -108,6 +108,7 @@ appengine {
     }
 
     deploy {
+        project 'dev-sam'
         stopPreviousVersion = true
         promote = true
         version = 5

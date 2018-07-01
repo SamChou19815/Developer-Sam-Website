@@ -1,0 +1,5 @@
+<a class="nav-item">
+  <app-icon [icon]="group.icon"></app-icon>
+  <span class="nav-item-text">{{group.name}}</span>
+</a>
+<app-nav-item *ngFor="let item of group.children" [item]="item" [isChild]="true"></app-nav-item>

@@ -19,12 +19,12 @@
             "assets": [
               "src/assets",
               "src/robots.txt",
-              "src/manifest.json",
-              "src/favicon.ico"
+              "src/manifest.json"
             ],
             "styles": [
               "src/styles.css",
-              "src/custom-theme.scss"
+              "src/custom-theme.scss",
+              "node_modules/font-awesome/css/font-awesome.css"
             ],
             "scripts": []
           },

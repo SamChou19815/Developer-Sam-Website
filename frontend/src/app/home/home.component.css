@@ -2,7 +2,7 @@
   :host {
     display: block;
     column-count: 3;
-    column-gap: 1em;
+    column-gap: 0;
     column-fill: initial;
   }
 }
@@ -11,7 +11,7 @@
   :host {
     display: block;
     column-count: 2;
-    column-gap: 1em;
+    column-gap: 0;
     column-fill: initial;
   }
 }

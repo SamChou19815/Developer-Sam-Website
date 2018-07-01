@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [
@@ -13,14 +13,16 @@ const routes: Routes = [
     loadChildren: 'app/chunk-reader/chunk-reader.module#ChunkReaderModule'
   },
   {
-    path: 'ten',
+    path: 'playground/ten',
     loadChildren: 'app/ten/ten.module#TenModule'
   }
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes, {
+      preloadingStrategy: PreloadAllModules
+    })
   ],
   exports: [RouterModule],
   declarations: []

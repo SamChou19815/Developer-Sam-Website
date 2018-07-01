@@ -1,4 +1,29 @@
 <mat-sidenav-container [autosize]="false">
+  <mat-sidenav [mode]="mode" [opened]="sideNavInitiallyOpened" #drawer>
+    <nav class="nav-toolbar">
+      <span class="title-nav">
+        <mat-icon class="close-icon" (click)="drawer.toggle()">close</mat-icon>
+        <span style="display: flex;">Developer Sam</span>
+      </span>
+      <app-home-side-nav [dataList]="dataList"></app-home-side-nav>
+    </nav>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="mat-elevation-z2" [class.side-nav-closed]="!drawer.opened">
+      <mat-icon class="hamburger-icon"
+                (click)="drawer.toggle()"
+                *ngIf="!drawer.opened">menu
+      </mat-icon>
+      <span class="title-content">{{title}}</span>
+      <span style="flex: 1 1 auto;"></span>
+    </mat-toolbar>
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+<!--
+<mat-sidenav-container [autosize]="false">
   <mat-sidenav mode="over" #drawer>
     <nav class="nav-toolbar">
       <span class="title-nav">Developer Sam</span>
@@ -16,19 +41,19 @@
       <a class="nav-item" [class.selected]="chunkReaderSelected"
          routerLink="/chunkreader"
          (click)="select(NavElementName.ChunkReader)">
-        Chunk Reader (Beta V2)
+        Chunk Reader
       </a>
       <a class="nav-item" [class.selected]="tenSelected"
          routerLink="/ten"
          (click)="select(NavElementName.TEN)">
         TEN
       </a>
-      <a href="https://blog.developersam.com"
-         target="_blank" class="nav-item">
+      <a class="nav-item" href="https://blog.developersam.com"
+         target="_blank">
         Blog
       </a>
-      <a href="https://github.com/SamChou19815/Developer-Sam-Website"
-         target="_blank" class="nav-item">
+      <a class="nav-item" href="https://github.com/SamChou19815/Developer-Sam-Website"
+         target="_blank">
         Open Source
       </a>
     </nav>
@@ -43,3 +68,4 @@
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
+-->

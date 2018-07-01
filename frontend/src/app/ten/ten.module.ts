@@ -13,7 +13,6 @@ import { TenCellComponent } from './ten-cell/ten-cell.component';
   imports: [
     SharedModule,
     CommonModule,
-    SharedModule,
     TenRoutingModule
   ],
   exports: [TenComponent],

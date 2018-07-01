@@ -14,6 +14,7 @@ import { LoadingOverlayComponent } from './overlay/loading-overlay.component';
 import { LoadingOverlayService } from './overlay/loading-overlay.service';
 import { PushedControllerOverlayComponent } from './overlay/pushed-controller-overlay.component';
 import { SharedModule } from './shared/shared.module';
+import { NavModule } from './nav/nav.module';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { SharedModule } from './shared/shared.module';
     BrowserAnimationsModule,
     SharedModule,
     AppRoutingModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
+    NavModule
   ],
   providers: [Title],
   bootstrap: [AppComponent],

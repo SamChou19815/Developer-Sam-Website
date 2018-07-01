@@ -12,11 +12,8 @@ Currently, the project is undergoing an improvement of structure.
 
 It is impossible for this website to run without
 
-* [Guava (Apache 2.0)](https://github.com/google/guava)
+* [Spark (Apache 2.0)](https://github.com/perwendel/spark)
 * [GSON (Apache 2.0)](https://github.com/google/gson)
-* [Vert.x (Eclipse 2.0, Apache 2.0)](https://github.com/eclipse/vert.x)
-* [Angular 5 (MIT)](https://github.com/angular/angular)
+* [Angular 6 (MIT)](https://github.com/angular/angular)
 * [Angular Material (MIT)](https://github.com/angular/material2)
-* [Vertx-GCP-Datastore (MIT)](https://github.com/SamChou19815/Vertx-GCP-Datastore)
-* [VertFireAuth (MIT)](https://github.com/SamChou19815/VertFireAuth)
 * [TEN (MIT)](https://github.com/SamChou19815/TEN)

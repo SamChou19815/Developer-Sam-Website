@@ -15,16 +15,20 @@ import com.google.cloud.datastore.Key
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
+import org.fluentd.logger.FluentLogger
 import spark.Request
 import spark.Response
 import spark.ResponseTransformer
 import spark.Route
 import spark.Spark
+import spark.Spark.get
 import spark.Spark.path
 import spark.kotlin.before
 import spark.kotlin.halt
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import java.io.PrintWriter
+import java.io.StringWriter
+import java.net.ConnectException
+import java.util.HashMap
 
 /*
  * ------------------------------------------------------------------------------------------
@@ -41,6 +45,11 @@ private val firebaseAuth: FirebaseAuth = System::class.java
         .let { FirebaseOptions.Builder().setCredentials(it).build() }
         .let { FirebaseApp.initializeApp(it) }
         .let { FirebaseAuth.getInstance(it) }
+
+/**
+ * [ERRORS] is the global fluent logger.
+ */
+private val ERRORS: FluentLogger = FluentLogger.getLogger("myapp")
 
 /**
  * [Role] defines a set of roles supported by the system.
@@ -107,6 +116,7 @@ private inline fun delete(path: String, crossinline f: Request.(Response) -> Any
  * [initializeApiHandlers] initializes a list of handlers.
  */
 private fun initializeApiHandlers() {
+    get(path = "/apis/echo") { _ -> "OK" }
     path("/apis/public", ::initializePublicApiHandlers)
     path("/apis/user", ::initializeUserApiHandlers)
 }
@@ -126,7 +136,7 @@ private fun initializeUserApiHandlers() {
     // Scheduler
     before(path = "/*", role = Role.USER)
     path("/scheduler") {
-        get(path = "/load") { SchedulerItem[user] }
+        get(path = "/load") { _ -> SchedulerItem[user] }
         post(path = "/write") { _ ->
             toJson<SchedulerItem>().upsert(user = user)?.toUrlSafe() ?: halt(code = 400)
         }
@@ -146,8 +156,8 @@ private fun initializeUserApiHandlers() {
     }
     // ChunkReader
     path("/chunkreader") {
-        get(path = "/load") { Article[user] }
-        post(path = "/analyze") { toJson<RawArticle>().process(user = user) }
+        get(path = "/load") { _ -> Article[user] }
+        post(path = "/analyze") { _ -> toJson<RawArticle>().process(user = user) }
         get(path = "/article_detail") { _ ->
             val key = Key.fromUrlSafe(queryParams("key"))
             Article[user, key]
@@ -173,13 +183,16 @@ private fun initializeUserApiHandlers() {
  */
 fun main(args: Array<String>) {
     Spark.port(8080)
-    Spark.staticFileLocation("/public")
-    Spark.notFound { _, resp ->
-        resp.status(200)
-        SecurityFilters::class.java.getResourceAsStream("/public/index.html")
-                .let { BufferedReader(InputStreamReader(it)) }
-                .lineSequence()
-                .joinToString(separator = "\n")
+    Spark.exception(Exception::class.java) { e, _, _ ->
+        val exceptionWriter = StringWriter()
+        e.printStackTrace(PrintWriter(exceptionWriter))
+        val data = HashMap<String, Any>()
+        data["message"] = exceptionWriter.toString()
+        try {
+            ERRORS.log("errors", data)
+        } catch (connectEx: ConnectException) {
+            e.printStackTrace()
+        }
     }
     initializeApiHandlers()
 }

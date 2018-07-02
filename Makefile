@@ -1,13 +1,17 @@
 all:
-	cd src/main/frontend; npm run build
-	./gradlew build
+	cd frontend; npm run build
 
-backend:
-	./gradlew build
+build_frontend:
+	cd frontend; npm run build
 
-deploy_backend:
-	./gradlew appengineDeploy
+deploy_frontend:
+	cd frontend; npm run build
+	gsutil -m rsync -d -r build/frontend gs://developersam.com
+	gsutil -m acl ch -r -u AllUsers:R gs://developersam.com/*
 
-deploy:
-	cd src/main/frontend; npm run build
-	./gradlew appengineDeploy
+build_backend_as_container:
+	./gradlew appengineStage
+	cd build/staged-app; \
+	gcloud beta app gen-config --custom; \
+	gcloud config set project dev-sam; \
+	gcloud container builds submit --tag gcr.io/dev-sam/backend-container .

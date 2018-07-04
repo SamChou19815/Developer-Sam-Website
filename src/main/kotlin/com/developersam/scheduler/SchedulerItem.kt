@@ -1,6 +1,7 @@
 package com.developersam.scheduler
 
 import com.developersam.auth.FirebaseUser
+import com.developersam.scheduler.SchedulerItem.Table.detail
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import typestore.TypedEntity
@@ -18,15 +19,22 @@ import java.time.LocalDateTime
  * @property key key to uniquely identify one item.
  * @property title title of the item.
  * @property deadline deadline of the item in long.
- * @property isCompleted whether this item
+ * @property isCompleted whether this item is completed.
+ * @property minimumTimeUnits minimum discrete time units that can be spent on this task.
+ * @property estimatedTimeUnits the estimated number of time units to spend on this task.
+ * @property isGroupProject whether the project is a group project.
+ * @property detail the optional detail of the item.
  */
 data class SchedulerItem(
-        private val key: Key? = null, private val title: String = "",
-        private val deadline: Long = 0, private val isCompleted: Boolean = false,
-        private val detail: String = ""
+        val key: Key? = null, val title: String = "", val deadline: Long = 0,
+        private val isCompleted: Boolean = false, private val detail: String = "",
+        val minimumTimeUnits: Long = 0, val estimatedTimeUnits: Long = 0,
+        val isGroupProject: Boolean = false, val weight: Long = 0
 ) {
 
-    private val isValid: Boolean get() = title.isNotBlank() && deadline > System.currentTimeMillis()
+    private val isValid: Boolean
+        get() = title.isNotBlank() && deadline > System.currentTimeMillis() &&
+                minimumTimeUnits in 1..5 && estimatedTimeUnits in 1..20 && weight in 1..10
 
     fun upsert(user: FirebaseUser): Key? {
         if (!isValid) {
@@ -42,6 +50,10 @@ data class SchedulerItem(
             t[Table.deadline] = toLocalDateTimeInUTC(date = deadline)
             t[Table.isCompleted] = isCompleted
             t[Table.detail] = detail
+            t[Table.minimumTimeUnits] = minimumTimeUnits
+            t[Table.estimatedTimeUnits] = estimatedTimeUnits
+            t[Table.isGroupProject] = isGroupProject
+            t[Table.weight] = weight
         }.key
     }
 
@@ -54,6 +66,10 @@ data class SchedulerItem(
         val deadline = datetimeProperty(name = "deadline")
         val isCompleted = boolProperty(name = "completed")
         val detail = longStringProperty(name = "detail")
+        val minimumTimeUnits = longProperty(name = "min_time_units")
+        val estimatedTimeUnits = longProperty(name = "est_time_units")
+        val isGroupProject = boolProperty(name = "group_project")
+        val weight = longProperty(name = "weight")
     }
 
     /**
@@ -66,11 +82,17 @@ data class SchedulerItem(
         val deadline: LocalDateTime = Table.deadline.delegatedValue
         val isCompleted: Boolean = Table.isCompleted.delegatedValue
         val detail: String = Table.detail.delegatedValue
+        val minimumTimeUnits = Table.minimumTimeUnits.delegatedValue
+        val estimatedTimeUnits = Table.estimatedTimeUnits.delegatedValue
+        val isGroupProject = Table.isGroupProject.delegatedValue
+        val weight = Table.weight.delegatedValue
 
         val asSchedulerItem: SchedulerItem
             get() = SchedulerItem(
                     key = key, title = title, deadline = deadline.toUTCMillis(),
-                    isCompleted = isCompleted, detail = detail
+                    isCompleted = isCompleted, detail = detail,
+                    minimumTimeUnits = minimumTimeUnits, estimatedTimeUnits = estimatedTimeUnits,
+                    isGroupProject = isGroupProject, weight = weight
             )
 
         companion object : TypedEntityCompanion<Table, SchedulerItemEntity>(table = Table) {
@@ -101,9 +123,7 @@ data class SchedulerItem(
             defaultDatastore.transaction {
                 SchedulerItemEntity[key]?.let { item ->
                     if (item.userId == user.uid) {
-                        SchedulerItemEntity.update(item) { t ->
-                            t[Table.isCompleted] = isCompleted
-                        }
+                        SchedulerItemEntity.update(item) { it[Table.isCompleted] = isCompleted }
                     }
                 }
             }
@@ -114,11 +134,8 @@ data class SchedulerItem(
          * the item really belongs to the given [user].
          */
         fun delete(user: FirebaseUser, key: Key) {
-            SchedulerItemEntity[key]?.let { item ->
-                if (item.userId == user.uid) {
-                    SchedulerItemEntity.delete(item)
-                }
-            }
+            SchedulerItemEntity[key]?.takeIf { it.userId == user.uid }
+                    ?.let { SchedulerItemEntity.delete(it) }
         }
 
     }

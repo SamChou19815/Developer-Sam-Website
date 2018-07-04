@@ -188,11 +188,8 @@ fun main(args: Array<String>) {
         e.printStackTrace(PrintWriter(exceptionWriter))
         val data = HashMap<String, Any>()
         data["message"] = exceptionWriter.toString()
-        try {
-            ERRORS.log("errors", data)
-        } catch (connectEx: ConnectException) {
-            e.printStackTrace()
-        }
+        ERRORS.log("errors", data)
+        throw e
     }
     initializeApiHandlers()
 }

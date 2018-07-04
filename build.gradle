@@ -13,7 +13,7 @@ plugins {
     id 'java'
     id 'idea'
     // 3rd-parties
-    id 'org.jetbrains.kotlin.jvm' version '1.2.50'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.51'
     id 'com.github.johnrengelman.shadow' version '2.0.4'
 }
 
@@ -73,6 +73,7 @@ dependencies {
     implementation 'log4j:log4j:1.2.17'
     // My Libraries
     implementation 'com.github.SamChou19815:TypedStore:0.1.0'
+    implementation 'com.github.SamChou19815:okaml-lib:0.4.0'
     // Apps Backend
     implementation 'com.developersam:game-ten:1.0.1'
 }

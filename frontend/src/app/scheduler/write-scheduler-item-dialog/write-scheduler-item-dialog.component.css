@@ -2,6 +2,17 @@ mat-dialog-content {
   flex-direction: column;
 }
 
-mat-form-field, mat-slider {
+mat-form-field {
   width: 100%;
+}
+
+label {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+mat-slider {
+  margin-left: 1em;
+  flex: 1 1;
 }

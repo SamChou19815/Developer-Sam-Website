@@ -19,9 +19,11 @@ export class SchedulerItemComponent implements OnInit {
    *
    * @param {SchedulerNetworkService} schedulerNetworkService the injected network service.
    */
-  constructor(private schedulerNetworkService: SchedulerNetworkService) { }
+  constructor(private schedulerNetworkService: SchedulerNetworkService) {
+  }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   /**
    * Compute style class of the component.
@@ -39,6 +41,11 @@ export class SchedulerItemComponent implements OnInit {
     } else {
       return 'level-3-urgent';
     }
+  }
+
+  get title(): string {
+    return this.schedulerItem.isGroupProject
+      ? `[Group Project] ${this.schedulerItem.title}` : this.schedulerItem.title;
   }
 
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { GoogleUserService } from '../google-user/google-user.service';
-import { LoadingOverlayService } from "../overlay/loading-overlay.service";
+import { LoadingOverlayService } from '../overlay/loading-overlay.service';
 import { SchedulerItem } from './scheduler-item';
 import { SchedulerNetworkService } from './scheduler-network.service';
 import { WriteSchedulerItemDialogComponent } from './write-scheduler-item-dialog/write-scheduler-item-dialog.component';
@@ -67,7 +67,7 @@ export class SchedulerComponent implements OnInit {
     const ref = this.loadingService.open();
     await this.networkService.markAs(completed, item.key);
     ref.close();
-    item.isCompleted = completed
+    item.isCompleted = completed;
   }
 
 }

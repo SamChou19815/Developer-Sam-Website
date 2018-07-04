@@ -1,7 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl } from "@angular/forms";
+import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { SchedulerItem } from '../scheduler-item';
+
+const possibleHoursArray = Array<number>(24);
+for (let i = 0; i < 24; i++) {
+  possibleHoursArray[i] = i;
+}
 
 @Component({
   selector: 'app-write-scheduler-item-dialog',
@@ -16,6 +21,10 @@ export class WriteSchedulerItemDialogComponent implements OnInit {
   hour: number;
   private readonly isCompleted: boolean;
   detail: string;
+  minimumTimeUnits: number;
+  estimatedTimeUnits: number;
+  isGroupProject: boolean;
+  weight: number;
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any) {
     const item = data as SchedulerItem;
@@ -26,6 +35,10 @@ export class WriteSchedulerItemDialogComponent implements OnInit {
     this.hour = d.getHours();
     this.isCompleted = item.isCompleted;
     this.detail = item.detail;
+    this.minimumTimeUnits = item.minimumTimeUnits;
+    this.estimatedTimeUnits = item.estimatedTimeUnits;
+    this.isGroupProject = item.isGroupProject;
+    this.weight = item.weight;
   }
 
   ngOnInit() {
@@ -39,11 +52,7 @@ export class WriteSchedulerItemDialogComponent implements OnInit {
 
   // noinspection JSMethodCanBeStatic
   get possibleHours(): number[] {
-    const array = Array<number>(24);
-    for (let i = 0; i < 24; i++) {
-      array[i] = i;
-    }
-    return array;
+    return possibleHoursArray;
   }
 
   get submitDisabled(): boolean {
@@ -60,7 +69,11 @@ export class WriteSchedulerItemDialogComponent implements OnInit {
       title: this.title,
       deadline: this.deadline,
       isCompleted: this.isCompleted,
-      detail: this.detail
+      detail: this.detail,
+      minimumTimeUnits: this.minimumTimeUnits,
+      estimatedTimeUnits: this.estimatedTimeUnits,
+      isGroupProject: this.isGroupProject,
+      weight: this.weight
     };
   }
 

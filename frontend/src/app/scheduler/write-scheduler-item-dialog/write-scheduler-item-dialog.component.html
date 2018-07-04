@@ -15,9 +15,42 @@
     </mat-select>
   </mat-form-field>
   <mat-form-field>
-    <textarea matInput [(ngModel)]="detail" placeholder="Item Detail (Optional)" type="text">
-
-    </textarea>
+    <input matInput [(ngModel)]="isGroupProject" placeholder="Group Project?" required hidden>
+    <mat-checkbox [(ngModel)]="isGroupProject">Group Project</mat-checkbox>
+  </mat-form-field>
+  <mat-form-field>
+    <label>
+      <input matInput [(ngModel)]="minimumTimeUnits"
+             placeholder="Minimum Time Units" required hidden>
+      <span [ngPlural]="minimumTimeUnits">
+        <ng-template ngPluralCase="=1">1 hour</ng-template>
+        <ng-template ngPluralCase="other">{{minimumTimeUnits}} hours</ng-template>
+      </span>
+      <mat-slider [thumbLabel]="true"
+                  [min]="1" [max]="5" [(ngModel)]="minimumTimeUnits"></mat-slider>
+    </label>
+  </mat-form-field>
+  <mat-form-field>
+    <label>
+      <input matInput [(ngModel)]="estimatedTimeUnits" placeholder="Estimated Time Units" hidden>
+      <span [ngPlural]="estimatedTimeUnits">
+        <ng-template ngPluralCase="=1">1 hour</ng-template>
+        <ng-template ngPluralCase="other">{{estimatedTimeUnits}} hours</ng-template>
+      </span>
+      <mat-slider [thumbLabel]="true"
+                  [min]="1" [max]="20" [(ngModel)]="estimatedTimeUnits"></mat-slider>
+    </label>
+  </mat-form-field>
+  <mat-form-field>
+    <label>
+      <input matInput [(ngModel)]="weight" placeholder="Weight" hidden>
+      Value: {{weight}}
+      <mat-slider [thumbLabel]="true" [min]="1" [max]="10" [(ngModel)]="weight"></mat-slider>
+    </label>
+  </mat-form-field>
+  <mat-form-field>
+    <textarea matInput [(ngModel)]="detail"
+              placeholder="Item Detail (Optional)" type="text"></textarea>
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>

@@ -1,5 +1,5 @@
 <mat-card [class.completed]="schedulerItem.isCompleted">
-  <mat-card-title [class]="titleStyle"><span>{{schedulerItem.title}}</span></mat-card-title>
+  <mat-card-title [class]="titleStyle"><span>{{title}}</span></mat-card-title>
   <mat-card-content>Deadline: {{schedulerItem.deadlineString}}</mat-card-content>
   <mat-card-content>
     <span>Time Left: </span>
@@ -13,6 +13,23 @@
       <ng-template ngPluralCase="=1">1 hour</ng-template>
       <ng-template ngPluralCase="other">{{schedulerItem.hoursLeft}} hours</ng-template>
     </span>
+  </mat-card-content>
+  <mat-card-content>
+    <span>Minimum Time Units: </span>
+    <span [ngPlural]="schedulerItem.minimumTimeUnits">
+      <ng-template ngPluralCase="=0"> </ng-template>
+      <ng-template ngPluralCase="=1">1 hour</ng-template>
+      <ng-template ngPluralCase="other">{{schedulerItem.minimumTimeUnits}} hours</ng-template>
+    </span>
+    <br>
+    <span>Estimated Time Units: </span>
+    <span [ngPlural]="schedulerItem.estimatedTimeUnits">
+      <ng-template ngPluralCase="=0"> </ng-template>
+      <ng-template ngPluralCase="=1">1 hour</ng-template>
+      <ng-template ngPluralCase="other">{{schedulerItem.estimatedTimeUnits}} hours</ng-template>
+    </span>
+    <br>
+    Weight: {{schedulerItem.weight}}
   </mat-card-content>
   <mat-card-content *ngIf="schedulerItem.detail.trim()" class="multi-line">
     Detail: <br>

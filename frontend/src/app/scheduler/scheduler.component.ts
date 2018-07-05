@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { GoogleUserService } from '../google-user/google-user.service';
 import { LoadingOverlayService } from '../overlay/loading-overlay.service';
-import { SchedulerItem } from './scheduler-item';
+import { EditItemDialogComponent } from './edit-scheduler-item-dialog/edit-item-dialog.component';
+import { SchedulerItem } from './scheduler-data';
 import { SchedulerNetworkService } from './scheduler-network.service';
-import { WriteSchedulerItemDialogComponent } from './write-scheduler-item-dialog/write-scheduler-item-dialog.component';
 
 @Component({
   selector: 'app-scheduler',
@@ -24,9 +24,9 @@ export class SchedulerComponent implements OnInit {
   async ngOnInit() {
     setTimeout(async () => {
       const ref = this.loadingService.open();
-      await this.googleUserService.afterSignedIn();
-      const items = await this.networkService.loadItems();
-      this.items = items.map(i => new SchedulerItem(i));
+      this.networkService.firebaseAuthToken = await this.googleUserService.afterSignedIn();
+      const data = await this.networkService.loadData();
+      this.items = data.items.map(i => new SchedulerItem(i));
       ref.close();
     }, 50);
   }
@@ -34,7 +34,7 @@ export class SchedulerComponent implements OnInit {
   async editItem(item?: SchedulerItem) {
     const toBeEdited = item == null ? new SchedulerItem() : new SchedulerItem(item);
     const value: any = await this.dialog
-      .open(WriteSchedulerItemDialogComponent, { data: toBeEdited })
+      .open(EditItemDialogComponent, { data: toBeEdited })
       .afterClosed()
       .toPromise();
     if (value == null) {

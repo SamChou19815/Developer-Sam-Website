@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { User } from "firebase";
+import { User } from 'firebase';
 import * as firebase from 'firebase/app';
 
 @Injectable({
@@ -13,11 +13,7 @@ export class GoogleUserService {
 
   private userPromise(): Promise<User | null> {
     return new Promise((resolve, reject) =>
-      this.angularFireAuth.auth.onAuthStateChanged(user => {
-        resolve(user)
-      }, error => {
-        reject(error);
-      })
+      this.angularFireAuth.auth.onAuthStateChanged(resolve, reject)
     );
   }
 

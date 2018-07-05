@@ -1,10 +1,10 @@
-import { Component, OnInit } from "@angular/core";
-import { PushedControllerOverlayRef } from "./push-controller.service";
+import { Component, OnInit } from '@angular/core';
+import { PushedControllerOverlayRef } from './push-controller.service';
 
 @Component({
-  selector: "app-pushed-controller-overlay",
-  templateUrl: "./pushed-controller-overlay.component.html",
-  styleUrls: ["./pushed-controller-overlay.component.scss"]
+  selector: 'app-pushed-controller-overlay',
+  template: '<p>If you see this, then my program has a bug.</p>',
+  styleUrls: ['./pushed-controller-overlay.component.scss']
 })
 export class PushedControllerOverlayComponent implements OnInit {
 

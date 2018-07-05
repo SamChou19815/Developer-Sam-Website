@@ -1,19 +1,22 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { LoadingOverlayService } from "../../overlay/loading-overlay.service";
+import { LoadingOverlayService } from '../../overlay/loading-overlay.service';
 import {
   PUSHED_CONTROLLER_DATA,
   PushedControllerOverlayRef
 } from '../../overlay/push-controller.service';
 import { PushedControllerOverlayComponent } from '../../overlay/pushed-controller-overlay.component';
-import { FullAnalyzedArticle } from '../articles';
+import { FullAnalyzedArticle } from '../chunk-reader-data';
 import { ChunkReaderNetworkService } from '../chunk-reader-network.service';
 
 @Component({
   selector: 'app-chunk-reader-article-detail',
-  templateUrl: './chunk-reader-article-detail.component.html',
-  styleUrls: ['../../overlay/pushed-controller-overlay.component.scss', './chunk-reader-article-detail.component.css']
+  templateUrl: './article-detail.component.html',
+  styleUrls: [
+    '../../overlay/pushed-controller-overlay.component.scss',
+    './article-detail.component.css'
+  ]
 })
-export class ChunkReaderArticleDetailComponent extends PushedControllerOverlayComponent implements OnInit {
+export class ArticleDetailComponent extends PushedControllerOverlayComponent implements OnInit {
 
   readonly articleDetail: FullAnalyzedArticle;
 

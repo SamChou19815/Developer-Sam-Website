@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AnalyzedArticle } from '../articles';
+import { AnalyzedArticle } from '../chunk-reader-data';
 
 @Component({
   selector: 'app-chunk-reader-article-preview',
-  templateUrl: './chunk-reader-article-preview.component.html',
-  styleUrls: ['./chunk-reader-article-preview.component.css']
+  templateUrl: './article-preview.component.html',
+  styleUrls: ['./article-preview.component.css']
 })
-export class ChunkReaderArticlePreviewComponent implements OnInit {
+export class ArticlePreviewComponent implements OnInit {
 
   @Input() articlePreview: AnalyzedArticle = AnalyzedArticle.defaultValue;
   @Output() viewDetailClicked = new EventEmitter<undefined>();

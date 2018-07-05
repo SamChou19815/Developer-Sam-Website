@@ -1,32 +1,24 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SchedulerItem } from './scheduler-item';
+import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
+import { SchedulerData, SchedulerItem } from './scheduler-data';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SchedulerNetworkService {
+export class SchedulerNetworkService extends AuthenticatedNetworkService {
 
-  constructor(private http: HttpClient) {
+  constructor(http: HttpClient) {
+    super(http);
   }
 
-  async loadItems(): Promise<SchedulerItem[]> {
-    const token = localStorage.getItem('token');
-    if (token == null) {
-      throw new Error();
-    }
-    return await this.http.get<SchedulerItem[]>('/apis/user/scheduler/load', {
-      withCredentials: true, headers: { 'Firebase-Auth-Token': token }
-    }).toPromise();
+  async loadData(): Promise<SchedulerData> {
+    return this.getData<SchedulerData>('/apis/user/scheduler/load');
   }
 
   async editItem(data: SchedulerItem): Promise<string> {
-    const token = localStorage.getItem('token');
-    if (token == null) {
-      throw new Error();
-    }
-    const key = await this.http.post('/apis/user/scheduler/write', data, {
-      responseType: 'text', withCredentials: true, headers: { 'Firebase-Auth-Token': token }
+    const key = await this.http.post('/apis/user/scheduler/edit?type=item', data, {
+      responseType: 'text', withCredentials: true, headers: this.firebaseAuthHeader
     }).toPromise();
     if (key == null) {
       throw new Error();
@@ -35,24 +27,16 @@ export class SchedulerNetworkService {
   }
 
   async deleteItem(key: string) {
-    const token = localStorage.getItem('token');
-    if (token == null) {
-      throw new Error();
-    }
-    await this.http.delete<string>('/apis/user/scheduler/delete', {
-      params: new HttpParams().set('key', key), withCredentials: true,
-      headers: { 'Firebase-Auth-Token': token }
+    return this.http.delete<string>('/apis/user/scheduler/delete', {
+      params: new HttpParams().set('type', 'item').set('key', key), withCredentials: true,
+      headers: this.firebaseAuthHeader
     }).toPromise();
   }
 
   async markAs(completed: boolean, key: string) {
-    const token = localStorage.getItem('token');
-    if (token == null) {
-      throw new Error();
-    }
-    await this.http.post('/apis/user/scheduler/mark_as', '', {
+    return this.http.post('/apis/user/scheduler/mark_item_as', '', {
       params: new HttpParams().set('key', key).set('completed', String(completed)),
-      withCredentials: true, headers: { 'Firebase-Auth-Token': token }
+      withCredentials: true, headers: this.firebaseAuthHeader
     }).toPromise();
   }
 

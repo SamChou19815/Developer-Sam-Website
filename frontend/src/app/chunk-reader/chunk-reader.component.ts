@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { AlertComponent } from "../alert/alert.component";
+import { AlertComponent } from '../alert/alert.component';
 import { GoogleUserService } from '../google-user/google-user.service';
-import { LoadingOverlayService } from "../overlay/loading-overlay.service";
+import { LoadingOverlayService } from '../overlay/loading-overlay.service';
 import { PushControllerService } from '../overlay/push-controller.service';
 import { AddArticleDialogComponent } from './add-article-dialog/add-article-dialog.component';
-import { AnalyzedArticle, RawArticle } from './articles';
-import { ChunkReaderArticleDetailComponent } from './chunk-reader-article-detail/chunk-reader-article-detail.component';
+import { AnalyzedArticle, RawArticle } from './chunk-reader-data';
+import { ArticleDetailComponent } from './article-detail/article-detail.component';
 import { ChunkReaderNetworkService } from './chunk-reader-network.service';
 
 @Component({
@@ -49,7 +49,7 @@ export class ChunkReaderComponent implements OnInit {
 
   async displayArticleDetails(analyzedArticle: AnalyzedArticle) {
     const article = await this.chunkReaderNetworkService.loadArticleDetail(analyzedArticle.key);
-    this.pushControllerService.open(ChunkReaderArticleDetailComponent, article);
+    this.pushControllerService.open(ArticleDetailComponent, article);
   }
 
 }

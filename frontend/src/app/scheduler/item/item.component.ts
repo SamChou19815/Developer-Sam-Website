@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { SchedulerItem } from '../scheduler-item';
+import { SchedulerItem } from '../scheduler-data';
 import { SchedulerNetworkService } from '../scheduler-network.service';
 
 @Component({
   selector: 'app-scheduler-item',
-  templateUrl: './scheduler-item.component.html',
-  styleUrls: ['./scheduler-item.component.scss']
+  templateUrl: './item.component.html',
+  styleUrls: ['./item.component.scss']
 })
-export class SchedulerItemComponent implements OnInit {
+export class ItemComponent implements OnInit {
 
   @Input() schedulerItem: SchedulerItem = new SchedulerItem();
   @Output() editClicked = new EventEmitter<undefined>();

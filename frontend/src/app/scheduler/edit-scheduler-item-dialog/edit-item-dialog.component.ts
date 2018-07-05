@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { SchedulerItem } from '../scheduler-item';
+import { SchedulerItem } from '../scheduler-data';
 
 const possibleHoursArray = Array<number>(24);
 for (let i = 0; i < 24; i++) {
@@ -9,11 +9,11 @@ for (let i = 0; i < 24; i++) {
 }
 
 @Component({
-  selector: 'app-write-scheduler-item-dialog',
-  templateUrl: './write-scheduler-item-dialog.component.html',
-  styleUrls: ['./write-scheduler-item-dialog.component.css']
+  selector: 'app-scheduler-edit-item-dialog',
+  templateUrl: './edit-item-dialog.component.html',
+  styleUrls: ['./edit-item-dialog.component.css']
 })
-export class WriteSchedulerItemDialogComponent implements OnInit {
+export class EditItemDialogComponent implements OnInit {
 
   readonly key: string | undefined;
   title: string;

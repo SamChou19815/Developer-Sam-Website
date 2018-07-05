@@ -8,6 +8,8 @@ import com.developersam.chunkreader.Article
 import com.developersam.chunkreader.RawArticle
 import com.developersam.chunkreader.Summary
 import com.developersam.game.ten.Board
+import com.developersam.scheduler.SchedulerData
+import com.developersam.scheduler.SchedulerEvent
 import com.developersam.scheduler.SchedulerItem
 import com.developersam.util.gson
 import com.google.auth.oauth2.GoogleCredentials
@@ -27,7 +29,6 @@ import spark.kotlin.before
 import spark.kotlin.halt
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.net.ConnectException
 import java.util.HashMap
 
 /*
@@ -106,6 +107,11 @@ private inline fun post(path: String, crossinline f: Request.(Response) -> Any?)
 private inline fun delete(path: String, crossinline f: Request.(Response) -> Any?): Unit =
         Spark.delete(path, Route { request, response -> request.f(response) }, transformer)
 
+/**
+ * [badRequest] is used to indicate a bad request.
+ */
+private fun badRequest(): Nothing = throw halt(code = 400)
+
 /*
  * ------------------------------------------------------------------------------------------
  * Part 4: Route Declarations
@@ -136,17 +142,27 @@ private fun initializeUserApiHandlers() {
     // Scheduler
     before(path = "/*", role = Role.USER)
     path("/scheduler") {
-        get(path = "/load") { _ -> SchedulerItem[user] }
-        post(path = "/write") { _ ->
-            toJson<SchedulerItem>().upsert(user = user)?.toUrlSafe() ?: halt(code = 400)
+        get(path = "/load") { _ -> SchedulerData[user] }
+        post(path = "/edit") { _ ->
+            val type = queryParams("type") ?: badRequest()
+            val key = when (type) {
+                "item" -> toJson<SchedulerItem>().upsert(user = user)?.toUrlSafe()
+                "event" -> toJson<SchedulerEvent>().upsert(user = user)?.toUrlSafe()
+                else -> null
+            }
+            key ?: badRequest()
         }
         delete(path = "/delete") { _ ->
+            val type: String? = queryParams("type")
             val key: String? = queryParams("key")
-            if (key != null) {
-                SchedulerItem.delete(user = user, key = Key.fromUrlSafe(key))
+            when {
+                key == null -> Unit
+                type == "item" -> SchedulerItem.delete(user = user, key = Key.fromUrlSafe(key))
+                type == "event" -> SchedulerEvent.delete(user = user, key = Key.fromUrlSafe(key))
+                else -> Unit
             }
         }
-        post(path = "/mark_as") { _ ->
+        post(path = "/mark_item_as") { _ ->
             val key: String? = queryParams("key")
             val completed: Boolean? = queryParams("completed")?.toBoolean()
             if (key != null && completed != null) {

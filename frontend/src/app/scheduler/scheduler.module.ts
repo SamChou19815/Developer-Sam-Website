@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
-import { SchedulerItemComponent } from './scheduler-item/scheduler-item.component';
+import { ItemComponent } from './item/item.component';
 import { SchedulerRoutingModule } from './scheduler-routing.module';
 
 import { SchedulerComponent } from './scheduler.component';
-import { WriteSchedulerItemDialogComponent } from './write-scheduler-item-dialog/write-scheduler-item-dialog.component';
+import { EditItemDialogComponent } from './edit-scheduler-item-dialog/edit-item-dialog.component';
 
 @NgModule({
   imports: [
@@ -12,9 +12,9 @@ import { WriteSchedulerItemDialogComponent } from './write-scheduler-item-dialog
     SchedulerRoutingModule
   ],
   exports: [SchedulerComponent],
-  declarations: [SchedulerComponent, SchedulerItemComponent, WriteSchedulerItemDialogComponent],
+  declarations: [SchedulerComponent, ItemComponent, EditItemDialogComponent],
   providers: [],
-  entryComponents: [WriteSchedulerItemDialogComponent]
+  entryComponents: [EditItemDialogComponent]
 })
 export class SchedulerModule {
 }

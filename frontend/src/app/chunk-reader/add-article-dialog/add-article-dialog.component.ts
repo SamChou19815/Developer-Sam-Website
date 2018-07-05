@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { RawArticle } from '../articles';
+import { RawArticle } from '../chunk-reader-data';
 
 @Component({
-  selector: 'app-add-article-dialog',
+  selector: 'app-chunk-reader-add-article-dialog',
   templateUrl: './add-article-dialog.component.html',
   styleUrls: ['./add-article-dialog.component.css']
 })

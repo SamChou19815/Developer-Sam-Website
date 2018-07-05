@@ -32,10 +32,17 @@ data class SchedulerItem(
         val isGroupProject: Boolean = false, val weight: Long = 0
 ) {
 
+    /**
+     * [isValid] checks and returns whether this [SchedulerItem] is valid.
+     */
     private val isValid: Boolean
         get() = title.isNotBlank() && deadline > System.currentTimeMillis() &&
                 minimumTimeUnits in 1..5 && estimatedTimeUnits in 1..20 && weight in 1..10
 
+    /**
+     * [upsert] upserts this item for the [user] if the item is valid and belongs to the user.
+     * It returns the key of the new item if it is successfully created and `null` if otherwise.
+     */
     fun upsert(user: FirebaseUser): Key? {
         if (!isValid) {
             return null
@@ -104,20 +111,20 @@ data class SchedulerItem(
     companion object {
 
         /**
-         * [get] returns a list of [SchedulerItem] for a given [user].
+         * [get] returns a list of [SchedulerItem] for a given [user], sorted by deadline.
          *
          * @param user the user whose items need to be fetched. This user must exist.
          */
-        operator fun get(user: FirebaseUser): List<SchedulerItem> =
+        internal operator fun get(user: FirebaseUser): List<SchedulerItem> =
                 SchedulerItemEntity.query {
                     filter = (Table.userId eq user.uid) and Table.deadline.isFuture()
                     order = Table.deadline.asc()
                 }.map { it.asSchedulerItem }.toList()
 
         /**
-         * [markAs] marks the completion status for a scheduler item specified
-         * by the given [key] and the desired new completion status [isCompleted] if
-         * the item really belongs to the given [user].
+         * [markAs] marks the completion status for a scheduler item specified by the given [key]
+         * and the desired new completion status [isCompleted] if the item really belongs to the
+         * given [user].
          */
         fun markAs(user: FirebaseUser, key: Key, isCompleted: Boolean) {
             defaultDatastore.transaction {
@@ -130,8 +137,8 @@ data class SchedulerItem(
         }
 
         /**
-         * [delete] removes a scheduler item from database with a given [key] if
-         * the item really belongs to the given [user].
+         * [delete] removes a scheduler item from database with a given [key] if the item really
+         * belongs to the given [user].
          */
         fun delete(user: FirebaseUser, key: Key) {
             SchedulerItemEntity[key]?.takeIf { it.userId == user.uid }

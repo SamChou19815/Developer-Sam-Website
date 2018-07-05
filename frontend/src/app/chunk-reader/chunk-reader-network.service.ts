@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AnalyzedArticle, FullAnalyzedArticle, RawArticle } from './articles';
+import { AnalyzedArticle, FullAnalyzedArticle, RawArticle } from './chunk-reader-data';
 
 @Injectable({
   providedIn: 'root'

@@ -6,6 +6,7 @@ import com.google.cloud.datastore.Key
 import typestore.TypedEntity
 import typestore.TypedEntityCompanion
 import typestore.TypedTable
+import java.time.DayOfWeek
 
 /**
  * [SchedulerEvent] represents an event that has a well-defined time interval and repeating config.
@@ -124,6 +125,26 @@ data class SchedulerEvent(
          */
         @JvmStatic
         fun isValid(config: Long): Boolean = config != 0L && config or EVERYDAY == EVERYDAY
+
+        /**
+         * [DayOfWeek.inConfig] returns whether this number representing a [DayOfWeek] is presented
+         * in config.
+         */
+        private fun Long.inConfig(config: Long): Boolean = this or config == config
+
+        /**
+         * [DayOfWeek.inConfig] returns whether this [DayOfWeek] is presented in config.
+         */
+        @JvmStatic
+        fun DayOfWeek.inConfig(config: Long): Boolean = when (this) {
+            DayOfWeek.SUNDAY -> SUNDAY.inConfig(config = config)
+            DayOfWeek.MONDAY -> MONDAY.inConfig(config = config)
+            DayOfWeek.TUESDAY -> TUESDAY.inConfig(config = config)
+            DayOfWeek.WEDNESDAY -> WEDNESDAY.inConfig(config = config)
+            DayOfWeek.THURSDAY -> THURSDAY.inConfig(config = config)
+            DayOfWeek.FRIDAY -> FRIDAY.inConfig(config = config)
+            DayOfWeek.SATURDAY -> SATURDAY.inConfig(config = config)
+        }
 
     }
 

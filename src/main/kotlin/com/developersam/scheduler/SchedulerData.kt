@@ -8,13 +8,17 @@ import com.developersam.auth.FirebaseUser
  * @property items a list of all items.
  * @property events a list of all events.
  */
-data class SchedulerData(val items: List<SchedulerItem>, val events: List<SchedulerEvent>) {
+data class SchedulerData(
+        val items: List<SchedulerItem> = emptyList(),
+        val events: List<SchedulerEvent> = emptyList()
+) {
 
     companion object {
 
         /**
          * [get] returns the [SchedulerData] associated with the given [user].
          */
+        @JvmStatic
         operator fun get(user: FirebaseUser): SchedulerData =
                 SchedulerData(items = SchedulerItem[user], events = SchedulerEvent[user])
 

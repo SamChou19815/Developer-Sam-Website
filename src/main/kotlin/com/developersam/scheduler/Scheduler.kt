@@ -246,9 +246,7 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData()
          * [with] returns the plan with the given [interval] if it can be added, `null` if cannot.
          */
         fun with(interval: AnnotatedInterval): Plan? {
-            if (!canAdd(interval = interval)) {
-                return null
-            }
+            if (!canAdd(interval = interval)) return null
             val newList = interval cons intervalList
             val key = interval.key
             val oldCount = timeUnitStat[key] ?: 0

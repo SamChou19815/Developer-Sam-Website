@@ -81,31 +81,31 @@ data class SchedulerEvent(
         /**
          * [SUNDAY] means repeating on Sunday.
          */
-        const val SUNDAY: Long = 1 shl 0
+        private const val SUNDAY: Long = 1 shl 0
         /**
          * [MONDAY] means repeating on Monday.
          */
-        const val MONDAY: Long = 1 shl 1
+        private const val MONDAY: Long = 1 shl 1
         /**
          * [TUESDAY] means repeating on Tuesday.
          */
-        const val TUESDAY: Long = 1 shl 2
+        private const val TUESDAY: Long = 1 shl 2
         /**
          * [WEDNESDAY] means repeating on Wednesday.
          */
-        const val WEDNESDAY: Long = 1 shl 3
+        private const val WEDNESDAY: Long = 1 shl 3
         /**
          * [THURSDAY] means repeating on Thursday.
          */
-        const val THURSDAY: Long = 1 shl 4
+        private const val THURSDAY: Long = 1 shl 4
         /**
          * [FRIDAY] means repeating on Friday.
          */
-        const val FRIDAY: Long = 1 shl 5
+        private const val FRIDAY: Long = 1 shl 5
         /**
          * [SATURDAY] means repeating on Saturday.
          */
-        const val SATURDAY: Long = 1 shl 6
+        private const val SATURDAY: Long = 1 shl 6
 
         /**
          * [WEEKDAYS] means repeating on weekdays.

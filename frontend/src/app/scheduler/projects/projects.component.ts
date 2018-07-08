@@ -5,7 +5,7 @@ import { LoadingOverlayService } from '../../shared/overlay/loading-overlay.serv
 import { shortDelay } from '../../shared/util';
 import { SchedulerProject } from '../scheduler-data';
 import { SchedulerNetworkService } from '../scheduler-network.service';
-import { EditItemDialogComponent } from './edit-item-dialog/edit-item-dialog.component';
+import { EditorDialogComponent } from './editor-dialog/editor-dialog.component';
 
 @Component({
   selector: 'app-projects',
@@ -35,7 +35,7 @@ export class ProjectsComponent implements OnInit {
   async editItem(project?: SchedulerProject) {
     const toBeEdited = project == null ? new SchedulerProject() : new SchedulerProject(project);
     const value: any = await this.dialog
-      .open(EditItemDialogComponent, { data: toBeEdited })
+      .open(EditorDialogComponent, { data: toBeEdited })
       .afterClosed()
       .toPromise();
     if (value == null) {

@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
-import { EditItemDialogComponent } from './projects/edit-item-dialog/edit-item-dialog.component';
-import { ItemComponent } from './projects/item/item.component';
+import { AutoSchedulingComponent } from './auto-scheduling/auto-scheduling.component';
+import { EventsComponent } from './events/events.component';
+import { EditorDialogComponent } from './projects/editor-dialog/editor-dialog.component';
+import { ProjectComponent } from './projects/project/project.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { SchedulerRoutingModule } from './scheduler-routing.module';
 
@@ -11,9 +13,10 @@ import { SchedulerRoutingModule } from './scheduler-routing.module';
     SchedulerRoutingModule
   ],
   exports: [],
-  declarations: [ProjectsComponent, ItemComponent, EditItemDialogComponent],
+  declarations: [ProjectsComponent, ProjectComponent, EditorDialogComponent,
+    EventsComponent, AutoSchedulingComponent],
   providers: [],
-  entryComponents: [EditItemDialogComponent]
+  entryComponents: [EditorDialogComponent]
 })
 export class SchedulerModule {
 }

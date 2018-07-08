@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { SchedulerItem } from '../scheduler-data';
+import { SchedulerProject } from '../../scheduler-data';
 
 const possibleHoursArray = Array<number>(24);
 for (let i = 0; i < 24; i++) {
@@ -9,11 +9,11 @@ for (let i = 0; i < 24; i++) {
 }
 
 @Component({
-  selector: 'app-scheduler-edit-item-dialog',
-  templateUrl: './edit-item-dialog.component.html',
-  styleUrls: ['./edit-item-dialog.component.css']
+  selector: 'app-scheduler-editor-dialog',
+  templateUrl: './editor-dialog.component.html',
+  styleUrls: ['./editor-dialog.component.css']
 })
-export class EditItemDialogComponent implements OnInit {
+export class EditorDialogComponent implements OnInit {
 
   readonly key: string | undefined;
   title: string;
@@ -27,7 +27,7 @@ export class EditItemDialogComponent implements OnInit {
   weight: number;
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any) {
-    const item = data as SchedulerItem;
+    const item = data as SchedulerProject;
     this.key = item.key;
     this.title = item.title;
     const d = item.deadlineDate;
@@ -63,8 +63,8 @@ export class EditItemDialogComponent implements OnInit {
     }
   }
 
-  get generatedItem(): SchedulerItem {
-    return <SchedulerItem>{
+  get generatedProject(): SchedulerProject {
+    return <SchedulerProject>{
       key: this.key,
       title: this.title,
       deadline: this.deadline,

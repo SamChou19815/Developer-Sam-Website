@@ -1,7 +1,7 @@
 <!--suppress JSIgnoredPromiseFromCall -->
-<app-scheduler-item *ngFor="let item of projects"
+<app-scheduler-project *ngFor="let item of projects"
                     [schedulerProject]="item"
                     (editClicked)="editItem(item)"
                     (deleteClicked)="deleteItem(item)"
-                    (markAsClicked)="markAs($event, item)"></app-scheduler-item>
+                    (markAsClicked)="markAs($event, item)"></app-scheduler-project>
 <button color="accent" mat-fab (click)="editItem()">+</button>

@@ -3,11 +3,11 @@ import { SchedulerProject } from '../../scheduler-data';
 import { SchedulerNetworkService } from '../../scheduler-network.service';
 
 @Component({
-  selector: 'app-scheduler-item',
-  templateUrl: './item.component.html',
-  styleUrls: ['./item.component.scss']
+  selector: 'app-scheduler-project',
+  templateUrl: './project.component.html',
+  styleUrls: ['./project.component.scss']
 })
-export class ItemComponent implements OnInit {
+export class ProjectComponent implements OnInit {
 
   @Input() schedulerProject: SchedulerProject = new SchedulerProject();
   @Output() editClicked = new EventEmitter<undefined>();

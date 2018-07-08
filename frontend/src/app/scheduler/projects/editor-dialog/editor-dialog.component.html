@@ -55,7 +55,9 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <button color="primary" mat-button [mat-dialog-close]="null">Cancel</button>
-  <button color="primary" mat-button [mat-dialog-close]="generatedItem" [disabled]="submitDisabled">
+  <button color="primary" mat-button
+          [mat-dialog-close]="generatedProject"
+          [disabled]="submitDisabled">
     Submit
   </button>
 </mat-dialog-actions>

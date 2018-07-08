@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { SchedulerProject } from '../../scheduler-data';
+import { SchedulerProject } from '../../scheduler-project';
 import { SchedulerNetworkService } from '../../scheduler-network.service';
 
 @Component({

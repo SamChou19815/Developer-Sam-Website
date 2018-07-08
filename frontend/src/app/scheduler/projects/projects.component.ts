@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { GoogleUserService } from '../../shared/google-user.service';
 import { LoadingOverlayService } from '../../shared/overlay/loading-overlay.service';
 import { shortDelay } from '../../shared/util';
-import { SchedulerProject } from '../scheduler-data';
+import { SchedulerProject } from '../scheduler-project';
 import { SchedulerNetworkService } from '../scheduler-network.service';
 import { EditorDialogComponent } from './editor-dialog/editor-dialog.component';
 

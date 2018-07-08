@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
-import { SchedulerData, SchedulerProject } from './scheduler-data';
+import { SchedulerData } from './scheduler-data';
+import { SchedulerProject } from './scheduler-project';
 
 @Injectable({
   providedIn: 'root'

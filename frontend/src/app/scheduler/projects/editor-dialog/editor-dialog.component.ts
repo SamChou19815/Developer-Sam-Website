@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { SchedulerProject } from '../../scheduler-data';
+import { SchedulerProject } from '../../scheduler-project';
 
 const possibleHoursArray = Array<number>(24);
 for (let i = 0; i < 24; i++) {
@@ -9,7 +9,7 @@ for (let i = 0; i < 24; i++) {
 }
 
 @Component({
-  selector: 'app-scheduler-editor-dialog',
+  selector: 'app-scheduler-project-editor-dialog',
   templateUrl: './editor-dialog.component.html',
   styleUrls: ['./editor-dialog.component.css']
 })

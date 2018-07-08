@@ -53,6 +53,9 @@ export const allData: NavData[] = [
     name: 'Developer Sam', icon: Icon.ofMaterial('home'),
     link: '/', isInternal: true
   },
+  <NavItem>{
+    name: 'Friends', icon: Icon.ofMaterial('group'), link: '/friends', isInternal: true
+  },
   <NavGroup>{
     name: 'Scheduler', icon: Icon.ofMaterial('event_note'),
     children: [

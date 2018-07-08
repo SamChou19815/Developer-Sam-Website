@@ -20,7 +20,7 @@ import kotlin.math.min
  * @param config2 the config for the second person, which can be omitted and then this class can be
  * used to do scheduling for only one person.
  */
-class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData()) {
+class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.empty) {
 
     /*
      * --------------------------------------------------------------------------------

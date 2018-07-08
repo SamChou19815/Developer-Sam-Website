@@ -50,11 +50,11 @@ open class SecurityFilters<R : Enum<R>>(
             Logger.getGlobal().log(Level.SEVERE, e) { "Auth Error" }
             return@HeaderClient
         }
-        val firebaseUser = GoogleUser(
+        val googleUser = GoogleUser(
                 uid = firebaseToken.uid, name = firebaseToken.name,
                 email = firebaseToken.email, picture = firebaseToken.picture
         ).upsert()
-        val profile = Profile(firebaseUser)
+        val profile = Profile(googleUser)
         credentials.userProfile = profile
     }.apply { addAuthorizationGenerator(authorizationGenerator) }
 
@@ -66,12 +66,11 @@ open class SecurityFilters<R : Enum<R>>(
     /**
      * [withRole] returns a new security filter that requires the user to have certain [role].
      */
-    fun withRole(role: R): SecurityFilter =
-            Config(clients).apply {
-                addAuthorizer(ROLE_AUTHORIZER_NAME,
-                        RequireAllRolesAuthorizer<Profile>(role.name))
-                httpActionAdapter = DefaultHttpActionAdapter()
-            }.let { UserSecurityFilter(config = it) }
+    fun withRole(role: R): SecurityFilter = Config(clients).apply {
+        addAuthorizer(ROLE_AUTHORIZER_NAME,
+                RequireAllRolesAuthorizer<Profile>(role.name))
+        httpActionAdapter = DefaultHttpActionAdapter()
+    }.let { UserSecurityFilter(config = it) }
 
     /**
      * [Profile] is the user profile of the firebase user.

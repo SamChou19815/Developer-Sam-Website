@@ -13,7 +13,7 @@ export class FriendsNetworkService extends AuthenticatedNetworkService {
   }
 
   async loadFriendsData(): Promise<FriendData> {
-    return this.getData<FriendData>('/apis/friends/load');
+    return this.getData<FriendData>('/apis/user/friends/load');
   }
 
 }

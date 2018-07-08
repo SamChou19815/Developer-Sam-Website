@@ -169,7 +169,6 @@ private fun initializeFriendSystemApiHandlers() {
         if (!successful) {
             badRequest()
         }
-        "OK"
     }
     post("/respond_friend_request") { _ ->
         val key = queryParamsForKey("responder_user_key")
@@ -180,7 +179,6 @@ private fun initializeFriendSystemApiHandlers() {
         if (!successful) {
             badRequest()
         }
-        "OK"
     }
     delete(path = "/remove_friend") { _ ->
         val friendKey = queryParamsForKey("removed_friend_key")
@@ -205,7 +203,7 @@ private fun initializeSchedulerApiHandlers() {
     }
     delete(path = "/delete") { _ ->
         val type = queryParams("type") ?: badRequest()
-        val key = queryParamsForKey("removed_friend_key")
+        val key = queryParamsForKey("key")
         when (type) {
             "item" -> SchedulerItem.delete(user = user, key = key)
             "event" -> SchedulerEvent.delete(user = user, key = key)
@@ -270,6 +268,7 @@ private fun initializeUserApiHandlers() {
  */
 fun main(args: Array<String>) {
     Spark.port(8080)
+    /*
     Spark.exception(Exception::class.java) { e, _, _ ->
         val exceptionWriter = StringWriter()
         e.printStackTrace(PrintWriter(exceptionWriter))
@@ -278,5 +277,6 @@ fun main(args: Array<String>) {
         ERRORS.log("errors", data)
         throw e
     }
+    */
     initializeApiHandlers()
 }

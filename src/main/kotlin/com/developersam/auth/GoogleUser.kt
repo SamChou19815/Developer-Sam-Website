@@ -35,6 +35,7 @@ data class GoogleUser(
     fun upsert(): GoogleUser {
         val entityOpt = getEntityByUid(uid = uid)
         return UserEntity.upsert(entity = entityOpt) { t ->
+            t[Table.uid] = uid
             t[Table.name] = name
             t[Table.email] = email
             t[Table.picture] = picture
@@ -44,7 +45,7 @@ data class GoogleUser(
     /**
      * [Table] is the table definition for [GoogleUser]
      */
-    private object Table : TypedTable<Table>(tableName = "FirebaseUser") {
+    private object Table : TypedTable<Table>(tableName = "GoogleUser") {
         val uid = stringProperty(name = "uid")
         val name = stringProperty(name = "name")
         val email = stringProperty(name = "email")
@@ -61,7 +62,7 @@ data class GoogleUser(
         val picture: String = Table.picture.delegatedValue
 
         val asGoogleUser: GoogleUser
-            get() = GoogleUser(uid = uid, name = name, email = email, picture = picture)
+            get() = GoogleUser(key = key, uid = uid, name = name, email = email, picture = picture)
 
         companion object : TypedEntityCompanion<Table, UserEntity>(table = Table) {
             override fun create(entity: Entity): UserEntity = UserEntity(entity = entity)

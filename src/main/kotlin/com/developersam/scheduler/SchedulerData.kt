@@ -17,4 +17,12 @@ class SchedulerData private constructor(
      */
     constructor(user: GoogleUser) : this(items = SchedulerItem[user], events = SchedulerEvent[user])
 
+    companion object {
+        /**
+         * [empty] is the empty [SchedulerData].
+         */
+        @JvmField
+        val empty: SchedulerData = SchedulerData(items = emptyList(), events = emptyList())
+    }
+
 }

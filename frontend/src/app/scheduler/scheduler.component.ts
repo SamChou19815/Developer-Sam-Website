@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { GoogleUserService } from '../google-user/google-user.service';
-import { LoadingOverlayService } from '../overlay/loading-overlay.service';
+import { LoadingOverlayService } from '../shared/overlay/loading-overlay.service';
+import { GoogleUserService } from '../shared/google-user.service';
 import { shortDelay } from '../shared/util';
 import { EditItemDialogComponent } from './edit-item-dialog/edit-item-dialog.component';
 import { SchedulerItem } from './scheduler-data';

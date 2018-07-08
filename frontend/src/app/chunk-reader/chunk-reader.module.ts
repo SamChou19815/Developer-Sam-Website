@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { PushControllerService } from '../overlay/push-controller.service';
+import { PushControllerService } from '../shared/overlay/push-controller.service';
 import { SharedModule } from '../shared/shared.module';
 import { AddArticleDialogComponent } from './add-article-dialog/add-article-dialog.component';
 import { ArticleDetailComponent } from './article-detail/article-detail.component';

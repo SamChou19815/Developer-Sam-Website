@@ -6,7 +6,7 @@ import com.developersam.auth.GoogleUser
  * [FriendData] is a combination of friend [list] and [requests] for the given user.
  */
 class FriendData private constructor(
-        private val list: List<GoogleUser>, private val requests: List<GoogleUser>
+        private val list: Set<GoogleUser>, private val requests: List<GoogleUser>
 ) {
 
     /**

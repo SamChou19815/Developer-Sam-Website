@@ -9,6 +9,7 @@ import { NavGroup } from '../../nav-data';
 })
 export class NavGroupComponent implements OnInit {
 
+  shown = true;
   @Input() group: NavGroup = { name: '', icon: Icon.ofDummy, children: [] };
 
   constructor() {

@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { LoadingOverlayService } from '../../overlay/loading-overlay.service';
+import { LoadingOverlayService } from '../../shared/overlay/loading-overlay.service';
 import {
   PUSHED_CONTROLLER_DATA,
   PushedControllerOverlayRef
-} from '../../overlay/push-controller.service';
-import { PushedControllerOverlayComponent } from '../../overlay/pushed-controller-overlay.component';
+} from '../../shared/overlay/push-controller.service';
+import { PushedControllerOverlayComponent } from '../../shared/overlay/pushed-controller-overlay.component';
 import { FullAnalyzedArticle } from '../chunk-reader-data';
 import { ChunkReaderNetworkService } from '../chunk-reader-network.service';
 
@@ -12,7 +12,7 @@ import { ChunkReaderNetworkService } from '../chunk-reader-network.service';
   selector: 'app-chunk-reader-article-detail',
   templateUrl: './article-detail.component.html',
   styleUrls: [
-    '../../overlay/pushed-controller-overlay.component.scss',
+    '../../shared/overlay/pushed-controller-overlay.component.scss',
     './article-detail.component.css'
   ]
 })

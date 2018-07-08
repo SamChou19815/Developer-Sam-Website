@@ -36,11 +36,11 @@ object FriendPair {
      * [get] returns a list of friends for [user].
      */
     @JvmStatic
-    internal operator fun get(user: GoogleUser): List<GoogleUser> {
+    internal operator fun get(user: GoogleUser): Set<GoogleUser> {
         val userKey = user.keyNotNull
         return PairEntity.query { filter = Table.firstUserKey eq userKey }
                 .mapNotNull { entity -> GoogleUser.getByKey(key = entity.secondUserKey) }
-                .toList()
+                .toSet()
     }
 
     /**

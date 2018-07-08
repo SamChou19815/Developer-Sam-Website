@@ -54,7 +54,7 @@ object FriendRequest {
                     (Table.requesterUserKey eq requesterUserKey)
         }
         if (exists) {
-            return false
+            return true
         }
         RequestEntity.insert { t ->
             t[Table.requesterUserKey] = requesterUserKey

@@ -5,24 +5,18 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { environment } from '../environments/environment';
-import { AlertComponent } from './alert/alert.component';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { LoadingOverlayComponent } from './overlay/loading-overlay.component';
-import { LoadingOverlayService } from './overlay/loading-overlay.service';
-import { PushedControllerOverlayComponent } from './overlay/pushed-controller-overlay.component';
-import { SharedModule } from './shared/shared.module';
 import { NavModule } from './nav/nav.module';
+import { LoadingOverlayComponent } from './shared/overlay/loading-overlay.component';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    LoadingOverlayComponent,
-    PushedControllerOverlayComponent,
-    AlertComponent
+    LoadingOverlayComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +30,7 @@ import { NavModule } from './nav/nav.module';
   ],
   providers: [Title],
   bootstrap: [AppComponent],
-  entryComponents: [LoadingOverlayComponent, AlertComponent]
+  entryComponents: [LoadingOverlayComponent]
 })
 export class AppModule {
 }

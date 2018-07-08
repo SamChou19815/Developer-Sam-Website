@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { AlertComponent } from '../alert/alert.component';
-import { GoogleUserService } from '../google-user/google-user.service';
-import { LoadingOverlayService } from '../overlay/loading-overlay.service';
-import { PushControllerService } from '../overlay/push-controller.service';
+import { AlertComponent } from '../shared/alert/alert.component';
+import { GoogleUserService } from '../shared/google-user.service';
+import { LoadingOverlayService } from '../shared/overlay/loading-overlay.service';
+import { PushControllerService } from '../shared/overlay/push-controller.service';
 import { shortDelay } from '../shared/util';
 import { AddArticleDialogComponent } from './add-article-dialog/add-article-dialog.component';
-import { AnalyzedArticle, RawArticle } from './chunk-reader-data';
 import { ArticleDetailComponent } from './article-detail/article-detail.component';
+import { AnalyzedArticle, RawArticle } from './chunk-reader-data';
 import { ChunkReaderNetworkService } from './chunk-reader-network.service';
 
 @Component({

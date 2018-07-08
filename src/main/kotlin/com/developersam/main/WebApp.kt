@@ -32,9 +32,7 @@ import spark.Spark.get
 import spark.Spark.path
 import spark.kotlin.before
 import spark.kotlin.halt
-import java.io.PrintWriter
-import java.io.StringWriter
-import java.util.HashMap
+import kotlin.system.measureTimeMillis
 
 /*
  * ------------------------------------------------------------------------------------------
@@ -164,14 +162,14 @@ private fun initializeFriendSystemApiHandlers() {
         GoogleUser.getByEmail(email = email)
     }
     post(path = "/add_friend_request") { _ ->
-        val key = queryParamsForKey("requester_user_key")
+        val key = queryParamsForKey("responder_user_key")
         val successful = FriendRequest.add(requester = user, responderUserKey = key)
         if (!successful) {
             badRequest()
         }
     }
     post("/respond_friend_request") { _ ->
-        val key = queryParamsForKey("responder_user_key")
+        val key = queryParamsForKey("requester_user_key")
         val approved = queryParams("approved")?.let { it == "true" } ?: badRequest()
         val successful = FriendRequest.respond(
                 responder = user, requesterUserKey = key, approved = approved
@@ -183,7 +181,6 @@ private fun initializeFriendSystemApiHandlers() {
     delete(path = "/remove_friend") { _ ->
         val friendKey = queryParamsForKey("removed_friend_key")
         FriendPair.delete(firstUserKey = user.keyNotNull, secondUserKey = friendKey)
-        "OK"
     }
 }
 
@@ -267,16 +264,19 @@ private fun initializeUserApiHandlers() {
  * @param args these info will be ignored right now.
  */
 fun main(args: Array<String>) {
-    Spark.port(8080)
-    /*
-    Spark.exception(Exception::class.java) { e, _, _ ->
-        val exceptionWriter = StringWriter()
-        e.printStackTrace(PrintWriter(exceptionWriter))
-        val data = HashMap<String, Any>()
-        data["message"] = exceptionWriter.toString()
-        ERRORS.log("errors", data)
-        throw e
+    val initTime = measureTimeMillis {
+        Spark.port(8080)
+        /*
+        Spark.exception(Exception::class.java) { e, _, _ ->
+            val exceptionWriter = StringWriter()
+            e.printStackTrace(PrintWriter(exceptionWriter))
+            val data = HashMap<String, Any>()
+            data["message"] = exceptionWriter.toString()
+            ERRORS.log("errors", data)
+            throw e
+        }
+        */
+        initializeApiHandlers()
     }
-    */
-    initializeApiHandlers()
+    println("Initialized in ${initTime}ms.")
 }

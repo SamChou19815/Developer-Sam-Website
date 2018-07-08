@@ -3,10 +3,12 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
-import { BlockingOverlayComponent } from '../overlay/blocking-overlay.component';
+import { AlertComponent } from './alert/alert.component';
 import { ClosableControllerComponent } from './closable-controller/closable-controller.component';
 import { IconComponent } from './icon.component';
 import { MaterialModule } from './material.module';
+import { BlockingOverlayComponent } from './overlay/blocking-overlay.component';
+import { PushedControllerOverlayComponent } from './overlay/pushed-controller-overlay.component';
 import { UserCardComponent } from './user-card/user-card.component';
 
 @NgModule({
@@ -14,10 +16,14 @@ import { UserCardComponent } from './user-card/user-card.component';
     AngularFontAwesomeModule, HttpClientModule],
   exports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule,
     AngularFontAwesomeModule, HttpClientModule,
-    BlockingOverlayComponent, ClosableControllerComponent, IconComponent, UserCardComponent],
-  declarations: [BlockingOverlayComponent, ClosableControllerComponent,
+    BlockingOverlayComponent, ClosableControllerComponent,
+    PushedControllerOverlayComponent, AlertComponent,
     IconComponent, UserCardComponent],
-  providers: [HttpClient]
+  declarations: [BlockingOverlayComponent, ClosableControllerComponent,
+    PushedControllerOverlayComponent, AlertComponent,
+    IconComponent, UserCardComponent],
+  providers: [HttpClient],
+  entryComponents: [AlertComponent]
 })
 export class SharedModule {
 }

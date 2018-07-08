@@ -11,11 +11,11 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 /**
- * A [NLPAPIAnalyzer] using Google Cloud NLP API directly.
+ * A [NlpApiAnalyzer] using Google Cloud NLP API directly.
  *
  * It should be constructed from the text needed to analyze.
  */
-internal class NLPAPIAnalyzer(text: String) {
+internal class NlpApiAnalyzer(text: String) {
 
     /**
      * [entities] is a list of entities extracted from the text.

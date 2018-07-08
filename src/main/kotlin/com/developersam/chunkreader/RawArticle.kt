@@ -1,6 +1,6 @@
 package com.developersam.chunkreader
 
-import com.developersam.auth.FirebaseUser
+import com.developersam.auth.GoogleUser
 import kotlin.concurrent.thread
 
 /**
@@ -12,7 +12,7 @@ data class RawArticle(val title: String = "", val content: String = "") {
      * [process] will starts to process the given [RawArticle] and returns immediately whether the
      * article is well-formatted.
      */
-    fun process(user: FirebaseUser): Boolean {
+    fun process(user: GoogleUser): Boolean {
         if (title.isBlank() || content.isBlank()) {
             return false
         }

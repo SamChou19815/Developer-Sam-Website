@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
 import { SchedulerData, SchedulerItem } from './scheduler-data';
@@ -17,27 +17,19 @@ export class SchedulerNetworkService extends AuthenticatedNetworkService {
   }
 
   async editItem(data: SchedulerItem): Promise<string> {
-    const key = await this.http.post('/apis/user/scheduler/edit?type=item', data, {
-      responseType: 'text', withCredentials: true, headers: this.firebaseAuthHeader
-    }).toPromise();
-    if (key == null) {
-      throw new Error();
-    }
-    return key;
+    return this.postDataForText('/apis/user/scheduler/edit?type=item', data);
   }
 
-  async deleteItem(key: string) {
-    return this.http.delete<string>('/apis/user/scheduler/delete', {
-      params: new HttpParams().set('type', 'item').set('key', key), withCredentials: true,
-      headers: this.firebaseAuthHeader
-    }).toPromise();
+  async deleteItem(key: string): Promise<string> {
+    return this.deleteWithParams('/apis/user/scheduler/delete', {
+      'type': 'item', 'key': key
+    });
   }
 
   async markAs(completed: boolean, key: string) {
-    return this.http.post('/apis/user/scheduler/mark_item_as', '', {
-      params: new HttpParams().set('key', key).set('completed', String(completed)),
-      withCredentials: true, headers: this.firebaseAuthHeader
-    }).toPromise();
+    return this.postParams('/apis/user/scheduler/mark_item_as', {
+      'key': key, 'completed': String(completed).trim()
+    });
   }
 
 }

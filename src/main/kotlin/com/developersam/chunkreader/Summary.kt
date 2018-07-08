@@ -1,6 +1,6 @@
 package com.developersam.chunkreader
 
-import com.developersam.auth.FirebaseUser
+import com.developersam.auth.GoogleUser
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.language.v1beta2.Sentence
@@ -264,7 +264,7 @@ class Summary private constructor() {
          * with sentences sorted according to their sequence in the original article. If the given
          * [user] cannot access the article with [textKey], it will return an empty list.
          */
-        operator fun get(user: FirebaseUser, textKey: Key, limit: Int): List<String> =
+        operator fun get(user: GoogleUser, textKey: Key, limit: Int): List<String> =
                 if (Article.userCanAccess(user = user, key = textKey)) {
                     getFromKey(textKey = textKey, limit = limit)
                 } else {

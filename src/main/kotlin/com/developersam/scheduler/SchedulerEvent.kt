@@ -1,6 +1,6 @@
 package com.developersam.scheduler
 
-import com.developersam.auth.FirebaseUser
+import com.developersam.auth.GoogleUser
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import typestore.TypedEntity
@@ -39,7 +39,7 @@ data class SchedulerEvent(
      * [upsert] upserts this event for the [user] if the item is valid and belongs to the user.
      * It returns the key of the new event if it is successfully created and `null` if otherwise.
      */
-    fun upsert(user: FirebaseUser): Key? {
+    fun upsert(user: GoogleUser): Key? {
         if (!isValid) {
             return null
         }
@@ -187,7 +187,7 @@ data class SchedulerEvent(
          *
          * @param user the user whose events need to be fetched. This user must exist.
          */
-        internal operator fun get(user: FirebaseUser): List<SchedulerEvent> =
+        internal operator fun get(user: GoogleUser): List<SchedulerEvent> =
                 SchedulerEventEntity.query { filter = Table.userId eq user.uid }
                         .map { it.asSchedulerEvent }
                         .toList()
@@ -196,7 +196,7 @@ data class SchedulerEvent(
          * [delete] removes a scheduler event from database with a given [key] if the item really
          * belongs to the given [user].
          */
-        fun delete(user: FirebaseUser, key: Key) {
+        fun delete(user: GoogleUser, key: Key) {
             SchedulerEventEntity[key]?.takeIf { it.userId == user.uid }
                     ?.let { SchedulerEventEntity.delete(it) }
         }

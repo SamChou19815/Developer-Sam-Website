@@ -1,6 +1,6 @@
 package com.developersam.chunkreader
 
-import com.developersam.auth.FirebaseUser
+import com.developersam.auth.GoogleUser
 import com.developersam.chunkreader.Article.Table.content
 import com.developersam.chunkreader.Article.Table.title
 import com.google.cloud.datastore.Entity
@@ -90,15 +90,15 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
 
         /**
          * [runAnalyzerWithLog] runs the google NLP analyzer on [content] and logs its running time.
-         * After the result is fetched, it will returns an optional [NLPAPIAnalyzer] if it
+         * After the result is fetched, it will returns an optional [NlpApiAnalyzer] if it
          * completes successfully.
          */
         @JvmStatic
-        private fun runAnalyzerWithLog(content: String): NLPAPIAnalyzer? {
-            var analyzer: NLPAPIAnalyzer? = null
+        private fun runAnalyzerWithLog(content: String): NlpApiAnalyzer? {
+            var analyzer: NlpApiAnalyzer? = null
             val analyzerRunningTime = measureTimeMillis {
                 analyzer = try {
-                    NLPAPIAnalyzer(text = content)
+                    NlpApiAnalyzer(text = content)
                 } catch (e: Exception) {
                     e.printStackTrace()
                     return null
@@ -113,7 +113,7 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
          * processing has succeeded without error.
          */
         @JvmStatic
-        fun process(user: FirebaseUser, article: RawArticle) {
+        fun process(user: GoogleUser, article: RawArticle) {
             val (title, content) = article
             val analyzer = runAnalyzerWithLog(content = content) ?: run {
                 println("Processing failed!")
@@ -145,13 +145,13 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
         /**
          * [userCanAccess] reports whether a [user] can access an article with this [key].
          */
-        fun userCanAccess(user: FirebaseUser, key: Key): Boolean =
+        fun userCanAccess(user: GoogleUser, key: Key): Boolean =
                 Db[key]?.let { it.userId == user.uid } ?: false
 
         /**
          * [get] returns a list of articles associated with the given [user].
          */
-        operator fun get(user: FirebaseUser): List<Article> =
+        operator fun get(user: GoogleUser): List<Article> =
                 Db.query {
                     filter = Table.userId eq user.uid
                     order = Table.time.desc()
@@ -161,7 +161,7 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
          * [get] returns a [Article] with full detail from a [key], which may not exist due to a
          * wrong key. It also checks whether the [user] has the permission.
          */
-        operator fun get(user: FirebaseUser, key: Key): Article? =
+        operator fun get(user: GoogleUser, key: Key): Article? =
                 Db[key]?.takeIf { it.userId == user.uid }?.let { article ->
                     Article(article = article, fullDetail = true)
                 }

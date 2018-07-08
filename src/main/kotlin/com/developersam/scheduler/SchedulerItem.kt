@@ -1,7 +1,6 @@
 package com.developersam.scheduler
 
-import com.developersam.auth.FirebaseUser
-import com.developersam.scheduler.SchedulerItem.Table.detail
+import com.developersam.auth.GoogleUser
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import typestore.TypedEntity
@@ -43,7 +42,7 @@ data class SchedulerItem(
      * [upsert] upserts this item for the [user] if the item is valid and belongs to the user.
      * It returns the key of the new item if it is successfully created and `null` if otherwise.
      */
-    fun upsert(user: FirebaseUser): Key? {
+    fun upsert(user: GoogleUser): Key? {
         if (!isValid) {
             return null
         }
@@ -115,7 +114,7 @@ data class SchedulerItem(
          *
          * @param user the user whose items need to be fetched. This user must exist.
          */
-        internal operator fun get(user: FirebaseUser): List<SchedulerItem> =
+        internal operator fun get(user: GoogleUser): List<SchedulerItem> =
                 SchedulerItemEntity.query {
                     filter = (Table.userId eq user.uid) and Table.deadline.isFuture()
                     order = Table.deadline.asc()
@@ -126,7 +125,7 @@ data class SchedulerItem(
          * and the desired new completion status [isCompleted] if the item really belongs to the
          * given [user].
          */
-        fun markAs(user: FirebaseUser, key: Key, isCompleted: Boolean) {
+        fun markAs(user: GoogleUser, key: Key, isCompleted: Boolean) {
             defaultDatastore.transaction {
                 SchedulerItemEntity[key]?.let { item ->
                     if (item.userId == user.uid) {
@@ -140,7 +139,7 @@ data class SchedulerItem(
          * [delete] removes a scheduler item from database with a given [key] if the item really
          * belongs to the given [user].
          */
-        fun delete(user: FirebaseUser, key: Key) {
+        fun delete(user: GoogleUser, key: Key) {
             SchedulerItemEntity[key]?.takeIf { it.userId == user.uid }
                     ?.let { SchedulerItemEntity.delete(it) }
         }

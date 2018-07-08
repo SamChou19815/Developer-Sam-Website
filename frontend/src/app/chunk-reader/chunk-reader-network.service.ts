@@ -1,55 +1,33 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
 import { AnalyzedArticle, FullAnalyzedArticle, RawArticle } from './chunk-reader-data';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ChunkReaderNetworkService {
+export class ChunkReaderNetworkService extends AuthenticatedNetworkService {
 
-  constructor(private http: HttpClient) {
+  constructor(http: HttpClient) {
+    super(http);
   }
 
   async loadArticlesPreview(): Promise<AnalyzedArticle[]> {
-    const token = localStorage.getItem('token');
-    if (token == null) {
-      throw new Error();
-    }
-    return this.http.get<AnalyzedArticle[]>('/apis/user/chunkreader/load', {
-      withCredentials: true, headers: { 'Firebase-Auth-Token': token }
-    }).toPromise();
+    return this.getData<AnalyzedArticle[]>('/apis/user/chunkreader/load');
   }
 
   async loadArticleDetail(key: string): Promise<FullAnalyzedArticle> {
-    const token = localStorage.getItem('token');
-    if (token == null) {
-      throw new Error();
-    }
     const url = `/apis/user/chunkreader/article_detail?key=${key}`;
-    return this.http.get<FullAnalyzedArticle>(url, {
-      withCredentials: true, headers: { 'Firebase-Auth-Token': token }
-    }).toPromise();
+    return this.getData<FullAnalyzedArticle>(url);
   }
 
   async adjustSummary(key: string, limit: number): Promise<string[]> {
-    const token = localStorage.getItem('token');
-    if (token == null) {
-      throw new Error();
-    }
     const url = `/apis/user/chunkreader/adjust_summary?key=${key}&limit=${limit}`;
-    return this.http.post<string[]>(url, {}, {
-      withCredentials: true, headers: { 'Firebase-Auth-Token': token }
-    }).toPromise()
+    return this.getData<string[]>(url);
   }
 
   async analyzeArticle(rawArticle: RawArticle): Promise<boolean> {
-    const token = localStorage.getItem('token');
-    if (token == null) {
-      throw new Error();
-    }
-    const resp = await this.http.post('/apis/user/chunkreader/analyze', rawArticle, {
-      responseType: 'text', withCredentials: true, headers: { 'Firebase-Auth-Token': token }
-    }).toPromise();
+    const resp = await this.postDataForText('/apis/user/chunkreader/analyze', rawArticle);
     return resp === 'true';
   }
 

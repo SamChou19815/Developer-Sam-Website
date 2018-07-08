@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { GoogleUserService } from '../google-user/google-user.service';
 import { LoadingOverlayService } from '../overlay/loading-overlay.service';
-import { EditItemDialogComponent } from './edit-scheduler-item-dialog/edit-item-dialog.component';
+import { EditItemDialogComponent } from './edit-item-dialog/edit-item-dialog.component';
 import { SchedulerItem } from './scheduler-data';
 import { SchedulerNetworkService } from './scheduler-network.service';
 

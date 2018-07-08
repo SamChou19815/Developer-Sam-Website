@@ -2,12 +2,17 @@
 
 package com.developersam.main
 
-import com.developersam.auth.FirebaseUser
-import com.developersam.auth.FirebaseUser.SecurityFilters.Companion.user
+import com.developersam.auth.GoogleUser
+import com.developersam.auth.SecurityFilters
+import com.developersam.auth.SecurityFilters.Companion.user
 import com.developersam.chunkreader.Article
 import com.developersam.chunkreader.RawArticle
 import com.developersam.chunkreader.Summary
+import com.developersam.friend.FriendData
+import com.developersam.friend.FriendPair
+import com.developersam.friend.FriendRequest
 import com.developersam.game.ten.Board
+import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerData
 import com.developersam.scheduler.SchedulerEvent
 import com.developersam.scheduler.SchedulerItem
@@ -58,9 +63,9 @@ private val ERRORS: FluentLogger = FluentLogger.getLogger("myapp")
 private enum class Role { USER, ADMIN }
 
 /**
- * [SecurityFilters] can be used to create security filters.
+ * [Filters] can be used to create security filters.
  */
-private object SecurityFilters : FirebaseUser.SecurityFilters<Role>(firebaseAuth, { Role.USER })
+private object Filters : SecurityFilters<Role>(firebaseAuth, { Role.USER })
 
 /*
  * ------------------------------------------------------------------------------------------
@@ -84,10 +89,24 @@ private val transformer: ResponseTransformer = ResponseTransformer { r ->
 private inline fun <reified T> Request.toJson(): T = gson.fromJson(body(), T::class.java)
 
 /**
+ * [Request.queryParamsForKeyOpt] returns the key from the given query params in this [Request].
+ * If the data with [name] is not a key, it will return null.
+ */
+private fun Request.queryParamsForKeyOpt(name: String): Key? =
+        queryParams(name)?.let { Key.fromUrlSafe(it) }
+
+/**
+ * [Request.queryParamsForKey] returns the key from the given query params in this [Request].
+ * If the data with [name] is not a key, it will end with a 400 error.
+ */
+private fun Request.queryParamsForKey(name: String): Key =
+        queryParamsForKeyOpt(name = name) ?: badRequest()
+
+/**
  * [before] registers a before security filter with [path] and a user given a required [role].
  */
 private fun before(path: String, role: Role): Unit =
-        Spark.before(path, SecurityFilters.withRole(role = role))
+        Spark.before(path, Filters.withRole(role = role))
 
 /**
  * [get] registers a GET handler with [path] and a user given function [f].
@@ -136,54 +155,106 @@ private fun initializePublicApiHandlers() {
 }
 
 /**
+ * [initializeFriendSystemApiHandlers] initializes a list of friend system API handlers.
+ */
+private fun initializeFriendSystemApiHandlers() {
+    get(path = "/load") { _ -> FriendData(user = user) }
+    get(path = "/get_user_info") { _ ->
+        val email = queryParams("email") ?: badRequest()
+        GoogleUser.getByEmail(email = email)
+    }
+    post(path = "/add_friend_request") { _ ->
+        val key = queryParamsForKey("requester_user_key")
+        val successful = FriendRequest.add(requester = user, responderUserKey = key)
+        if (!successful) {
+            badRequest()
+        }
+        "OK"
+    }
+    post("/respond_friend_request") { _ ->
+        val key = queryParamsForKey("responder_user_key")
+        val approved = queryParams("approved")?.let { it == "true" } ?: badRequest()
+        val successful = FriendRequest.respond(
+                responder = user, requesterUserKey = key, approved = approved
+        )
+        if (!successful) {
+            badRequest()
+        }
+        "OK"
+    }
+    delete(path = "/remove_friend") { _ ->
+        val friendKey = queryParamsForKey("removed_friend_key")
+        FriendPair.delete(firstUserKey = user.keyNotNull, secondUserKey = friendKey)
+        "OK"
+    }
+}
+
+/**
+ * [initializeSchedulerApiHandlers] initializes a list of Scheduler API handlers.
+ */
+private fun initializeSchedulerApiHandlers() {
+    get(path = "/load") { _ -> SchedulerData(user = user) }
+    post(path = "/edit") { _ ->
+        val type = queryParams("type") ?: badRequest()
+        val key = when (type) {
+            "item" -> toJson<SchedulerItem>().upsert(user = user)?.toUrlSafe()
+            "event" -> toJson<SchedulerEvent>().upsert(user = user)?.toUrlSafe()
+            else -> null
+        }
+        key ?: badRequest()
+    }
+    delete(path = "/delete") { _ ->
+        val type = queryParams("type") ?: badRequest()
+        val key = queryParamsForKey("removed_friend_key")
+        when (type) {
+            "item" -> SchedulerItem.delete(user = user, key = key)
+            "event" -> SchedulerEvent.delete(user = user, key = key)
+        }
+    }
+    post(path = "/mark_item_as") { _ ->
+        val key = queryParamsForKey("key")
+        val completed = queryParams("completed")?.toBoolean() ?: badRequest()
+        SchedulerItem.markAs(user = user, key = key, isCompleted = completed)
+    }
+    get(path = "/auto_schedule") { _ ->
+        val friendKey = queryParamsForKeyOpt(name = "friend_key")
+                ?: return@get Scheduler(config1 = SchedulerData(user = user)).schedule()
+        val myKey = user.keyNotNull
+        if (!FriendPair.exists(firstUserKey = myKey, secondUserKey = friendKey)) {
+            throw halt(code = 403)
+        }
+        val friend = GoogleUser.getByKey(key = friendKey) ?: badRequest()
+        val myConfig = SchedulerData(user = user)
+        val friendConfig = SchedulerData(user = friend)
+        Scheduler(config1 = myConfig, config2 = friendConfig).schedule()
+    }
+}
+
+/**
+ * [initializeChunkReaderApiHandlers] initializes a list of Chunk Reader API handlers.
+ */
+private fun initializeChunkReaderApiHandlers() {
+    get(path = "/load") { _ -> Article[user] }
+    post(path = "/analyze") { _ -> toJson<RawArticle>().process(user = user) }
+    get(path = "/article_detail") { _ ->
+        val key = queryParamsForKey(name = "key")
+        Article[user, key]
+    }
+    get(path = "/adjust_summary") { _ ->
+        val key = queryParamsForKey(name = "key")
+        val limit = queryParams("limit")?.toInt() ?: badRequest()
+        Summary[user, key, limit]
+    }
+}
+
+/**
  * [initializeUserApiHandlers] initializes a list of user API handlers.
  */
 private fun initializeUserApiHandlers() {
-    // Scheduler
     before(path = "/*", role = Role.USER)
-    path("/scheduler") {
-        get(path = "/load") { _ -> SchedulerData[user] }
-        post(path = "/edit") { _ ->
-            val type = queryParams("type") ?: badRequest()
-            val key = when (type) {
-                "item" -> toJson<SchedulerItem>().upsert(user = user)?.toUrlSafe()
-                "event" -> toJson<SchedulerEvent>().upsert(user = user)?.toUrlSafe()
-                else -> null
-            }
-            key ?: badRequest()
-        }
-        delete(path = "/delete") { _ ->
-            val type: String? = queryParams("type")
-            val key: String? = queryParams("key")
-            when {
-                key == null -> Unit
-                type == "item" -> SchedulerItem.delete(user = user, key = Key.fromUrlSafe(key))
-                type == "event" -> SchedulerEvent.delete(user = user, key = Key.fromUrlSafe(key))
-                else -> Unit
-            }
-        }
-        post(path = "/mark_item_as") { _ ->
-            val key: String? = queryParams("key")
-            val completed: Boolean? = queryParams("completed")?.toBoolean()
-            if (key != null && completed != null) {
-                SchedulerItem.markAs(user, Key.fromUrlSafe(key), completed)
-            }
-        }
-    }
-    // ChunkReader
-    path("/chunkreader") {
-        get(path = "/load") { _ -> Article[user] }
-        post(path = "/analyze") { _ -> toJson<RawArticle>().process(user = user) }
-        get(path = "/article_detail") { _ ->
-            val key = Key.fromUrlSafe(queryParams("key"))
-            Article[user, key]
-        }
-        post(path = "/adjust_summary") { _ ->
-            val key = Key.fromUrlSafe(queryParams("key"))
-            val limit = queryParams("limit").toInt()
-            Summary[user, key, limit]
-        }
-    }
+    path("/friends", ::initializeFriendSystemApiHandlers)
+    path("/scheduler", ::initializeSchedulerApiHandlers)
+    path("/chunkreader", ::initializeChunkReaderApiHandlers)
 }
 
 /*

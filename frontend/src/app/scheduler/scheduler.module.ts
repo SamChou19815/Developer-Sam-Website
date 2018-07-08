@@ -4,7 +4,7 @@ import { ItemComponent } from './item/item.component';
 import { SchedulerRoutingModule } from './scheduler-routing.module';
 
 import { SchedulerComponent } from './scheduler.component';
-import { EditItemDialogComponent } from './edit-scheduler-item-dialog/edit-item-dialog.component';
+import { EditItemDialogComponent } from './edit-item-dialog/edit-item-dialog.component';
 
 @NgModule({
   imports: [

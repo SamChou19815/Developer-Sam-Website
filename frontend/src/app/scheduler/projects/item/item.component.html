@@ -1,0 +1,48 @@
+<mat-card [class.completed]="schedulerProject.isCompleted">
+  <mat-card-title [class]="titleStyle"><span>{{title}}</span></mat-card-title>
+  <mat-card-content>Deadline: {{schedulerProject.deadlineString}}</mat-card-content>
+  <mat-card-content>
+    <span>Time Left: </span>
+    <span [ngPlural]="schedulerProject.daysLeft">
+      <ng-template ngPluralCase="=0"> </ng-template>
+      <ng-template ngPluralCase="=1">1 day </ng-template>
+      <ng-template ngPluralCase="other">{{schedulerProject.daysLeft}} days </ng-template>
+    </span>
+    <span [ngPlural]="schedulerProject.hoursLeft">
+      <ng-template ngPluralCase="=0"></ng-template>
+      <ng-template ngPluralCase="=1">1 hour</ng-template>
+      <ng-template ngPluralCase="other">{{schedulerProject.hoursLeft}} hours</ng-template>
+    </span>
+  </mat-card-content>
+  <mat-card-content>
+    <span>Minimum Time Units: </span>
+    <span [ngPlural]="schedulerProject.minimumTimeUnits">
+      <ng-template ngPluralCase="=0"> </ng-template>
+      <ng-template ngPluralCase="=1">1 hour</ng-template>
+      <ng-template ngPluralCase="other">{{schedulerProject.minimumTimeUnits}} hours</ng-template>
+    </span>
+    <br>
+    <span>Estimated Time Units: </span>
+    <span [ngPlural]="schedulerProject.estimatedTimeUnits">
+      <ng-template ngPluralCase="=0"> </ng-template>
+      <ng-template ngPluralCase="=1">1 hour</ng-template>
+      <ng-template ngPluralCase="other">{{schedulerProject.estimatedTimeUnits}} hours</ng-template>
+    </span>
+    <br>
+    Weight: {{schedulerProject.weight}}
+  </mat-card-content>
+  <mat-card-content *ngIf="schedulerProject.detail.trim()" class="multi-line">
+    Detail: <br>
+    {{schedulerProject.detail.trim()}}
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button (click)="editClicked.emit()">Edit</button>
+    <button mat-button (click)="deleteClicked.emit()">Delete</button>
+    <button mat-button *ngIf="!schedulerProject.isCompleted" (click)="markAsClicked.emit(true)">
+      Completed
+    </button>
+    <button mat-button *ngIf="schedulerProject.isCompleted" (click)="markAsClicked.emit(false)">
+      Uncompleted
+    </button>
+  </mat-card-actions>
+</mat-card>

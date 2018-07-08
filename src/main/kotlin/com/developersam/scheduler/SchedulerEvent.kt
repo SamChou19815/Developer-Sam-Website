@@ -19,24 +19,24 @@ import java.time.DayOfWeek
  * @property repeatConfig the config. for repeating.
  */
 data class SchedulerEvent(
-        val key: Key? = null, val type: EventType = EventType.ONE_TIME, val title: String = "",
+        override val key: Key? = null, val type: EventType = EventType.ONE_TIME,
+        override val title: String = "",
         val startHour: Long = 0, val endHour: Long = 0, val repeatConfig: Long = 0
-) {
+) : SchedulerRecord {
 
     /**
      * [isValid] checks and returns whether this [SchedulerEvent] is valid.
      */
     private val isValid: Boolean
         get() = when {
-            title.isBlank() && startHour !in 0..23 && endHour !in 0..23 &&
-                    startHour >= endHour -> false
+            title.isBlank() || startHour !in 0..23 || startHour >= endHour -> false
             type == EventType.ONE_TIME -> repeatConfig > System.currentTimeMillis() // Date valid
             type == EventType.WEEKLY -> Repeats.isValid(config = repeatConfig) // Valid repeat
             else -> error(message = "Impossible")
         }
 
     /**
-     * [upsert] upserts this event for the [user] if the item is valid and belongs to the user.
+     * [upsert] upserts this event for the [user] if the event is valid and belongs to the user.
      * It returns the key of the new event if it is successfully created and `null` if otherwise.
      */
     fun upsert(user: GoogleUser): Key? {
@@ -193,7 +193,7 @@ data class SchedulerEvent(
                         .toList()
 
         /**
-         * [delete] removes a scheduler event from database with a given [key] if the item really
+         * [delete] removes a scheduler event from database with a given [key] if the event really
          * belongs to the given [user].
          */
         fun delete(user: GoogleUser, key: Key) {

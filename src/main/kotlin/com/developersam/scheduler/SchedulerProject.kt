@@ -13,34 +13,34 @@ import typestore.transaction
 import java.time.LocalDateTime
 
 /**
- * [SchedulerItem] defines a set of things recorded for a scheduler item.
+ * [SchedulerProject] defines a set of things recorded for a scheduler project.
  *
- * @property key key to uniquely identify one item.
- * @property title title of the item.
- * @property deadline deadline of the item in long.
- * @property isCompleted whether this item is completed.
+ * @property key key to uniquely identify one project.
+ * @property title title of the project.
+ * @property deadline deadline of the project in long.
+ * @property isCompleted whether this project is completed.
  * @property minimumTimeUnits minimum discrete time units that can be spent on this task.
  * @property estimatedTimeUnits the estimated number of time units to spend on this task.
  * @property isGroupProject whether the project is a group project.
- * @property detail the optional detail of the item.
+ * @property detail the optional detail of the project.
  */
-data class SchedulerItem(
-        val key: Key? = null, val title: String = "", val deadline: Long = 0,
+data class SchedulerProject(
+        override val key: Key? = null, override val title: String = "", val deadline: Long = 0,
         private val isCompleted: Boolean = false, private val detail: String = "",
         val minimumTimeUnits: Long = 0, val estimatedTimeUnits: Long = 0,
         val isGroupProject: Boolean = false, val weight: Long = 0
-) {
+) : SchedulerRecord {
 
     /**
-     * [isValid] checks and returns whether this [SchedulerItem] is valid.
+     * [isValid] checks and returns whether this [SchedulerProject] is valid.
      */
     private val isValid: Boolean
         get() = title.isNotBlank() && deadline > System.currentTimeMillis() &&
                 minimumTimeUnits in 1..5 && estimatedTimeUnits in 1..20 && weight in 1..10
 
     /**
-     * [upsert] upserts this item for the [user] if the item is valid and belongs to the user.
-     * It returns the key of the new item if it is successfully created and `null` if otherwise.
+     * [upsert] upserts this project for the [user] if the project is valid and belongs to the user.
+     * It returns the key of the new project if it is successfully created and `null` if otherwise.
      */
     fun upsert(user: GoogleUser): Key? {
         if (!isValid) {
@@ -64,9 +64,9 @@ data class SchedulerItem(
     }
 
     /**
-     * [Table] is the table definition for [SchedulerItem].
+     * [Table] is the table definition for [SchedulerProject].
      */
-    private object Table : TypedTable<Table>(tableName = "SchedulerItem") {
+    private object Table : TypedTable<Table>(tableName = "SchedulerProject") {
         val userId = stringProperty(name = "user_id")
         val title = stringProperty(name = "title")
         val deadline = datetimeProperty(name = "deadline")
@@ -79,7 +79,7 @@ data class SchedulerItem(
     }
 
     /**
-     * [SchedulerItemEntity] is the entity definition for [SchedulerItem].
+     * [SchedulerItemEntity] is the entity definition for [SchedulerProject].
      */
     private class SchedulerItemEntity(entity: Entity) :
             TypedEntity<Table>(entity = entity) {
@@ -93,8 +93,8 @@ data class SchedulerItem(
         val isGroupProject = Table.isGroupProject.delegatedValue
         val weight = Table.weight.delegatedValue
 
-        val asSchedulerItem: SchedulerItem
-            get() = SchedulerItem(
+        val asSchedulerProject: SchedulerProject
+            get() = SchedulerProject(
                     key = key, title = title, deadline = deadline.toUTCMillis(),
                     isCompleted = isCompleted, detail = detail,
                     minimumTimeUnits = minimumTimeUnits, estimatedTimeUnits = estimatedTimeUnits,
@@ -110,19 +110,19 @@ data class SchedulerItem(
     companion object {
 
         /**
-         * [get] returns a list of [SchedulerItem] for a given [user], sorted by deadline.
+         * [get] returns a list of [SchedulerProject] for a given [user], sorted by deadline.
          *
-         * @param user the user whose items need to be fetched. This user must exist.
+         * @param user the user whose projects need to be fetched. This user must exist.
          */
-        internal operator fun get(user: GoogleUser): List<SchedulerItem> =
+        internal operator fun get(user: GoogleUser): List<SchedulerProject> =
                 SchedulerItemEntity.query {
                     filter = (Table.userId eq user.uid) and Table.deadline.isFuture()
                     order = Table.deadline.asc()
-                }.map { it.asSchedulerItem }.toList()
+                }.map { it.asSchedulerProject }.toList()
 
         /**
-         * [markAs] marks the completion status for a scheduler item specified by the given [key]
-         * and the desired new completion status [isCompleted] if the item really belongs to the
+         * [markAs] marks the completion status for a scheduler project specified by the given [key]
+         * and the desired new completion status [isCompleted] if the project really belongs to the
          * given [user].
          */
         fun markAs(user: GoogleUser, key: Key, isCompleted: Boolean) {
@@ -136,8 +136,8 @@ data class SchedulerItem(
         }
 
         /**
-         * [delete] removes a scheduler item from database with a given [key] if the item really
-         * belongs to the given [user].
+         * [delete] removes a scheduler project from database with a given [key] if the project
+         * really belongs to the given [user].
          */
         fun delete(user: GoogleUser, key: Key) {
             SchedulerItemEntity[key]?.takeIf { it.userId == user.uid }

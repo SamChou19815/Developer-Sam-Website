@@ -15,7 +15,7 @@ import com.developersam.game.ten.Board
 import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerData
 import com.developersam.scheduler.SchedulerEvent
-import com.developersam.scheduler.SchedulerItem
+import com.developersam.scheduler.SchedulerProject
 import com.developersam.util.gson
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.datastore.Key
@@ -192,7 +192,7 @@ private fun initializeSchedulerApiHandlers() {
     post(path = "/edit") { _ ->
         val type = queryParams("type") ?: badRequest()
         val key = when (type) {
-            "item" -> toJson<SchedulerItem>().upsert(user = user)?.toUrlSafe()
+            "item" -> toJson<SchedulerProject>().upsert(user = user)?.toUrlSafe()
             "event" -> toJson<SchedulerEvent>().upsert(user = user)?.toUrlSafe()
             else -> null
         }
@@ -202,14 +202,14 @@ private fun initializeSchedulerApiHandlers() {
         val type = queryParams("type") ?: badRequest()
         val key = queryParamsForKey("key")
         when (type) {
-            "item" -> SchedulerItem.delete(user = user, key = key)
+            "item" -> SchedulerProject.delete(user = user, key = key)
             "event" -> SchedulerEvent.delete(user = user, key = key)
         }
     }
     post(path = "/mark_item_as") { _ ->
         val key = queryParamsForKey("key")
         val completed = queryParams("completed")?.toBoolean() ?: badRequest()
-        SchedulerItem.markAs(user = user, key = key, isCompleted = completed)
+        SchedulerProject.markAs(user = user, key = key, isCompleted = completed)
     }
     get(path = "/auto_schedule") { _ ->
         val friendKey = queryParamsForKeyOpt(name = "friend_key")

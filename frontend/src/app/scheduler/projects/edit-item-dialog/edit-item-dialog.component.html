@@ -1,7 +1,7 @@
-<h2 mat-dialog-title>{{key ? 'Edit' : 'Add'}} Scheduler Item</h2>
+<h2 mat-dialog-title>{{key ? 'Edit' : 'Add'}} Project</h2>
 <mat-dialog-content>
   <mat-form-field>
-    <input matInput [(ngModel)]="title" placeholder="Item Title" type="text" required>
+    <input matInput [(ngModel)]="title" placeholder="Project Title" type="text" required>
   </mat-form-field>
   <mat-form-field>
     <input matInput [matDatepicker]="picker" placeholder="Deadline Date"
@@ -16,7 +16,7 @@
   </mat-form-field>
   <mat-form-field>
     <input matInput [(ngModel)]="isGroupProject" placeholder="Group Project?" required hidden>
-    <mat-checkbox [(ngModel)]="isGroupProject">Group Project</mat-checkbox>
+    <mat-checkbox [(ngModel)]="isGroupProject">Yes, this is a group project.</mat-checkbox>
   </mat-form-field>
   <mat-form-field>
     <label>
@@ -50,7 +50,7 @@
   </mat-form-field>
   <mat-form-field>
     <textarea matInput [(ngModel)]="detail"
-              placeholder="Item Detail (Optional)" type="text"></textarea>
+              placeholder="Project Detail (Optional)" type="text"></textarea>
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>

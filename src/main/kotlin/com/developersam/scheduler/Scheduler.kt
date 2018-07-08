@@ -14,7 +14,7 @@ import kotlin.math.min
 
 /**
  * [Scheduler] is responsible for providing algorithms to automatically schedule a list of selected
- * tasks based on user supplied items.
+ * tasks based on user supplied projects.
  *
  * @param config1 the config for the first person, which is treated as the primary user.
  * @param config2 the config for the second person, which can be omitted and then this class can be
@@ -66,9 +66,9 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
     ) : Comparable<AnnotatedInterval> {
 
         /**
-         * [getTotalWeight] returns the total weight of the scheduler item with
+         * [getTotalWeight] returns the total weight of the scheduler project with
          * count [timeUnitCount].
-         * The receiver [SchedulerItem] is assumed to have a non-null key.
+         * The receiver [SchedulerProject] is assumed to have a non-null key.
          */
         fun getTotalWeight(timeUnitCount: Int): Double {
             if (timeUnitCount <= maxFullWeightCount) {
@@ -104,6 +104,11 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
         val isPrimaryUser: Boolean
 
         /**
+         * [original] returns the original record.
+         */
+        val original: SchedulerRecord
+
+        /**
          * [generateIntervals] returns a list of intervals between now and the max deadline of the
          * container.
          */
@@ -111,12 +116,12 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
     }
 
     /**
-     * [AnnotatedItem] is the scheduler item with string based [key] and user identity marker
+     * [AnnotatedProject] is the scheduler project with string based [key] and user identity marker
      * [isPrimaryUser].
      */
-    private data class AnnotatedItem(
+    private data class AnnotatedProject(
             override val key: String, override val isPrimaryUser: Boolean,
-            val original: SchedulerItem
+            override val original: SchedulerProject
     ) : IntervalContainer {
 
         override fun generateIntervals(): List<AnnotatedInterval> {
@@ -139,7 +144,7 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
 
         override fun equals(other: Any?): Boolean = when {
             this === other -> true
-            other is AnnotatedItem -> key == other.key
+            other is AnnotatedProject -> key == other.key
             else -> false
         }
 
@@ -153,7 +158,7 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
      */
     private data class AnnotatedEvent(
             override val key: String, override val isPrimaryUser: Boolean,
-            val original: SchedulerEvent
+            override val original: SchedulerEvent
     ) : IntervalContainer {
 
         /**
@@ -311,10 +316,12 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
     data class Interval(val start: Long, val end: Long)
 
     /**
-     * [IntervalsAnnotatedItem] represents a scheduler item annotated by a list of sorted,
+     * [IntervalsAnnotatedRecord] represents a scheduler record annotated by a list of sorted,
      * not-completed, non-conflicting intervals that is recommended by the system.
      */
-    data class IntervalsAnnotatedItem(val item: SchedulerItem, val intervals: List<Interval>)
+    data class IntervalsAnnotatedRecord(
+            val record: SchedulerRecord, val intervals: List<Interval>
+    )
 
     /*
      * --------------------------------------------------------------------------------
@@ -328,29 +335,29 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
     private class Merger(private val config1: SchedulerData, private val config2: SchedulerData) {
 
         /**
-         * [merged] is the list of merged items/events as [IntervalContainer]s.
+         * [merged] is the list of merged projects/events as [IntervalContainer]s.
          */
         private val merged = arrayListOf<IntervalContainer>()
         /**
          * [tentativeGroupProjects] is a list of possibly group projects.
          */
-        private val tentativeGroupProjects = arrayListOf<AnnotatedItem>()
+        private val tentativeGroupProjects = arrayListOf<AnnotatedProject>()
         /**
          * [realGroupProjects] is a list of confirmed common group projects.
          */
-        private val realGroupProjects = arrayListOf<AnnotatedItem>()
+        private val realGroupProjects = arrayListOf<AnnotatedProject>()
 
         /**
-         * [classifyItemList] transforms and adds items in config to [merged] or
-         * [tentativeGroupProjects] based on items' properties.
+         * [classifyProjectList] transforms and adds projects in config to [merged] or
+         * [tentativeGroupProjects] based on projects' properties.
          */
-        private fun classifyItemList(items: List<SchedulerItem>, isPrimaryUser: Boolean) {
-            for (item in items) {
-                val annotatedItem = item.toAnnotatedItem(isPrimaryUser = isPrimaryUser)
-                if (item.isGroupProject) {
-                    tentativeGroupProjects.add(element = annotatedItem)
+        private fun classifyProjectList(projects: List<SchedulerProject>, isPrimaryUser: Boolean) {
+            for (project in projects) {
+                val annotatedProject = project.toAnnotatedProject(isPrimaryUser = isPrimaryUser)
+                if (project.isGroupProject) {
+                    tentativeGroupProjects.add(element = annotatedProject)
                 } else {
-                    merged.add(element = annotatedItem)
+                    merged.add(element = annotatedProject)
                 }
             }
         }
@@ -368,27 +375,27 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
          * [average] returns the average of [fo] and [so] based on [transform].
          */
         private inline fun average(
-                fo: SchedulerItem, so: SchedulerItem,
-                crossinline transform: SchedulerItem.() -> Long
+                fo: SchedulerProject, so: SchedulerProject,
+                crossinline transform: SchedulerProject.() -> Long
         ): Long = (fo.transform() + so.transform()) / 2
 
         /**
-         * [reconcile] tries to reconcile the difference between items in a title group.
+         * [reconcile] tries to reconcile the difference between projects in a title group.
          */
-        private fun reconcile(items: List<AnnotatedItem>) {
-            when (items.size) {
+        private fun reconcile(projects: List<AnnotatedProject>) {
+            when (projects.size) {
                 0, 1 -> {
                     // Not common for both
-                    for (item in items) {
-                        val correctItem = item.copy(original = item.original.copy(
+                    for (project in projects) {
+                        val correctProject = project.copy(original = project.original.copy(
                                 isGroupProject = false
                         ))
-                        merged.add(element = correctItem)
+                        merged.add(element = correctProject)
                     }
                 }
                 2 -> {
-                    val i1 = items[0]
-                    val i2 = items[1]
+                    val i1 = projects[0]
+                    val i2 = projects[1]
                     val first = if (i1.isPrimaryUser) i1 else i2
                     val second = if (i1.isPrimaryUser) i2 else i1
                     val fo = first.original
@@ -398,7 +405,7 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
                             estimatedTimeUnits = average(fo, so) { estimatedTimeUnits },
                             weight = average(fo, so) { weight }
                     )
-                    realGroupProjects.add(reconciled.toAnnotatedItem(isPrimaryUser = true))
+                    realGroupProjects.add(reconciled.toAnnotatedProject(isPrimaryUser = true))
                 }
                 else -> error(message = "Impossible")
             }
@@ -406,13 +413,13 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
 
         init {
             // Merge
-            classifyItemList(items = config1.items, isPrimaryUser = true)
-            classifyItemList(items = config2.items, isPrimaryUser = false)
+            classifyProjectList(projects = config1.projects, isPrimaryUser = true)
+            classifyProjectList(projects = config2.projects, isPrimaryUser = false)
             processEventList(events = config1.events, isPrimaryUser = true)
             processEventList(events = config2.events, isPrimaryUser = false)
             val titleGroupedGroupProjects = tentativeGroupProjects.asSequence()
                     .groupBy { it.original.title }.map { it.value }
-            titleGroupedGroupProjects.forEach { reconcile(items = it) }
+            titleGroupedGroupProjects.forEach { reconcile(projects = it) }
             merged.addAll(realGroupProjects)
         }
 
@@ -429,16 +436,16 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
 
         /*
          * --------------------------------------------------------------------------------
-         * Part 3: Scheduler Item/Event Extensions
+         * Part 3: Scheduler Project/Event Extensions
          * --------------------------------------------------------------------------------
          */
 
         /**
-         * [SchedulerItem.toAnnotatedItem] returns the corresponding [AnnotatedItem] with the
-         * specified [isPrimaryUser] property.
+         * [SchedulerProject.toAnnotatedProject] returns the corresponding [AnnotatedProject] with
+         * the specified [isPrimaryUser] property.
          */
-        private fun SchedulerItem.toAnnotatedItem(isPrimaryUser: Boolean): AnnotatedItem =
-                AnnotatedItem(
+        private fun SchedulerProject.toAnnotatedProject(isPrimaryUser: Boolean): AnnotatedProject =
+                AnnotatedProject(
                         key = key?.toUrlSafe()!!, isPrimaryUser = isPrimaryUser, original = this
                 )
 
@@ -488,10 +495,10 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
      */
 
     /**
-     * [schedule] returns a list of [IntervalsAnnotatedItem] for a group in the perspective
+     * [schedule] returns a list of [IntervalsAnnotatedRecord] for a group in the perspective
      * of the primary user.
      */
-    fun schedule(): List<IntervalsAnnotatedItem> {
+    fun schedule(): List<IntervalsAnnotatedRecord> {
         val len = preparedIntervals.size
         // dp array
         val dp: Array<PlanPair> = Array(size = len) { PlanPair() }
@@ -515,11 +522,10 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
                 .groupBy { it.key }
                 .mapNotNull { (_, intervals) ->
                     val intervalRepresentative = intervals[0] // ensured by groupBy
-                    val annotatedItemOpt = mergedIntervalContainersMap[intervalRepresentative.key]
-                            as? AnnotatedItem
-                    val schedulerItem = annotatedItemOpt?.original ?: return@mapNotNull null
-                    IntervalsAnnotatedItem(
-                            item = schedulerItem,
+                    val record = mergedIntervalContainersMap[intervalRepresentative.key]?.original
+                            ?: return@mapNotNull null
+                    IntervalsAnnotatedRecord(
+                            record = record,
                             intervals = intervals.map { Interval(start = it.start, end = it.end) }
                     )
                 }

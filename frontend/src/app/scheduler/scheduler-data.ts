@@ -1,4 +1,4 @@
-export class SchedulerItem {
+export class SchedulerProject {
 
   readonly key: string | undefined;
   readonly title: string;
@@ -10,7 +10,7 @@ export class SchedulerItem {
   readonly isGroupProject: boolean;
   readonly weight: number;
 
-  constructor(another?: SchedulerItem) {
+  constructor(another?: SchedulerProject) {
     if (another == null) {
       this.title = '';
       const nowDate = new Date();
@@ -96,9 +96,9 @@ export class SchedulerEvent {
  */
 export interface SchedulerData {
   /**
-   * A list of all items.
+   * A list of all projects.
    */
-  items: SchedulerItem[];
+  projects: SchedulerProject[];
   /**
    * A list of all events.
    */

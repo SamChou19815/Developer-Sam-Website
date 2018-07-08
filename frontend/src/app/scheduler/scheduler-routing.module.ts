@@ -1,9 +1,12 @@
 import { NgModule } from '@angular/core';
-import { SchedulerComponent } from './scheduler.component';
 import { RouterModule } from '@angular/router';
+import { ProjectsComponent } from './projects/projects.component';
 
 const routes = [
-  { path: '', component: SchedulerComponent }
+  { path: '', component: ProjectsComponent },
+  { path: 'projects', component: ProjectsComponent },
+  { path: 'events', component: ProjectsComponent },
+  { path: 'auto', component: ProjectsComponent },
 ];
 
 @NgModule({
@@ -13,4 +16,5 @@ const routes = [
   exports: [RouterModule],
   declarations: []
 })
-export class SchedulerRoutingModule {}
+export class SchedulerRoutingModule {
+}

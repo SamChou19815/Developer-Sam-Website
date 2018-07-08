@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
-import { SchedulerData, SchedulerItem } from './scheduler-data';
+import { SchedulerData, SchedulerProject } from './scheduler-data';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class SchedulerNetworkService extends AuthenticatedNetworkService {
     return this.getData<SchedulerData>('/apis/user/scheduler/load');
   }
 
-  async editItem(data: SchedulerItem): Promise<string> {
+  async editItem(data: SchedulerProject): Promise<string> {
     return this.postDataForText('/apis/user/scheduler/edit?type=item', data);
   }
 

@@ -1,18 +1,17 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
-import { ItemComponent } from './item/item.component';
+import { EditItemDialogComponent } from './projects/edit-item-dialog/edit-item-dialog.component';
+import { ItemComponent } from './projects/item/item.component';
+import { ProjectsComponent } from './projects/projects.component';
 import { SchedulerRoutingModule } from './scheduler-routing.module';
-
-import { SchedulerComponent } from './scheduler.component';
-import { EditItemDialogComponent } from './edit-item-dialog/edit-item-dialog.component';
 
 @NgModule({
   imports: [
     SharedModule,
     SchedulerRoutingModule
   ],
-  exports: [SchedulerComponent],
-  declarations: [SchedulerComponent, ItemComponent, EditItemDialogComponent],
+  exports: [],
+  declarations: [ProjectsComponent, ItemComponent, EditItemDialogComponent],
   providers: [],
   entryComponents: [EditItemDialogComponent]
 })

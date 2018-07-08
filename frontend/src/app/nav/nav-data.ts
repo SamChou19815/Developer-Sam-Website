@@ -60,8 +60,16 @@ export const allData: NavData[] = [
     name: 'Scheduler', icon: Icon.ofMaterial('event_note'),
     children: [
       {
-        name: 'Dashboard', icon: Icon.ofMaterial('dashboard'),
-        link: '/scheduler', isInternal: true
+        name: 'Projects', icon: Icon.ofMaterial('event_available'),
+        link: '/scheduler/projects', isInternal: true
+      },
+      {
+        name: 'Events', icon: Icon.ofMaterial('event'),
+        link: '/scheduler/events', isInternal: true
+      },
+      {
+        name: 'Auto Scheduling', icon: Icon.ofMaterial('dashboard'),
+        link: '/scheduler/auto', isInternal: true
       }
     ]
   },

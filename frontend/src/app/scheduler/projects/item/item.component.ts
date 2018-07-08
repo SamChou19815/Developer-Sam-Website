@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { SchedulerItem } from '../scheduler-data';
-import { SchedulerNetworkService } from '../scheduler-network.service';
+import { SchedulerProject } from '../../scheduler-data';
+import { SchedulerNetworkService } from '../../scheduler-network.service';
 
 @Component({
   selector: 'app-scheduler-item',
@@ -9,7 +9,7 @@ import { SchedulerNetworkService } from '../scheduler-network.service';
 })
 export class ItemComponent implements OnInit {
 
-  @Input() schedulerItem: SchedulerItem = new SchedulerItem();
+  @Input() schedulerProject: SchedulerProject = new SchedulerProject();
   @Output() editClicked = new EventEmitter<undefined>();
   @Output() deleteClicked = new EventEmitter<undefined>();
   @Output() markAsClicked = new EventEmitter<boolean>();
@@ -31,7 +31,7 @@ export class ItemComponent implements OnInit {
    * @returns {string} a string of all classes that should be attached to title.
    */
   get titleStyle(): string {
-    const daysLeft = this.schedulerItem.daysLeft;
+    const daysLeft = this.schedulerProject.daysLeft;
     if (daysLeft <= 1) {
       return 'level-0-urgent';
     } else if (daysLeft <= 3) {
@@ -44,8 +44,8 @@ export class ItemComponent implements OnInit {
   }
 
   get title(): string {
-    return this.schedulerItem.isGroupProject
-      ? `[Group Project] ${this.schedulerItem.title}` : this.schedulerItem.title;
+    return this.schedulerProject.isGroupProject
+      ? `[Group Project] ${this.schedulerProject.title}` : this.schedulerProject.title;
   }
 
 }

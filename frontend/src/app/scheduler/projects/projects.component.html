@@ -1,6 +1,6 @@
 <!--suppress JSIgnoredPromiseFromCall -->
-<app-scheduler-item *ngFor="let item of items"
-                    [schedulerItem]="item"
+<app-scheduler-item *ngFor="let item of projects"
+                    [schedulerProject]="item"
                     (editClicked)="editItem(item)"
                     (deleteClicked)="deleteItem(item)"
                     (markAsClicked)="markAs($event, item)"></app-scheduler-item>

@@ -4,6 +4,7 @@ import { AlertComponent } from '../alert/alert.component';
 import { GoogleUserService } from '../google-user/google-user.service';
 import { LoadingOverlayService } from '../overlay/loading-overlay.service';
 import { PushControllerService } from '../overlay/push-controller.service';
+import { shortDelay } from '../shared/util';
 import { AddArticleDialogComponent } from './add-article-dialog/add-article-dialog.component';
 import { AnalyzedArticle, RawArticle } from './chunk-reader-data';
 import { ArticleDetailComponent } from './article-detail/article-detail.component';
@@ -19,19 +20,19 @@ export class ChunkReaderComponent implements OnInit {
   articlesPreview: AnalyzedArticle[] = [];
 
   constructor(private googleUserService: GoogleUserService,
-              private chunkReaderNetworkService: ChunkReaderNetworkService,
+              private networkService: ChunkReaderNetworkService,
               private pushControllerService: PushControllerService,
               private loadingService: LoadingOverlayService,
               private dialog: MatDialog) {
   }
 
   ngOnInit() {
-    setTimeout(async () => {
+    shortDelay(async () => {
       const ref = this.loadingService.open();
-      await this.googleUserService.afterSignedIn();
-      this.articlesPreview = await this.chunkReaderNetworkService.loadArticlesPreview();
+      this.networkService.firebaseAuthToken = await this.googleUserService.afterSignedIn();
+      this.articlesPreview = await this.networkService.loadArticlesPreview();
       ref.close();
-    }, 50);
+    });
   }
 
   async openAddArticleDialog() {
@@ -39,7 +40,7 @@ export class ChunkReaderComponent implements OnInit {
     if (value == null) {
       return;
     }
-    const successful = await this.chunkReaderNetworkService.analyzeArticle(value as RawArticle);
+    const successful = await this.networkService.analyzeArticle(value as RawArticle);
     const message = successful
       ? `Your article is being analyzed right now. Refresh the page later to see its analysis.`
       : `Sorry, your article cannot be analyzed for some unknown reasons.
@@ -48,7 +49,7 @@ export class ChunkReaderComponent implements OnInit {
   }
 
   async displayArticleDetails(analyzedArticle: AnalyzedArticle) {
-    const article = await this.chunkReaderNetworkService.loadArticleDetail(analyzedArticle.key);
+    const article = await this.networkService.loadArticleDetail(analyzedArticle.key);
     this.pushControllerService.open(ArticleDetailComponent, article);
   }
 

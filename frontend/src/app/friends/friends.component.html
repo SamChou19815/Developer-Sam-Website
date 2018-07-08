@@ -1,1 +1,8 @@
-<p>friends works!</p>
+<app-user-card *ngFor="let user of data.list" [user]="user">
+  <button mat-button color="accent">Unfriend</button>
+</app-user-card>
+<mat-divider></mat-divider>
+<app-user-card *ngFor="let user of data.requests" [user]="user">
+  <button mat-button color="accent">Accept</button>
+  <button mat-button color="accent">Reject</button>
+</app-user-card>

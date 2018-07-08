@@ -19,3 +19,15 @@ export interface GoogleUser {
    */
   readonly picture: string;
 }
+
+export namespace GoogleUser {
+
+  /**
+   * The default dummy Google user.
+   * @type {GoogleUser}
+   */
+  export const defaultDummyUser: GoogleUser = {
+    key: '_DUMMY_KEY', name: 'Anonymous', email: 'example@example.com', picture: ''
+  };
+
+}

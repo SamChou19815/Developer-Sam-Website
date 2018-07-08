@@ -13,3 +13,14 @@ export interface FriendData {
    */
   requests: GoogleUser[];
 }
+
+export namespace FriendData {
+
+  /**
+   * The dummy data for [FriendData].
+   * @type {FriendData}
+   */
+  export const dummyData: FriendData = { list: [], requests: [] };
+
+}
+

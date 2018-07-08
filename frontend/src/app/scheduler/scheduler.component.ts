@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { GoogleUserService } from '../google-user/google-user.service';
 import { LoadingOverlayService } from '../overlay/loading-overlay.service';
+import { shortDelay } from '../shared/util';
 import { EditItemDialogComponent } from './edit-item-dialog/edit-item-dialog.component';
 import { SchedulerItem } from './scheduler-data';
 import { SchedulerNetworkService } from './scheduler-network.service';
@@ -22,13 +23,13 @@ export class SchedulerComponent implements OnInit {
   }
 
   async ngOnInit() {
-    setTimeout(async () => {
+    shortDelay(async () => {
       const ref = this.loadingService.open();
       this.networkService.firebaseAuthToken = await this.googleUserService.afterSignedIn();
       const data = await this.networkService.loadData();
       this.items = data.items.map(i => new SchedulerItem(i));
       ref.close();
-    }, 50);
+    });
   }
 
   async editItem(item?: SchedulerItem) {

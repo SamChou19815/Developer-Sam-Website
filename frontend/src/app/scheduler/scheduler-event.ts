@@ -34,19 +34,6 @@ export namespace SchedulerEventRepeats {
   export const SATURDAY: number = 1 << 6;
 
   /**
-   * [WEEKDAYS] means repeating on weekdays.
-   */
-  const WEEKDAYS: number = MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY;
-  /**
-   * [WEEKENDS] means repeating on weekends.
-   */
-  const WEEKENDS: number = SATURDAY | SUNDAY;
-  /**
-   * [EVERYDAY] means repeating everyday.
-   */
-  export const EVERYDAY: number = WEEKDAYS | WEEKENDS;
-
-  /**
    * Returns whether day is in config.
    *
    * @param {number} day day to check.
@@ -140,7 +127,7 @@ export namespace SchedulerEvent {
       utcHour, 0, 0, 0);
     const utcDate = new Date(utcDateMs);
     utcDate.setUTCHours(0, 0, 0, 0);
-    const utcDateZeroAmMs = utcDate.getUTCMilliseconds();
+    const utcDateZeroAmMs = utcDate.getTime();
     return [utcDateZeroAmMs, utcHour];
   }
 

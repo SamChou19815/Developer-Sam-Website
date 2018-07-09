@@ -192,7 +192,7 @@ private fun initializeSchedulerApiHandlers() {
     post(path = "/edit") { _ ->
         val type = queryParams("type") ?: badRequest()
         val key = when (type) {
-            "item" -> toJson<SchedulerProject>().upsert(user = user)?.toUrlSafe()
+            "project" -> toJson<SchedulerProject>().upsert(user = user)?.toUrlSafe()
             "event" -> toJson<SchedulerEvent>().upsert(user = user)?.toUrlSafe()
             else -> null
         }
@@ -202,11 +202,11 @@ private fun initializeSchedulerApiHandlers() {
         val type = queryParams("type") ?: badRequest()
         val key = queryParamsForKey("key")
         when (type) {
-            "item" -> SchedulerProject.delete(user = user, key = key)
+            "project" -> SchedulerProject.delete(user = user, key = key)
             "event" -> SchedulerEvent.delete(user = user, key = key)
         }
     }
-    post(path = "/mark_item_as") { _ ->
+    post(path = "/mark_project_as") { _ ->
         val key = queryParamsForKey("key")
         val completed = queryParams("completed")?.toBoolean() ?: badRequest()
         SchedulerProject.markAs(user = user, key = key, isCompleted = completed)

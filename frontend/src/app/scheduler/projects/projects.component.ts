@@ -43,7 +43,7 @@ export class ProjectsComponent implements OnInit {
     }
     const edited = value as SchedulerProject;
     const ref = this.loadingService.open();
-    const key = await this.networkService.editItem(edited);
+    const key = await this.networkService.editProject(edited);
     ref.close();
     const projectsWithOldRemoved = project == null
       ? this.projects : this.projects.filter(i => i.key !== project.key);
@@ -56,7 +56,7 @@ export class ProjectsComponent implements OnInit {
       return;
     }
     const ref = this.loadingService.open();
-    await this.networkService.deleteItem(project.key);
+    await this.networkService.deleteRecord(project.key, 'project');
     ref.close();
     this.projects = this.projects.filter(i => i.key !== project.key);
   }
@@ -66,7 +66,7 @@ export class ProjectsComponent implements OnInit {
       return;
     }
     const ref = this.loadingService.open();
-    await this.networkService.markAs(completed, project.key);
+    await this.networkService.markProjectAs(completed, project.key);
     ref.close();
     project.isCompleted = completed;
   }

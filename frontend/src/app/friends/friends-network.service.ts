@@ -29,7 +29,7 @@ export class FriendsNetworkService extends AuthenticatedNetworkService {
 
   async respondFriendRequest(key: string, approved: boolean) {
     return this.postParams('/apis/user/friends/respond_friend_request', {
-      'requester_user_key': key, 'approved': String(approved).trim()
+      'requester_user_key': key, 'approved': String(approved)
     });
   }
 

@@ -1,12 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material';
+import { possibleHoursArray } from '../../../shared/util';
 import { SchedulerProject } from '../../scheduler-project';
-
-const possibleHoursArray = Array<number>(24);
-for (let i = 0; i < 24; i++) {
-  possibleHoursArray[i] = i;
-}
 
 @Component({
   selector: 'app-scheduler-project-editor-dialog',
@@ -14,6 +10,8 @@ for (let i = 0; i < 24; i++) {
   styleUrls: ['./editor-dialog.component.css']
 })
 export class EditorDialogComponent implements OnInit {
+
+  readonly possibleHours: number[] = possibleHoursArray;
 
   readonly key: string | undefined;
   title: string;
@@ -48,11 +46,6 @@ export class EditorDialogComponent implements OnInit {
     const d: Date = this.date.value;
     d.setHours(this.hour, 0, 0, 0);
     return d.getTime();
-  }
-
-  // noinspection JSMethodCanBeStatic
-  get possibleHours(): number[] {
-    return possibleHoursArray;
   }
 
   get submitDisabled(): boolean {

@@ -1,16 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material';
+import { possibleHoursArray } from '../../../shared/util';
 import {
   SchedulerEvent,
   SchedulerEventRepeats as Repeats,
   SchedulerEventType
 } from '../../scheduler-event';
-
-const possibleHoursArray = Array<number>(24);
-for (let i = 0; i < 24; i++) {
-  possibleHoursArray[i] = i;
-}
 
 @Component({
   selector: 'app-scheduler-event-editor-dialog',
@@ -19,6 +15,7 @@ for (let i = 0; i < 24; i++) {
 })
 export class EditorDialogComponent implements OnInit {
 
+  readonly possibleHours: number[] = possibleHoursArray;
   types = SchedulerEventType;
 
   readonly key: string | undefined;
@@ -71,11 +68,6 @@ export class EditorDialogComponent implements OnInit {
     return this.key == null
       ? 'Add Scheduler Event'
       : `Edit ${this.isOneTimeEvent ? 'One-time' : 'Weekly'} Scheduler Event`;
-  }
-
-  // noinspection JSMethodCanBeStatic
-  get possibleHours(): number[] {
-    return possibleHoursArray;
   }
 
   get isOneTimeEvent(): boolean {

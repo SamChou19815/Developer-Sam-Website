@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
 import { SchedulerData } from './scheduler-data';
+import { SchedulerEvent } from './scheduler-event';
 import { SchedulerProject } from './scheduler-project';
 
 @Injectable({
@@ -17,19 +18,23 @@ export class SchedulerNetworkService extends AuthenticatedNetworkService {
     return this.getData<SchedulerData>('/apis/user/scheduler/load');
   }
 
-  async editItem(data: SchedulerProject): Promise<string> {
-    return this.postDataForText('/apis/user/scheduler/edit?type=item', data);
+  async editProject(data: SchedulerProject): Promise<string> {
+    return this.postDataForText('/apis/user/scheduler/edit?type=project', data);
   }
 
-  async deleteItem(key: string): Promise<string> {
+  async editEvent(data: SchedulerEvent): Promise<string> {
+    return this.postDataForText('/apis/user/scheduler/edit?type=event', data);
+  }
+
+  async deleteRecord(key: string, type: 'project' | 'event'): Promise<string> {
     return this.deleteWithParams('/apis/user/scheduler/delete', {
-      'type': 'item', 'key': key
+      'type': type, 'key': key
     });
   }
 
-  async markAs(completed: boolean, key: string) {
-    return this.postParams('/apis/user/scheduler/mark_item_as', {
-      'key': key, 'completed': String(completed).trim()
+  async markProjectAs(completed: boolean, key: string) {
+    return this.postParams('/apis/user/scheduler/mark_project_as', {
+      'key': key, 'completed': String(completed)
     });
   }
 

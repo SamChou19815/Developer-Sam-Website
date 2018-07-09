@@ -26,7 +26,7 @@ import java.time.LocalDateTime
  */
 data class SchedulerProject(
         override val key: Key? = null, override val title: String = "", val deadline: Long = 0,
-        private val isCompleted: Boolean = false, private val detail: String = "",
+        val isCompleted: Boolean = false, private val detail: String = "",
         val minimumTimeUnits: Long = 0, val estimatedTimeUnits: Long = 0,
         val isGroupProject: Boolean = false, val weight: Long = 0
 ) : SchedulerRecord {

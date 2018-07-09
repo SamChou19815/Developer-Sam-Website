@@ -1,9 +1,6 @@
 all:
 	cd frontend; npm run build
 
-build_frontend:
-	cd frontend; npm run build
-
 deploy_frontend:
 	cd frontend; npm run build
 	gsutil -m rsync -d -r build/frontend gs://developersam.com

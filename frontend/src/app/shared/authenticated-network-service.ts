@@ -101,9 +101,9 @@ export class AuthenticatedNetworkService {
    * @param {HttpClientConfig} params params to post.
    * @returns {Promise<Object>} the promise of indicating finishing.
    */
-  protected async postParams(url: string, params: HttpClientConfig) {
+  protected async postParams(url: string, params: HttpClientConfig): Promise<string> {
     return this.http.post(url, '', {
-      params: params, withCredentials: true, headers: this.firebaseAuthHeader
+      responseType: 'text', params: params, withCredentials: true, headers: this.firebaseAuthHeader
     }).pipe(catchError(AuthenticatedNetworkService.handleHttpError)).toPromise();
   }
 

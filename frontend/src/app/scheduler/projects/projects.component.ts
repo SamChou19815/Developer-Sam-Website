@@ -32,7 +32,7 @@ export class ProjectsComponent implements OnInit {
     });
   }
 
-  async editItem(project?: SchedulerProject) {
+  async editProject(project?: SchedulerProject) {
     const toBeEdited = project == null ? new SchedulerProject() : new SchedulerProject(project);
     const value: any = await this.dialog
       .open(EditorDialogComponent, { data: toBeEdited })
@@ -51,7 +51,7 @@ export class ProjectsComponent implements OnInit {
     this.projects = projectsWithOldRemoved.sort((a, b) => a.deadline - b.deadline);
   }
 
-  async deleteItem(project: SchedulerProject) {
+  async deleteProject(project: SchedulerProject) {
     if (project.key == null) {
       return;
     }

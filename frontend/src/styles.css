@@ -52,6 +52,10 @@ body {
   white-space: pre-line;
 }
 
+.section-text {
+  margin: 1em;
+}
+
 /* Styling cards on different device widths. */
 
 /*  Mobile */

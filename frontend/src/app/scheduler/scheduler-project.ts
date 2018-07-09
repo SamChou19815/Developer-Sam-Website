@@ -1,15 +1,50 @@
+/**
+ * A project in Scheduler.
+ */
 export class SchedulerProject {
 
+  /**
+   * Key of the project.
+   */
   readonly key: string | undefined;
+  /**
+   * Title of the project.
+   */
   readonly title: string;
+  /**
+   * Deadline of the project.
+   */
   readonly deadline: number;
+  /**
+   * Whether the project is completed.
+   */
   isCompleted: boolean;
+  /**
+   * Detail of the project.
+   */
   readonly detail: string;
+  /**
+   * Minimum time units required to work on it consecutively.
+   */
   readonly minimumTimeUnits: number;
+  /**
+   * Estimated number of time units to complete it.
+   */
   readonly estimatedTimeUnits: number;
+  /**
+   * Whether the project is a group project.
+   */
   readonly isGroupProject: boolean;
+  /**
+   * Weight of the project, used for auto-scheduling.
+   */
   readonly weight: number;
 
+  /**
+   * Construct by nothing or another project.
+   *
+   * @param {SchedulerEvent} another another project, which can be omitted.
+   */
   constructor(another?: SchedulerProject) {
     if (another == null) {
       this.title = '';
@@ -36,23 +71,48 @@ export class SchedulerProject {
     }
   }
 
+  /**
+   * Returns the deadline as a Date object.
+   *
+   * @returns {Date} the deadline as a Date object.
+   */
   get deadlineDate(): Date {
     return new Date(this.deadline);
   }
 
+  /**
+   * Returns the total hours left.
+   *
+   * @returns {number} the total hours left.
+   */
   private get totalHoursLeft(): number {
     const millisLeft = this.deadline - new Date().getTime();
     return millisLeft / 1000 / 3600;
   }
 
+  /**
+   * Returns the string representation of the deadline.
+   *
+   * @returns {string} the string representation of the deadline.
+   */
   get deadlineString(): string {
     return this.deadlineDate.toLocaleString();
   }
 
+  /**
+   * Returns the number of days left.
+   *
+   * @returns {number} number of days left.
+   */
   get daysLeft(): number {
     return Math.floor(this.totalHoursLeft / 24);
   }
 
+  /**
+   * Returns the number of hours left, ignoring days info.
+   *
+   * @returns {number} the number of hours left, ignoring days info.
+   */
   get hoursLeft(): number {
     return Math.floor(this.totalHoursLeft % 24);
   }

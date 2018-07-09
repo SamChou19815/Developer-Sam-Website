@@ -354,6 +354,9 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
         private fun classifyProjectList(projects: List<SchedulerProject>, isPrimaryUser: Boolean) {
             for (project in projects) {
                 val annotatedProject = project.toAnnotatedProject(isPrimaryUser = isPrimaryUser)
+                if (project.isCompleted) {
+                    continue
+                }
                 if (project.isGroupProject) {
                     tentativeGroupProjects.add(element = annotatedProject)
                 } else {

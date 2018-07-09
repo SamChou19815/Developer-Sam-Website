@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{key ? 'Edit' : 'Add'}} Project</h2>
+<h2 mat-dialog-title>{{key ? 'Edit' : 'Add'}} Scheduler Project</h2>
 <mat-dialog-content>
   <mat-form-field>
     <input matInput [(ngModel)]="title" placeholder="Project Title" type="text" required>
@@ -21,7 +21,8 @@
   <mat-form-field>
     <label>
       <input matInput [(ngModel)]="minimumTimeUnits"
-             placeholder="Minimum Time Units" required hidden>
+             placeholder="Minimum time units required to work on it consecutively."
+             required hidden>
       <span [ngPlural]="minimumTimeUnits">
         <ng-template ngPluralCase="=1">1 hour</ng-template>
         <ng-template ngPluralCase="other">{{minimumTimeUnits}} hours</ng-template>
@@ -32,7 +33,9 @@
   </mat-form-field>
   <mat-form-field>
     <label>
-      <input matInput [(ngModel)]="estimatedTimeUnits" placeholder="Estimated Time Units" hidden>
+      <input matInput [(ngModel)]="estimatedTimeUnits"
+             placeholder="Estimated number of time units to complete it."
+             required hidden>
       <span [ngPlural]="estimatedTimeUnits">
         <ng-template ngPluralCase="=1">1 hour</ng-template>
         <ng-template ngPluralCase="other">{{estimatedTimeUnits}} hours</ng-template>

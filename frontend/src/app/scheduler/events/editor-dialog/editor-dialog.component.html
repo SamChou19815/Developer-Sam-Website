@@ -1,3 +1,48 @@
-<p>
-  editor-dialog works!
-</p>
+<h2 mat-dialog-title>{{editorTitle}}</h2>
+<mat-dialog-content>
+  <mat-form-field>
+    <input matInput [(ngModel)]="title" placeholder="Event Title" type="text" required>
+  </mat-form-field>
+  <mat-form-field *ngIf="!key">
+    <input matInput [(ngModel)]="type" placeholder="Type" required hidden>
+    <mat-radio-group [required]="true" [(ngModel)]="type">
+      <mat-radio-button color="primary" [value]="types.ONE_TIME">One-time</mat-radio-button>
+      <mat-radio-button color="primary" [value]="types.WEEKLY">Weekly</mat-radio-button>
+    </mat-radio-group>
+  </mat-form-field>
+  <mat-form-field *ngIf="isOneTimeEvent">
+    <input matInput [matDatepicker]="picker" placeholder="Event Date"
+           [formControl]="date" [required]="true">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker [touchUi]="true" #picker></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field *ngIf="!isOneTimeEvent">
+    <input matInput [(ngModel)]="repeatSelected[0]" placeholder="Repeat Config" required hidden>
+    <mat-checkbox color="primary" [(ngModel)]="repeatSelected[0]">SUN</mat-checkbox>
+    <mat-checkbox color="primary" [(ngModel)]="repeatSelected[1]">MON</mat-checkbox>
+    <mat-checkbox color="primary" [(ngModel)]="repeatSelected[2]">TUE</mat-checkbox>
+    <mat-checkbox color="primary" [(ngModel)]="repeatSelected[3]">WED</mat-checkbox>
+    <mat-checkbox color="primary" [(ngModel)]="repeatSelected[4]">THU</mat-checkbox>
+    <mat-checkbox color="primary" [(ngModel)]="repeatSelected[5]">FRI</mat-checkbox>
+    <mat-checkbox color="primary" [(ngModel)]="repeatSelected[6]">SAT</mat-checkbox>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Start Hour" [required]="true" [(ngModel)]="startHour">
+      <mat-option *ngFor="let h of possibleHours" [value]="h">{{h}}:00</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="End Hour" [required]="true" [(ngModel)]="endHour">
+      <mat-option *ngFor="let h of possibleHours" [value]="h">{{h}}:00</mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="primary" mat-button [mat-dialog-close]="null">Cancel</button>
+  <button color="primary" mat-button
+          [mat-dialog-close]="generatedEvent"
+          [disabled]="submitDisabled">
+    Submit
+  </button>
+</mat-dialog-actions>
+

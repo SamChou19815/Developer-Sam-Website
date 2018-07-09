@@ -63,6 +63,12 @@ export namespace SchedulerEventRepeats {
 export class SchedulerEvent {
 
   /**
+   * The commonly used date hour offset.
+   * @type {number}
+   */
+  private static dateHourOffSet: number = Math.round(new Date().getTimezoneOffset() / 60);
+
+  /**
    * Key of the event.
    */
   readonly key: string | undefined;
@@ -96,8 +102,9 @@ export class SchedulerEvent {
     if (another == null) {
       this.type = SchedulerEventType.ONE_TIME;
       this.title = '';
-      this.startHour = 0;
-      this.endHour = 23;
+      const [s, e] = SchedulerEvent.convertHours(0, 23, true);
+      this.startHour = s;
+      this.endHour = e;
       const nowDate = new Date();
       nowDate.setHours(0, 0, 0, 0);
       this.repeatConfig = nowDate.getTime();
@@ -111,36 +118,39 @@ export class SchedulerEvent {
     }
   }
 
-}
-
-export namespace SchedulerEvent {
+  /**
+   * Returns the converted hours.
+   *
+   * @param {number} start start time.
+   * @param {number} end end time.
+   * @param {boolean} toUTC whether convert to UTC.
+   * @returns {[number]} the converted hours.
+   */
+  static convertHours(start: number, end: number, toUTC: boolean): [number, number] {
+    if (toUTC) {
+      const utcStart = (start + SchedulerEvent.dateHourOffSet + 24) % 24;
+      const utcEnd = utcStart + end - start;
+      return [utcStart, utcEnd];
+    } else {
+      const thisTimezoneStart = (start - SchedulerEvent.dateHourOffSet + 48) % 24;
+      const thisTimezoneEnd = (end - SchedulerEvent.dateHourOffSet + 48) % 24;
+      return [thisTimezoneStart, thisTimezoneEnd];
+    }
+  }
 
   /**
-   * Returns a tuple of (utcDateZeroAmMs, utcHour) from the given date.
+   * Returns the UTC date at 0AM from the given date.
    *
    * @param {Date} date the date to convert.
-   * @returns {[number]} a tuple of (utcDateZeroAmMs, utcHour).
+   * @returns {number} a tuple of the UTC date at 0AM from the given date.
    */
-  export function dateToUTCDateHour(date: Date): [number, number] {
+  static dateToUTCDateAtZeroAm(date: Date): number {
     const utcHour = date.getUTCHours();
     const utcDateMs = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
       utcHour, 0, 0, 0);
     const utcDate = new Date(utcDateMs);
     utcDate.setUTCHours(0, 0, 0, 0);
-    const utcDateZeroAmMs = utcDate.getTime();
-    return [utcDateZeroAmMs, utcHour];
-  }
-
-  /**
-   * Returns a date object from utcDateZeroAmMs and utcHour.
-   *
-   * @param {number} utcDateZeroAmMs the time in ms at the 0AM of the date in UTC.
-   * @param {number} utcHour The corresponding hour in 0..23.
-   * @returns {Date} a date object from utcDateZeroAmMs and utcHour.
-   */
-  export function utcDateHourToDate(utcDateZeroAmMs: number, utcHour: number): Date {
-    const time = utcDateZeroAmMs + 3600 * 1000 * utcHour;
-    return new Date(time);
+    return utcDate.getTime();
   }
 
   /**
@@ -149,7 +159,7 @@ export namespace SchedulerEvent {
    * @param {SchedulerEvent[]} rawEvents unclassified events.
    * @returns {SchedulerEvents} a collection of classified events.
    */
-  export function classify(rawEvents: SchedulerEvent[]): SchedulerEvents {
+  static classify(rawEvents: SchedulerEvent[]): SchedulerEvents {
     const oneTimeEvents = [], weeklyEvents = [];
     for (const rawEvent of rawEvents) {
       switch (rawEvent.type) {

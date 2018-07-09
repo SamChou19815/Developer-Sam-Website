@@ -19,19 +19,13 @@ for (let i = 0; i < 24; i++) {
 })
 export class EditorDialogComponent implements OnInit {
 
-  /**
-   * The commonly used date hour offset.
-   * @type {number}
-   */
-  private static dateHourOffSet: number = Math.round(new Date().getTimezoneOffset() / 60);
-
   types = SchedulerEventType;
 
   readonly key: string | undefined;
   type: SchedulerEventType;
   title: string;
-  startHour: number;
-  endHour: number;
+  startHourInThisTimeZone: number;
+  endHourInThisTimeZone: number;
 
   // One-time specific
   date: FormControl;
@@ -44,8 +38,10 @@ export class EditorDialogComponent implements OnInit {
     this.key = event.key;
     this.type = event.type;
     this.title = event.title;
-    this.startHour = event.startHour;
-    this.endHour = event.endHour;
+    const [thisTimezoneStart, thisTimezoneEnd] =
+      SchedulerEvent.convertHours(event.startHour, event.endHour, false);
+    this.startHourInThisTimeZone = thisTimezoneStart;
+    this.endHourInThisTimeZone = thisTimezoneEnd;
     if (this.isOneTimeEvent) {
       this.date = new FormControl(new Date(event.repeatConfig));
       this.repeatSelected = [true, true, true, true, true, true, true];
@@ -92,19 +88,15 @@ export class EditorDialogComponent implements OnInit {
    * @returns {number} the generated repeat config.
    */
   private get repeatConfig(): number {
-    if (this.isOneTimeEvent) {
-      const date: Date = this.date.value;
-      const [dateZeroAmTime] = SchedulerEvent.dateToUTCDateHour(date);
-      return dateZeroAmTime;
-    } else {
-      return Repeats.getDayConfig(Repeats.SUNDAY, this.repeatSelected[0]) |
-        Repeats.getDayConfig(Repeats.MONDAY, this.repeatSelected[1]) |
-        Repeats.getDayConfig(Repeats.TUESDAY, this.repeatSelected[2]) |
-        Repeats.getDayConfig(Repeats.WEDNESDAY, this.repeatSelected[3]) |
-        Repeats.getDayConfig(Repeats.THURSDAY, this.repeatSelected[4]) |
-        Repeats.getDayConfig(Repeats.FRIDAY, this.repeatSelected[5]) |
-        Repeats.getDayConfig(Repeats.SATURDAY, this.repeatSelected[6]);
-    }
+    return this.isOneTimeEvent
+      ? SchedulerEvent.dateToUTCDateAtZeroAm(<Date>this.date.value)
+      : Repeats.getDayConfig(Repeats.SUNDAY, this.repeatSelected[0]) |
+      Repeats.getDayConfig(Repeats.MONDAY, this.repeatSelected[1]) |
+      Repeats.getDayConfig(Repeats.TUESDAY, this.repeatSelected[2]) |
+      Repeats.getDayConfig(Repeats.WEDNESDAY, this.repeatSelected[3]) |
+      Repeats.getDayConfig(Repeats.THURSDAY, this.repeatSelected[4]) |
+      Repeats.getDayConfig(Repeats.FRIDAY, this.repeatSelected[5]) |
+      Repeats.getDayConfig(Repeats.SATURDAY, this.repeatSelected[6]);
   }
 
   /**
@@ -127,10 +119,9 @@ export class EditorDialogComponent implements OnInit {
   }
 
   get submitDisabled(): boolean {
-    if (this.title.trim().length === 0) {
-      return true;
-    }
-    return !this.isRepeatConfigValid;
+    return this.title.trim().length === 0 ||
+      this.startHourInThisTimeZone >= this.endHourInThisTimeZone ||
+      !this.isRepeatConfigValid;
   }
 
   /**
@@ -139,9 +130,11 @@ export class EditorDialogComponent implements OnInit {
    * @returns {SchedulerEvent} the generated event from the content of the dialog.
    */
   get generatedEvent(): SchedulerEvent {
+    const [utcStart, utcEnd] = SchedulerEvent.convertHours(
+      this.startHourInThisTimeZone, this.endHourInThisTimeZone, true);
     return <SchedulerEvent>{
-      key: this.key, title: this.title, type: this.type,
-      startHour: this.startHour, endHour: this.endHour, repeatConfig: this.repeatConfig
+      key: this.key, type: this.type, title: this.title,
+      startHour: utcStart, endHour: utcEnd, repeatConfig: this.repeatConfig
     };
   }
 

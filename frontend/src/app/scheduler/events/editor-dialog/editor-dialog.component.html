@@ -27,12 +27,12 @@
     <mat-checkbox color="primary" [(ngModel)]="repeatSelected[6]">SAT</mat-checkbox>
   </mat-form-field>
   <mat-form-field>
-    <mat-select placeholder="Start Hour" [required]="true" [(ngModel)]="startHour">
+    <mat-select placeholder="Start Hour" [required]="true" [(ngModel)]="startHourInThisTimeZone">
       <mat-option *ngFor="let h of possibleHours" [value]="h">{{h}}:00</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field>
-    <mat-select placeholder="End Hour" [required]="true" [(ngModel)]="endHour">
+    <mat-select placeholder="End Hour" [required]="true" [(ngModel)]="endHourInThisTimeZone">
       <mat-option *ngFor="let h of possibleHours" [value]="h">{{h}}:00</mat-option>
     </mat-select>
   </mat-form-field>

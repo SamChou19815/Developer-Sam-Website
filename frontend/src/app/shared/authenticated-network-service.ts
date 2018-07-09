@@ -1,4 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 /**
  * [HttpClientConfig] is the type for HttpClient config.
@@ -27,6 +29,23 @@ export class AuthenticatedNetworkService {
    * @param {HttpClient} http Angular's HTTP Client.
    */
   constructor(protected http: HttpClient) {
+  }
+
+  /**
+   * Automatically handles the error from http client.
+   *
+   * @param {HttpErrorResponse} error the error to handle.
+   */
+  private static handleHttpError<T>(error: HttpErrorResponse): Observable<never> {
+    if (error.error instanceof ErrorEvent) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.log('ERROR: An error occurred:', error.error.message);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong,
+      console.log(`ERROR: Backend returned code ${error.status} with body:\n${error.error}`);
+    }
+    return throwError('Something bad happened; please try again later.');
   }
 
   /**
@@ -59,7 +78,7 @@ export class AuthenticatedNetworkService {
   protected async getData<T>(url: string): Promise<T> {
     return this.http.get<T>(url, {
       withCredentials: true, headers: this.firebaseAuthHeader
-    }).toPromise();
+    }).pipe(catchError(AuthenticatedNetworkService.handleHttpError)).toPromise();
   }
 
   /**
@@ -72,7 +91,7 @@ export class AuthenticatedNetworkService {
   protected async postDataForText(url: string, data: any): Promise<string> {
     return this.http.post(url, data, {
       responseType: 'text', withCredentials: true, headers: this.firebaseAuthHeader
-    }).toPromise();
+    }).pipe(catchError(AuthenticatedNetworkService.handleHttpError)).toPromise();
   }
 
   /**
@@ -85,7 +104,7 @@ export class AuthenticatedNetworkService {
   protected async postParams(url: string, params: HttpClientConfig) {
     return this.http.post(url, '', {
       params: params, withCredentials: true, headers: this.firebaseAuthHeader
-    }).toPromise();
+    }).pipe(catchError(AuthenticatedNetworkService.handleHttpError)).toPromise();
   }
 
   /**
@@ -98,7 +117,7 @@ export class AuthenticatedNetworkService {
   protected async deleteWithParams(url: string, params: HttpClientConfig = {}): Promise<string> {
     return this.http.delete<string>(url, {
       params: params, withCredentials: true, headers: this.firebaseAuthHeader
-    }).toPromise();
+    }).pipe(catchError(AuthenticatedNetworkService.handleHttpError)).toPromise();
   }
 
 }

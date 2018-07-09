@@ -105,17 +105,7 @@ export class EditorDialogComponent implements OnInit {
    * @returns {boolean} whether the repeat config is valid.
    */
   private get isRepeatConfigValid(): boolean {
-    if (this.isOneTimeEvent) {
-      const nowTime = new Date().getTime();
-      if (this.repeatConfig < nowTime) {
-        return false;
-      }
-    } else {
-      if (this.repeatConfig === 0) {
-        return false;
-      }
-    }
-    return true;
+    return this.isOneTimeEvent || Repeats.inConfig(this.repeatConfig, Repeats.EVERYDAY);
   }
 
   get submitDisabled(): boolean {

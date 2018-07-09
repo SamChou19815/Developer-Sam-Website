@@ -34,6 +34,19 @@ export namespace SchedulerEventRepeats {
   export const SATURDAY: number = 1 << 6;
 
   /**
+   * [WEEKDAYS] means repeating on weekdays.
+   */
+  const WEEKDAYS: number = MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY;
+  /**
+   * [WEEKENDS] means repeating on weekends.
+   */
+  const WEEKENDS: number = SATURDAY | SUNDAY;
+  /**
+   * [EVERYDAY] means repeating everyday.
+   */
+  export const EVERYDAY: number = WEEKDAYS | WEEKENDS;
+
+  /**
    * Returns whether day is in config.
    *
    * @param {number} day day to check.
@@ -41,7 +54,7 @@ export namespace SchedulerEventRepeats {
    * @returns {boolean} whether day is in config.
    */
   export function inConfig(day: number, config: number): boolean {
-    return (day | config) === config;
+    return day !== 0 && (day | config) === config;
   }
 
   /**

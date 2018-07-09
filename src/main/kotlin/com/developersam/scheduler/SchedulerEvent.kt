@@ -29,8 +29,8 @@ data class SchedulerEvent(
      */
     private val isValid: Boolean
         get() = when {
-            title.isBlank() || startHour !in 0..23 || startHour >= endHour -> false
-            type == EventType.ONE_TIME -> repeatConfig > System.currentTimeMillis() // Date valid
+            title.isBlank() || startHour !in 0..23 || (endHour - startHour) !in 0..23 -> false
+            type == EventType.ONE_TIME -> true
             type == EventType.WEEKLY -> Repeats.isValid(config = repeatConfig) // Valid repeat
             else -> error(message = "Impossible")
         }

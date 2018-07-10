@@ -14,12 +14,14 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '2.0.4'
 }
 
-apply plugin: 'com.google.cloud.tools.appengine'
-
 group = 'com.developersam'
 version = '5.0.0'
 
-subprojects {
+dependencies {
+    compile project(':backend-main')
+}
+
+allprojects {
     apply plugin: 'java-library'
     apply plugin: 'kotlin'
 
@@ -55,26 +57,31 @@ subprojects {
     }
 }
 
+subprojects {
+    apply plugin: 'com.github.johnrengelman.shadow'
+    shadowJar {
+        classifier = null
+    }
+}
+
 shadowJar {
     baseName = "website"
     version = 5.0
     manifest {
         attributes 'Main-Class': 'com.developersam.main.WebApp'
     }
+    zip64 true
+    artifacts {
+        shadow(tasks.shadowJar.archivePath) {
+            builtBy shadowJar
+        }
+    }
 }
 
-project.tasks.assemble.dependsOn project.tasks.shadowJar
+build.dependsOn(shadowJar)
 
 test {
     testLogging {
         events "passed", "skipped", "failed", "standardOut", "standardError"
     }
-}
-
-appengine {
-
-    stage {
-        artifact = "build/libs/website-5.0-all.jar"
-    }
-
 }

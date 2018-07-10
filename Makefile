@@ -7,10 +7,11 @@ deploy_frontend:
 	gsutil -m acl ch -r -u AllUsers:R gs://developersam.com/*
 
 build_backend_as_container:
-	./gradlew appengineStage
-	cp backend-main/src/main/appengine/* build/staged-app
-	cd build/staged-app; \
-	gcloud config set project dev-sam; \
+	./gradlew build
+	mkdir -p build/staging
+	cp build/libs/website-5.0-all.jar build/staging
+	cp src/main/docker/* build/staging
+	cd build/staging; gcloud config set project dev-sam; \
 	gcloud container builds submit --tag gcr.io/dev-sam/backend-container .
 
 update_indices:

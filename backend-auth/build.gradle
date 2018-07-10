@@ -1,0 +1,9 @@
+dependencies {
+    // Firebase
+    implementation 'com.google.firebase:firebase-admin:6.2.0'
+    // Spark Kotlin
+    implementation 'com.sparkjava:spark-kotlin:1.0.0-alpha'
+    // Spark Pac4j
+    api 'org.pac4j:spark-pac4j:2.2.0'
+    api 'org.pac4j:pac4j-http:2.2.1'
+}

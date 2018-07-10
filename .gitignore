@@ -15,9 +15,9 @@
 # Exclude node_modules
 frontend/node_modules
 
-# Exclude Compiled Static Web App
-/src/main/resources/public/*
-/src/main/resources/secret/*
+# Exclude Resources
+**/resources/public/*
+**/resources/secret/*
 
 # Exclude System Files
 .DS_Store

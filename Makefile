@@ -8,7 +8,7 @@ deploy_frontend:
 
 build_backend_as_container:
 	./gradlew appengineStage
-	cp src/main/appengine/* build/staged-app
+	cp backend-main/src/main/appengine/* build/staged-app
 	cd build/staged-app; \
 	gcloud config set project dev-sam; \
 	gcloud container builds submit --tag gcr.io/dev-sam/backend-container .

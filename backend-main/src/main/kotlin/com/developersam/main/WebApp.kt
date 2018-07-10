@@ -16,13 +16,15 @@ import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerData
 import com.developersam.scheduler.SchedulerEvent
 import com.developersam.scheduler.SchedulerProject
-import com.developersam.util.gson
-import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.datastore.Key
-import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
-import com.google.firebase.auth.FirebaseAuth
-import org.fluentd.logger.FluentLogger
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonSerializer
 import spark.Request
 import spark.Response
 import spark.ResponseTransformer
@@ -32,6 +34,7 @@ import spark.Spark.get
 import spark.Spark.path
 import spark.kotlin.before
 import spark.kotlin.halt
+import java.lang.reflect.Type
 import kotlin.system.measureTimeMillis
 
 /*
@@ -41,21 +44,6 @@ import kotlin.system.measureTimeMillis
  */
 
 /**
- * The global Authentication Handler.
- */
-private val firebaseAuth: FirebaseAuth = System::class.java
-        .getResourceAsStream("/secret/firebase-adminsdk.json")
-        .let { GoogleCredentials.fromStream(it) }
-        .let { FirebaseOptions.Builder().setCredentials(it).build() }
-        .let { FirebaseApp.initializeApp(it) }
-        .let { FirebaseAuth.getInstance(it) }
-
-/**
- * [ERRORS] is the global fluent logger.
- */
-private val ERRORS: FluentLogger = FluentLogger.getLogger("myapp")
-
-/**
  * [Role] defines a set of roles supported by the system.
  */
 private enum class Role { USER, ADMIN }
@@ -63,7 +51,26 @@ private enum class Role { USER, ADMIN }
 /**
  * [Filters] can be used to create security filters.
  */
-private object Filters : SecurityFilters<Role>(firebaseAuth, { Role.USER })
+private object Filters : SecurityFilters<Role>(roleAssigner = { Role.USER })
+
+
+/**
+ * [KeyTypeAdapter] is the type adapter for [Key].
+ */
+private object KeyTypeAdapter : JsonDeserializer<Key>, JsonSerializer<Key> {
+    override fun deserialize(e: JsonElement, t: Type, c: JsonDeserializationContext): Key =
+            Key.fromUrlSafe(e.asJsonPrimitive.asString)
+
+    override fun serialize(k: Key, t: Type, c: JsonSerializationContext): JsonElement =
+            JsonPrimitive(k.toUrlSafe())
+}
+
+/**
+ * A default global [Gson] for the entire app.
+ */
+private val gson: Gson = GsonBuilder()
+        .registerTypeAdapter(Key::class.java, KeyTypeAdapter)
+        .create()
 
 /*
  * ------------------------------------------------------------------------------------------
@@ -202,7 +209,7 @@ private fun initializeSchedulerApiHandlers() {
             val key = queryParamsForKey("key")
             SchedulerProject.delete(user = user, key = key)
         }
-        delete(path = "/event"){ _ ->
+        delete(path = "/event") { _ ->
             val key = queryParamsForKey("key")
             SchedulerEvent.delete(user = user, key = key)
         }
@@ -271,16 +278,6 @@ private fun initializeUserApiHandlers() {
 fun main(args: Array<String>) {
     val initTime = measureTimeMillis {
         Spark.port(8080)
-        /*
-        Spark.exception(Exception::class.java) { e, _, _ ->
-            val exceptionWriter = StringWriter()
-            e.printStackTrace(PrintWriter(exceptionWriter))
-            val data = HashMap<String, Any>()
-            data["message"] = exceptionWriter.toString()
-            ERRORS.log("errors", data)
-            throw e
-        }
-        */
         initializeApiHandlers()
     }
     println("Initialized in ${initTime}ms.")

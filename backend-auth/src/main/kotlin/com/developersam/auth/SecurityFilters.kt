@@ -1,5 +1,8 @@
 package com.developersam.auth
 
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import org.pac4j.core.authorization.authorizer.RequireAllRolesAuthorizer
 import org.pac4j.core.authorization.generator.AuthorizationGenerator
@@ -28,9 +31,18 @@ import java.util.logging.Logger
  * @param R the enum type of user role.
  */
 open class SecurityFilters<R : Enum<R>>(
-        private val firebaseAuth: FirebaseAuth,
         private val roleAssigner: (GoogleUser) -> R
 ) {
+
+    /**
+     * [firebaseAuth] is the global Authentication Handler.
+     */
+    private val firebaseAuth: FirebaseAuth = System::class.java
+            .getResourceAsStream("/secret/firebase-adminsdk.json")
+            .let { GoogleCredentials.fromStream(it) }
+            .let { FirebaseOptions.Builder().setCredentials(it).build() }
+            .let { FirebaseApp.initializeApp(it) }
+            .let { FirebaseAuth.getInstance(it) }
 
     /**
      * [authorizationGenerator] is the generator used to assign roles to users.

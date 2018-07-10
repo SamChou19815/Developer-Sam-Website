@@ -9,9 +9,6 @@ buildscript {
 }
 
 plugins {
-    // Cores
-    id 'java'
-    id 'idea'
     // 3rd-parties
     id 'org.jetbrains.kotlin.jvm' version '1.2.51'
     id 'com.github.johnrengelman.shadow' version '2.0.4'
@@ -22,68 +19,39 @@ apply plugin: 'com.google.cloud.tools.appengine'
 group = 'com.developersam'
 version = '5.0.0'
 
-sourceCompatibility = 1.8  // App Engine Standard uses Java 8
-targetCompatibility = 1.8  // App Engine Standard uses Java 8
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'kotlin'
 
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = ["-Xjvm-default=enable"]
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven {
+            url 'https://jitpack.io'
+        }
     }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = ["-Xjvm-default=enable"]
-    }
-}
 
-repositories {
-    jcenter()
-    mavenCentral()
-    maven {
-        url 'https://jitpack.io'
+    dependencies {
+        // Kotlin
+        implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+        // Test
+        testImplementation 'junit:junit:4.12'
+        // DB
+        implementation 'com.github.SamChou19815:TypedStore:0.1.0'
     }
-}
 
-dependencies {
-    // Kotlin
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    // Test
-    testImplementation 'junit:junit:4.12'
-    // Spark
-    implementation 'com.sparkjava:spark-core:2.7.2'
-    implementation 'com.sparkjava:spark-kotlin:1.0.0-alpha'
-    // PAC4J
-    implementation 'org.pac4j:spark-pac4j:2.2.0'
-    implementation 'org.pac4j:pac4j-http:2.2.1'
-    // Google Cloud API
-    implementation 'com.google.cloud:google-cloud-datastore:1.35.0'
-    implementation 'com.google.cloud:google-cloud-language:1.35.0'
-    implementation 'org.fluentd:fluent-logger:0.3.3' // Stackdriver
-    // Firebase
-    implementation 'com.google.firebase:firebase-admin:6.2.0'
-    // GSON
-    implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'org.danilopianini:gson-extras:0.2.1'
-    // Logging
-    implementation 'org.slf4j:slf4j-api:1.7.25'
-    implementation 'org.slf4j:jcl-over-slf4j:1.7.25'
-    implementation 'org.slf4j:slf4j-log4j12:1.7.25'
-    implementation 'log4j:log4j:1.2.17'
-    // My Libraries
-    implementation 'com.github.SamChou19815:TypedStore:0.1.0'
-    implementation 'com.github.SamChou19815:okaml-lib:0.4.0'
-    // Apps Backend
-    implementation 'com.developersam:game-ten:1.0.1'
-}
-
-jar {
-    manifest {
-        attributes 'Main-Class': 'com.developersam.main.WebApp'
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = "1.8"
+            freeCompilerArgs = ["-Xjvm-default=enable"]
+        }
     }
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+
+    compileTestKotlin {
+        kotlinOptions {
+            jvmTarget = "1.8"
+            freeCompilerArgs = ["-Xjvm-default=enable"]
+        }
     }
 }
 
@@ -107,13 +75,6 @@ appengine {
 
     stage {
         artifact = "build/libs/website-5.0-all.jar"
-    }
-
-    deploy {
-        project 'dev-sam'
-        stopPreviousVersion = true
-        promote = true
-        version = 5
     }
 
 }

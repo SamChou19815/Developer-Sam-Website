@@ -73,11 +73,12 @@ export class AuthenticatedNetworkService {
    * Returns the promise of data of type T.
    *
    * @param {string} url url to fetch.
+   * @param {HttpClientConfig} params params with get, which is optional.
    * @returns {Promise<T>} the promise of data of type T.
    */
-  protected async getData<T>(url: string): Promise<T> {
+  protected async getData<T>(url: string, params: HttpClientConfig = {}): Promise<T> {
     return this.http.get<T>(url, {
-      withCredentials: true, headers: this.firebaseAuthHeader
+      params: params, withCredentials: true, headers: this.firebaseAuthHeader
     }).pipe(catchError(AuthenticatedNetworkService.handleHttpError)).toPromise();
   }
 
@@ -111,10 +112,10 @@ export class AuthenticatedNetworkService {
    * Returns the promise of text after deletion.
    *
    * @param {string} url the url to send the delete request.
-   * @param {HttpClientConfig} params params with delete.
+   * @param {HttpClientConfig} params params with delete, which is optional.
    * @returns {Promise<string>} the promise of text after deletion.
    */
-  protected async deleteWithParams(url: string, params: HttpClientConfig = {}): Promise<string> {
+  protected async deleteData(url: string, params: HttpClientConfig = {}): Promise<string> {
     return this.http.delete<string>(url, {
       params: params, withCredentials: true, headers: this.firebaseAuthHeader
     }).pipe(catchError(AuthenticatedNetworkService.handleHttpError)).toPromise();

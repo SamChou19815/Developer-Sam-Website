@@ -17,13 +17,13 @@ export class ChunkReaderNetworkService extends AuthenticatedNetworkService {
   }
 
   async loadArticleDetail(key: string): Promise<FullAnalyzedArticle> {
-    const url = `/apis/user/chunkreader/article_detail?key=${key}`;
-    return this.getData<FullAnalyzedArticle>(url);
+    const url = '/apis/user/chunkreader/article_detail';
+    return this.getData<FullAnalyzedArticle>(url, { 'key': key });
   }
 
   async adjustSummary(key: string, limit: number): Promise<string[]> {
-    const url = `/apis/user/chunkreader/adjust_summary?key=${key}&limit=${limit}`;
-    return this.getData<string[]>(url);
+    const url = '/apis/user/chunkreader/adjust_summary';
+    return this.getData<string[]>(url, { 'key': key, 'limit': limit.toString(10) });
   }
 
   async analyzeArticle(rawArticle: RawArticle): Promise<boolean> {
@@ -32,7 +32,7 @@ export class ChunkReaderNetworkService extends AuthenticatedNetworkService {
   }
 
   async deleteArticle(key: string): Promise<void> {
-    await this.deleteWithParams('/apis/user/chunkreader/delete', { 'key': key });
+    await this.deleteData('/apis/user/chunkreader/delete', { 'key': key });
   }
 
 }

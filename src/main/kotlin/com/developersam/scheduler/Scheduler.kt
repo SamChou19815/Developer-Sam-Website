@@ -9,6 +9,7 @@ import typestore.toLocalDateTimeInUTC
 import typestore.toUTCMillis
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.Arrays
 import java.util.stream.Collectors
 import kotlin.math.min
 
@@ -83,7 +84,7 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
             return totalWeight
         }
 
-        override fun compareTo(other: AnnotatedInterval): Int = start.compareTo(other = end)
+        override fun compareTo(other: AnnotatedInterval): Int = end.compareTo(other = other.end)
 
     }
 
@@ -262,6 +263,9 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
             return Plan(intervalList = newList, timeUnitStat = newStat, totalWeight = newWeight)
         }
 
+        override fun toString(): String =
+                "Plan{intervals: $intervalList, timeStats: $timeUnitStat, weight: $totalWeight}"
+
     }
 
     /**
@@ -296,6 +300,8 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
             }
         }
 
+        override fun toString(): String = "($p1, $p2)"
+
     }
 
     /**
@@ -329,10 +335,6 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
          * [tentativeGroupProjects] is a list of possibly group projects.
          */
         private val tentativeGroupProjects = arrayListOf<AnnotatedProject>()
-        /**
-         * [realGroupProjects] is a list of confirmed common group projects.
-         */
-        private val realGroupProjects = arrayListOf<AnnotatedProject>()
 
         /**
          * [classifyProjectList] transforms and adds projects in config to [merged] or
@@ -395,7 +397,7 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
                             estimatedTimeUnits = average(fo, so) { estimatedTimeUnits },
                             weight = average(fo, so) { weight }
                     )
-                    realGroupProjects.add(reconciled.toAnnotatedProject(isPrimaryUser = true))
+                    merged.add(reconciled.toAnnotatedProject(isPrimaryUser = true))
                 }
                 else -> error(message = "Impossible")
             }
@@ -410,7 +412,6 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
             val titleGroupedGroupProjects = tentativeGroupProjects.asSequence()
                     .groupBy { it.original.title }.map { it.value }
             titleGroupedGroupProjects.forEach { reconcile(projects = it) }
-            merged.addAll(realGroupProjects)
         }
 
         /**
@@ -474,7 +475,7 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
         /**
          * [maxDeadline] is the latest time for interval scheduling.
          */
-        private val maxDeadline: Long get() = System.currentTimeMillis() * 86400_000 * 14
+        private val maxDeadline: Long get() = System.currentTimeMillis() + 86400_000 * 14
 
     }
 
@@ -485,10 +486,10 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
      */
 
     /**
-     * [schedule] returns a list of [IntervalsAnnotatedSchedulerRecord] for a group in the
+     * [schedule] returns a list of [AnnotatedSchedulerRecord] for a group in the
      * perspective of the primary user.
      */
-    fun schedule(): List<IntervalsAnnotatedSchedulerRecord> {
+    fun schedule(): List<AnnotatedSchedulerRecord> {
         val len = preparedIntervals.size
         // dp array
         val dp: Array<PlanPair> = Array(size = len) { PlanPair() }
@@ -508,16 +509,13 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
             dp[i] = optPlanPair
         }
         // extract result
-        return dp[len - 1].p1.intervalList.reverse
+        return dp.last().p1.intervalList.reverse
                 .groupBy { it.key }
-                .mapNotNull { (_, intervals) ->
-                    val intervalRepresentative = intervals[0] // ensured by groupBy
-                    val record = mergedIntervalContainersMap[intervalRepresentative.key]?.original
-                            ?: return@mapNotNull null
-                    IntervalsAnnotatedSchedulerRecord(
-                            record = record,
-                            intervals = intervals.map { Interval(start = it.start, end = it.end) }
-                    )
+                .mapNotNull { (key, intervals) ->
+                    val record = mergedIntervalContainersMap[key]?.original
+                            ?: error(message = "Impossible!")
+                    val intervalGroup = intervals.map { Interval(start = it.start, end = it.end) }
+                    AnnotatedSchedulerRecord(record = record, intervals = intervalGroup)
                 }
     }
 

@@ -34,7 +34,7 @@ export class FriendsNetworkService extends AuthenticatedNetworkService {
   }
 
   async removeFriend(key: string) {
-    return this.deleteWithParams('/apis/user/friends/remove_friend', {
+    return this.deleteData('/apis/user/friends/remove_friend', {
       'removed_friend_key': key
     });
   }

@@ -1,9 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
+import {
+  AuthenticatedNetworkService,
+  HttpClientConfig
+} from '../shared/authenticated-network-service';
 import { SchedulerData } from './scheduler-data';
 import { SchedulerEvent } from './scheduler-event';
 import { SchedulerProject } from './scheduler-project';
+import { AnnotatedSchedulerRecord } from './scheduler-record';
 
 @Injectable({
   providedIn: 'root'
@@ -27,13 +31,19 @@ export class SchedulerNetworkService extends AuthenticatedNetworkService {
   }
 
   async deleteRecord(key: string, type: 'project' | 'event'): Promise<string> {
-    return this.deleteWithParams(`/apis/user/scheduler/delete/${type}`, { 'key': key });
+    return this.deleteData(`/apis/user/scheduler/delete/${type}`, { 'key': key });
   }
 
-  async markProjectAs(completed: boolean, key: string) {
+  async markProjectAs(completed: boolean, key: string): Promise<string> {
     return this.postParams('/apis/user/scheduler/mark_project_as', {
       'key': key, 'completed': String(completed)
     });
+  }
+
+  async getAutoScheduling(friendKey?: string): Promise<AnnotatedSchedulerRecord[]> {
+    const url = '/apis/user/scheduler/auto_schedule';
+    const params: HttpClientConfig = friendKey == null ? {} : { 'friend_key': friendKey };
+    return this.getData<AnnotatedSchedulerRecord[]>(url, params);
   }
 
 }

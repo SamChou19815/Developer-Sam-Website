@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 html {
-  background-color: #DDDDDD;
+  background-color: #EEEEEE;
 }
 
 body {
@@ -72,6 +72,10 @@ body {
     width: 80%;
     margin: 1em auto;
   }
+
+  .section-text {
+    text-align: center;
+  }
 }
 
 /*  Desktop */
@@ -79,6 +83,10 @@ body {
   mat-card {
     margin: 1em auto;
     width: 600px;
+  }
+
+  .section-text {
+    text-align: center;
   }
 }
 

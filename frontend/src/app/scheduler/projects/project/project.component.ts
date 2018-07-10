@@ -43,9 +43,4 @@ export class ProjectComponent implements OnInit {
     }
   }
 
-  get title(): string {
-    return this.schedulerProject.isGroupProject
-      ? `[Group Project] ${this.schedulerProject.title}` : this.schedulerProject.title;
-  }
-
 }

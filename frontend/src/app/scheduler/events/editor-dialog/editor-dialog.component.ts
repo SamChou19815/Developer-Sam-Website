@@ -40,19 +40,12 @@ export class EditorDialogComponent implements OnInit {
     this.startHourInThisTimeZone = thisTimezoneStart;
     this.endHourInThisTimeZone = thisTimezoneEnd;
     if (this.isOneTimeEvent) {
-      this.date = new FormControl(new Date(event.repeatConfig));
+      this.date = new FormControl(SchedulerEvent.utcDateTimeAtZeroAMAndUTCHourToLocalDate(
+        event.repeatConfig, event.startHour));
       this.repeatSelected = [true, true, true, true, true, true, true];
     } else {
       this.date = new FormControl(new Date());
-      this.repeatSelected = [
-        Repeats.inConfig(Repeats.SUNDAY, event.repeatConfig),
-        Repeats.inConfig(Repeats.MONDAY, event.repeatConfig),
-        Repeats.inConfig(Repeats.TUESDAY, event.repeatConfig),
-        Repeats.inConfig(Repeats.WEDNESDAY, event.repeatConfig),
-        Repeats.inConfig(Repeats.THURSDAY, event.repeatConfig),
-        Repeats.inConfig(Repeats.FRIDAY, event.repeatConfig),
-        Repeats.inConfig(Repeats.SATURDAY, event.repeatConfig)
-      ];
+      this.repeatSelected = Repeats.toRepeatSelectedArray(event.repeatConfig);
     }
   }
 

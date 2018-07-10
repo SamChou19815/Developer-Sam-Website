@@ -3,8 +3,8 @@ import { MatDialog } from '@angular/material';
 import { GoogleUserService } from '../../shared/google-user.service';
 import { LoadingOverlayService } from '../../shared/overlay/loading-overlay.service';
 import { shortDelay } from '../../shared/util';
-import { SchedulerProject } from '../scheduler-project';
 import { SchedulerNetworkService } from '../scheduler-network.service';
+import { SchedulerProject } from '../scheduler-project';
 import { EditorDialogComponent } from './editor-dialog/editor-dialog.component';
 
 @Component({
@@ -32,8 +32,9 @@ export class ProjectsComponent implements OnInit {
     });
   }
 
-  async editProject(project?: SchedulerProject) {
-    const toBeEdited = project == null ? new SchedulerProject() : new SchedulerProject(project);
+  async editProject(projectWithIndex?: { project: SchedulerProject, index: number }) {
+    const toBeEdited = projectWithIndex == null
+      ? new SchedulerProject() : new SchedulerProject(projectWithIndex.project);
     const value: any = await this.dialog
       .open(EditorDialogComponent, { data: toBeEdited })
       .afterClosed()
@@ -44,24 +45,27 @@ export class ProjectsComponent implements OnInit {
     const edited = value as SchedulerProject;
     const ref = this.loadingService.open();
     const key = await this.networkService.editProject(edited);
+    // remove old
+    if (projectWithIndex != null) {
+      const { index } = projectWithIndex;
+      this.projects.splice(index, 1);
+    }
+    this.projects.push(new SchedulerProject(<SchedulerProject>{ ...edited, key: key }));
+    this.projects.sort((a, b) => a.deadline - b.deadline);
     ref.close();
-    const projectsWithOldRemoved = project == null
-      ? this.projects : this.projects.filter(i => i.key !== project.key);
-    projectsWithOldRemoved.push(new SchedulerProject(<SchedulerProject>{ ...edited, key: key }));
-    this.projects = projectsWithOldRemoved.sort((a, b) => a.deadline - b.deadline);
   }
 
-  async deleteProject(project: SchedulerProject) {
+  async deleteProject(project: SchedulerProject, index: number) {
     if (project.key == null) {
       return;
     }
     const ref = this.loadingService.open();
     await this.networkService.deleteRecord(project.key, 'project');
     ref.close();
-    this.projects = this.projects.filter(i => i.key !== project.key);
+    this.projects.splice(index, 1);
   }
 
-  async markAs(completed: boolean, project: SchedulerProject) {
+  async markProjectAs(completed: boolean, project: SchedulerProject) {
     if (project.key == null) {
       return;
     }

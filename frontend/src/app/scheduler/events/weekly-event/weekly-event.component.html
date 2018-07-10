@@ -1,0 +1,14 @@
+<mat-card>
+  <mat-card-title>
+    <mat-icon>event</mat-icon>
+    <span>{{schedulerEvent.title}}</span>
+  </mat-card-title>
+  <mat-card-content>
+    <div>Repeats: {{repeatString}}</div>
+    <div>Start: {{startEndHour[0]}}:00, End: {{startEndHour[1]}}:00</div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button (click)="editClicked.emit()">Edit</button>
+    <button mat-button (click)="deleteClicked.emit()">Delete</button>
+  </mat-card-actions>
+</mat-card>

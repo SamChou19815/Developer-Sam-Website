@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { GoogleUserService } from '../../shared/google-user.service';
 import { LoadingOverlayService } from '../../shared/overlay/loading-overlay.service';
 import { shortDelay } from '../../shared/util';
-import { SchedulerEvent, SchedulerEvents } from '../scheduler-event';
+import { SchedulerEvent, SchedulerEvents, SchedulerEventType } from '../scheduler-event';
 import { SchedulerNetworkService } from '../scheduler-network.service';
 import { EditorDialogComponent } from './editor-dialog/editor-dialog.component';
 
@@ -37,8 +37,9 @@ export class EventsComponent implements OnInit {
     });
   }
 
-  async editEvent(event?: SchedulerEvent) {
-    const toBeEdited = event == null ? new SchedulerEvent() : new SchedulerEvent(event);
+  async editEvent(eventWithIndex?: { event: SchedulerEvent, index: number }) {
+    const toBeEdited = eventWithIndex == null ?
+      new SchedulerEvent() : new SchedulerEvent(eventWithIndex.event);
     const value: any = await this.dialog
       .open(EditorDialogComponent, { data: toBeEdited })
       .afterClosed()
@@ -46,17 +47,50 @@ export class EventsComponent implements OnInit {
     if (value == null) {
       return;
     }
-    console.log(value);
-    /*
     const edited = value as SchedulerEvent;
     const ref = this.loadingService.open();
-    // const key = await this.networkService.editItem(edited);
+    const key = await this.networkService.editEvent(edited);
+    // remove old
+    if (eventWithIndex != null) {
+      const { index } = eventWithIndex;
+      switch (edited.type) {
+        case SchedulerEventType.ONE_TIME:
+          this.events.oneTimeEvents.splice(index, 1);
+          break;
+        case SchedulerEventType.WEEKLY:
+          this.events.weeklyEvents.splice(index, 1);
+          break;
+      }
+    }
+    const newEvent = new SchedulerEvent(<SchedulerEvent>{ ...edited, key: key });
+    switch (edited.type) {
+      case SchedulerEventType.ONE_TIME:
+        this.events.oneTimeEvents.push(newEvent);
+        this.events.oneTimeEvents.sort((a, b) => a.repeatConfig - b.repeatConfig);
+        break;
+      case SchedulerEventType.WEEKLY:
+        this.events.weeklyEvents.push(newEvent);
+        this.events.weeklyEvents.sort((a, b) => b.repeatConfig - a.repeatConfig);
+        break;
+    }
     ref.close();
-    const projectsWithOldRemoved = project == null
-      ? this.projects : this.projects.filter(i => i.key !== project.key);
-    projectsWithOldRemoved.push(new SchedulerProject(<SchedulerProject>{ ...edited, key: key }));
-    this.projects = projectsWithOldRemoved.sort((a, b) => a.deadline - b.deadline);
-    */
+  }
+
+  async deleteEvent(event: SchedulerEvent, index: number) {
+    if (event.key == null) {
+      return;
+    }
+    const ref = this.loadingService.open();
+    await this.networkService.deleteRecord(event.key, 'event');
+    switch (event.type) {
+      case SchedulerEventType.ONE_TIME:
+        this.events.oneTimeEvents.splice(index, 1);
+        break;
+      case SchedulerEventType.WEEKLY:
+        this.events.weeklyEvents.splice(index, 1);
+        break;
+    }
+    ref.close();
   }
 
 }

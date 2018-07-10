@@ -68,6 +68,22 @@ export namespace SchedulerEventRepeats {
     return selected ? day : 0;
   }
 
+  /**
+   * Returns the repeat selected form of the given config.
+   *
+   * @param {number} config config to convert.
+   * @returns {[boolean]} the repeat selected form of the given config.
+   */
+  export function toRepeatSelectedArray(
+    config: number
+  ): [boolean, boolean, boolean, boolean, boolean, boolean, boolean] {
+    return [
+      inConfig(SUNDAY, config), inConfig(MONDAY, config), inConfig(TUESDAY, config),
+      inConfig(WEDNESDAY, config), inConfig(THURSDAY, config), inConfig(FRIDAY, config),
+      inConfig(SATURDAY, config),
+    ];
+  }
+
 }
 
 /**
@@ -141,7 +157,7 @@ export class SchedulerEvent {
    */
   static convertHours(start: number, end: number, toUTC: boolean): [number, number] {
     if (toUTC) {
-      const utcStart = (start + SchedulerEvent.dateHourOffSet + 24) % 24;
+      const utcStart = (start + SchedulerEvent.dateHourOffSet + 48) % 24;
       const utcEnd = utcStart + end - start;
       return [utcStart, utcEnd];
     } else {
@@ -164,6 +180,21 @@ export class SchedulerEvent {
     const utcDate = new Date(utcDateMs);
     utcDate.setUTCHours(0, 0, 0, 0);
     return utcDate.getTime();
+  }
+
+  /**
+   * Returns the correct local date at zero AM for the given utc date at zero am and hour offset.
+   *
+   * @param {number} utcDateAtZeroAm utc date at zero am
+   * @param {number} hour hour offset.
+   * @returns {Date} the correct local date at zero AM
+   */
+  static utcDateTimeAtZeroAMAndUTCHourToLocalDate(utcDateAtZeroAm: number, hour: number): Date {
+    const date = new Date(utcDateAtZeroAm);
+    date.setUTCHours(hour);
+    const localDate = new Date(date.getTime());
+    localDate.setHours(0);
+    return localDate;
   }
 
   /**

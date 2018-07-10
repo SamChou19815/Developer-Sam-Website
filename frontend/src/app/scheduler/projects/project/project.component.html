@@ -1,5 +1,9 @@
 <mat-card [class.completed]="schedulerProject.isCompleted">
-  <mat-card-title [class]="titleStyle"><span>{{title}}</span></mat-card-title>
+  <mat-card-title [class]="titleStyle">
+    <mat-icon>event_available</mat-icon>
+    <mat-icon *ngIf="schedulerProject.isGroupProject">group</mat-icon>
+    <span style="margin-right: 24px;">{{schedulerProject.title}}</span>
+  </mat-card-title>
   <mat-card-content>Deadline: {{schedulerProject.deadlineString}}</mat-card-content>
   <mat-card-content>
     <span>Time Left: </span>

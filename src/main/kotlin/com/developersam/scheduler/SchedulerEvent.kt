@@ -22,7 +22,7 @@ data class SchedulerEvent(
         override val key: Key? = null, val type: EventType = EventType.ONE_TIME,
         override val title: String = "",
         val startHour: Long = 0, val endHour: Long = 0, val repeatConfig: Long = 0
-) : SchedulerRecord {
+) : SchedulerRecord, Comparable<SchedulerEvent> {
 
     /**
      * [isValid] checks and returns whether this [SchedulerEvent] is valid.
@@ -55,6 +55,17 @@ data class SchedulerEvent(
             t[Table.endHour] = endHour
             t[Table.repeatConfig] = repeatConfig
         }.key
+    }
+
+    override fun compareTo(other: SchedulerEvent): Int = when (type) {
+        EventType.ONE_TIME -> when (other.type) {
+            EventType.ONE_TIME -> repeatConfig.compareTo(other = other.repeatConfig)
+            EventType.WEEKLY -> -1
+        }
+        EventType.WEEKLY -> when (other.type) {
+            EventType.ONE_TIME -> 1
+            EventType.WEEKLY -> -repeatConfig.compareTo(other = other.repeatConfig)
+        }
     }
 
     /**
@@ -190,6 +201,13 @@ data class SchedulerEvent(
         internal operator fun get(user: GoogleUser): List<SchedulerEvent> =
                 SchedulerEventEntity.query { filter = Table.userId eq user.uid }
                         .map { it.asSchedulerEvent }
+                        .filter { event ->
+                            if (event.type == EventType.WEEKLY) true else {
+                                val endTime = event.repeatConfig + event.endHour * 3600 * 1000
+                                endTime > System.currentTimeMillis()
+                            }
+                        }
+                        .sorted()
                         .toList()
 
         /**

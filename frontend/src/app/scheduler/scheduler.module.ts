@@ -9,12 +9,13 @@ import { ProjectsComponent } from './projects/projects.component';
 import { SchedulerRoutingModule } from './scheduler-routing.module';
 import { OneTimeEventComponent } from './events/one-time-event/one-time-event.component';
 import { WeeklyEventComponent } from './events/weekly-event/weekly-event.component';
+import { TaggedIntervalComponent } from './auto-scheduling/tagged-interval/tagged-interval.component';
 
 @NgModule({
   imports: [SharedModule, SchedulerRoutingModule],
   exports: [],
   declarations: [ProjectsComponent, ProjectComponent, EventsComponent, AutoSchedulingComponent,
-    PEditor, EEditor, OneTimeEventComponent, WeeklyEventComponent],
+    PEditor, EEditor, OneTimeEventComponent, WeeklyEventComponent, TaggedIntervalComponent],
   providers: [],
   entryComponents: [PEditor, EEditor]
 })

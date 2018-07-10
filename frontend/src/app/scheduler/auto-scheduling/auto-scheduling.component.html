@@ -1,3 +1,12 @@
-<p>
-  auto-scheduling works!
-</p>
+<div class="section-text" *ngIf="taggedIntervals.length > 0">
+  Auto-generated schedule for next two weeks
+</div>
+<mat-list *ngIf="taggedIntervals.length > 0">
+  <mat-list-item *ngFor="let taggedInterval of taggedIntervals">
+    <app-scheduler-tagged-interval
+      [taggedInterval]="taggedInterval"></app-scheduler-tagged-interval>
+  </mat-list-item>
+</mat-list>
+<div class="section-text" *ngIf="taggedIntervals.length === 0">
+  You don't have any activity in next two weeks.
+</div>

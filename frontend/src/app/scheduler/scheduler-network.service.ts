@@ -7,7 +7,7 @@ import {
 import { SchedulerData } from './scheduler-data';
 import { SchedulerEvent } from './scheduler-event';
 import { SchedulerProject } from './scheduler-project';
-import { AnnotatedSchedulerRecord } from './scheduler-record';
+import { SchedulerTaggedInterval } from './scheduler-tagged-interval';
 
 @Injectable({
   providedIn: 'root'
@@ -40,10 +40,10 @@ export class SchedulerNetworkService extends AuthenticatedNetworkService {
     });
   }
 
-  async getAutoScheduling(friendKey?: string): Promise<AnnotatedSchedulerRecord[]> {
+  async getAutoScheduling(friendKey?: string): Promise<SchedulerTaggedInterval[]> {
     const url = '/apis/user/scheduler/auto_schedule';
     const params: HttpClientConfig = friendKey == null ? {} : { 'friend_key': friendKey };
-    return this.getData<AnnotatedSchedulerRecord[]>(url, params);
+    return this.getData<SchedulerTaggedInterval[]>(url, params);
   }
 
 }

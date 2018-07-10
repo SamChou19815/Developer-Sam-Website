@@ -4,12 +4,13 @@ import com.developersam.fp.FpList
 import com.developersam.fp.FpMap
 import com.developersam.fp.cons
 import com.developersam.scheduler.SchedulerEvent.Repeats.inConfig
+import com.developersam.scheduler.TaggedInterval.Type.EVENT
+import com.developersam.scheduler.TaggedInterval.Type.PROJECT
 import typestore.nowInUTC
 import typestore.toLocalDateTimeInUTC
 import typestore.toUTCMillis
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Arrays
 import java.util.stream.Collectors
 import kotlin.math.min
 
@@ -489,7 +490,7 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
      * [schedule] returns a list of [AnnotatedSchedulerRecord] for a group in the
      * perspective of the primary user.
      */
-    fun schedule(): List<AnnotatedSchedulerRecord> {
+    fun schedule(): List<TaggedInterval> {
         val len = preparedIntervals.size
         // dp array
         val dp: Array<PlanPair> = Array(size = len) { PlanPair() }
@@ -510,13 +511,15 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
         }
         // extract result
         return dp.last().p1.intervalList.reverse
-                .groupBy { it.key }
-                .mapNotNull { (key, intervals) ->
-                    val record = mergedIntervalContainersMap[key]?.original
+                .map { i ->
+                    val record = mergedIntervalContainersMap[i.key]?.original
                             ?: error(message = "Impossible!")
-                    val intervalGroup = intervals.map { Interval(start = it.start, end = it.end) }
-                    AnnotatedSchedulerRecord(record = record, intervals = intervalGroup)
+                    val title = record.title
+                    val type = if (record is SchedulerProject) PROJECT else EVENT
+                    TaggedInterval(type = type, title = title, start = i.start, end = i.end)
                 }
+                .sorted()
+                .toList()
     }
 
 }

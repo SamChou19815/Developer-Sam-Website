@@ -10,6 +10,7 @@ export class ArticlePreviewComponent implements OnInit {
 
   @Input() articlePreview: AnalyzedArticle = AnalyzedArticle.defaultValue;
   @Output() viewDetailClicked = new EventEmitter<undefined>();
+  @Output() deleteClicked = new EventEmitter<undefined>();
 
   constructor() {
   }
@@ -18,7 +19,7 @@ export class ArticlePreviewComponent implements OnInit {
   }
 
   get time(): string {
-    return new Date(this.articlePreview.time).toLocaleDateString()
+    return new Date(this.articlePreview.time).toLocaleDateString();
   }
 
 }

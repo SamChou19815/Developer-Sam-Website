@@ -53,4 +53,14 @@ export class ChunkReaderComponent implements OnInit {
     this.pushControllerService.open(ArticleDetailComponent, article);
   }
 
+  async deleteArticle(article: AnalyzedArticle, index: number) {
+    if (!confirm('Do you really want to delete this article?')) {
+      return;
+    }
+    const ref = this.loadingService.open();
+    await this.networkService.deleteArticle(article.key);
+    this.articlesPreview.splice(index, 1);
+    ref.close();
+  }
+
 }

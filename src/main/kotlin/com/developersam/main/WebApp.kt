@@ -240,6 +240,10 @@ private fun initializeChunkReaderApiHandlers() {
         val limit = queryParams("limit")?.toInt() ?: badRequest()
         Summary[user, key, limit]
     }
+    delete(path = "/delete") { _ ->
+        val key = queryParamsForKey(name = "key")
+        Article.delete(user = user, key = key)
+    }
 }
 
 /**

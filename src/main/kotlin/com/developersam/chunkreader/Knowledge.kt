@@ -77,6 +77,14 @@ internal data class Knowledge(
                 .mapValues { (_, v) -> v.distinctBy { it.name } }
 
         /**
+         * [deleteAll] deletes all knowledge for a given article with [articleKey].
+         */
+        internal fun deleteAll(articleKey: Key) {
+            val keys = KnowledgeEntity.query(ancestor = articleKey).toList().toTypedArray()
+            KnowledgeEntity.delete(*keys)
+        }
+
+        /**
          * [buildKnowledgeGraph] uses the information from [textKey] and [entities] to build the
          * knowledge graph for the given text.
          */

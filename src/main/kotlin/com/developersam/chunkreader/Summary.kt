@@ -260,6 +260,14 @@ class Summary private constructor() {
                 }.sortedBy { it.beginOffset }.map { it.text }.toList()
 
         /**
+         * [deleteAll] deletes all summaries for a given article with [articleKey].
+         */
+        internal fun deleteAll(articleKey: Key) {
+            val keys = SentenceEntity.query(ancestor = articleKey).toList().toTypedArray()
+            SentenceEntity.delete(*keys)
+        }
+
+        /**
          * [get] returns a list of sentences with [limit] (defaults to 5) associated with [textKey],
          * with sentences sorted according to their sequence in the original article. If the given
          * [user] cannot access the article with [textKey], it will return an empty list.

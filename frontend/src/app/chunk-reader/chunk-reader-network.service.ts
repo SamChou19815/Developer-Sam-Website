@@ -31,4 +31,8 @@ export class ChunkReaderNetworkService extends AuthenticatedNetworkService {
     return resp === 'true';
   }
 
+  async deleteArticle(key: string): Promise<void> {
+    await this.deleteWithParams('/apis/user/chunkreader/delete', { 'key': key });
+  }
+
 }

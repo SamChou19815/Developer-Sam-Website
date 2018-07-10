@@ -25,7 +25,7 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
     /**
      * [key] is the key string of the article.
      */
-    private val key: String = article.key.toUrlSafe()
+    private val key: Key = article.key
     /**
      * [time] is the submitted time of the article.
      */
@@ -165,6 +165,17 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
                 Db[key]?.takeIf { it.userId == user.uid }?.let { article ->
                     Article(article = article, fullDetail = true)
                 }
+
+        /**
+         * [delete] deletes the article of [user] with the article [key].
+         */
+        fun delete(user: GoogleUser, key: Key) {
+            if (Db[key]?.userId == user.uid) {
+                Db.delete(key)
+                Knowledge.deleteAll(articleKey = key)
+                Summary.deleteAll(articleKey = key)
+            }
+        }
 
     }
 

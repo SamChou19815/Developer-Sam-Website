@@ -8,7 +8,12 @@ deploy_frontend:
 
 build_backend_as_container:
 	./gradlew appengineStage
+	cp src/main/appengine/* build/staged-app
 	cd build/staged-app; \
-	gcloud beta app gen-config --custom; \
 	gcloud config set project dev-sam; \
 	gcloud container builds submit --tag gcr.io/dev-sam/backend-container .
+
+update_indices:
+	cd ~/.config/gcloud/emulators/datastore/WEB-INF; \
+	gcloud datastore create-indexes index.yaml;\
+	gcloud datastore cleanup-indexes index.yaml

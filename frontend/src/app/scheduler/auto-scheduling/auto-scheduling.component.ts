@@ -42,11 +42,14 @@ export class AutoSchedulingComponent implements OnInit {
     });
   }
 
-  async doAutoScheduling(friend: GoogleUser) {
+  async doAutoScheduling() {
+    if (this.selectedFriend == null) {
+      throw new Error();
+    }
     this.taggedIntervalsWithFriends = [];
     const ref = this.loadingService.open();
     this.taggedIntervalsWithFriends =
-      await this.schedulerNetworkService.getAutoScheduling(friend.key);
+      await this.schedulerNetworkService.getAutoScheduling(this.selectedFriend.key);
     ref.close();
   }
 

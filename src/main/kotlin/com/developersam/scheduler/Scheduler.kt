@@ -487,11 +487,14 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
      */
 
     /**
-     * [schedule] returns a list of [AnnotatedSchedulerRecord] for a group in the
+     * [schedule] returns a list of [TaggedInterval] for a group in the
      * perspective of the primary user.
      */
     fun schedule(): List<TaggedInterval> {
         val len = preparedIntervals.size
+        if (len == 0) {
+            return emptyList()
+        }
         // dp array
         val dp: Array<PlanPair> = Array(size = len) { PlanPair() }
         for (i in 0 until len) {

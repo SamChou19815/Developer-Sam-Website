@@ -189,21 +189,22 @@ private fun initializeFriendSystemApiHandlers() {
  */
 private fun initializeSchedulerApiHandlers() {
     get(path = "/load") { _ -> SchedulerData(user = user) }
-    post(path = "/edit") { _ ->
-        val type = queryParams("type") ?: badRequest()
-        val key = when (type) {
-            "project" -> toJson<SchedulerProject>().upsert(user = user)?.toUrlSafe()
-            "event" -> toJson<SchedulerEvent>().upsert(user = user)?.toUrlSafe()
-            else -> null
+    path("/edit") {
+        post(path = "/project") { _ ->
+            toJson<SchedulerProject>().upsert(user = user)?.toUrlSafe() ?: badRequest()
         }
-        key ?: badRequest()
+        post(path = "/event") { _ ->
+            toJson<SchedulerEvent>().upsert(user = user)?.toUrlSafe() ?: badRequest()
+        }
     }
-    delete(path = "/delete") { _ ->
-        val type = queryParams("type") ?: badRequest()
-        val key = queryParamsForKey("key")
-        when (type) {
-            "project" -> SchedulerProject.delete(user = user, key = key)
-            "event" -> SchedulerEvent.delete(user = user, key = key)
+    path("/delete") {
+        delete(path = "/project") { _ ->
+            val key = queryParamsForKey("key")
+            SchedulerProject.delete(user = user, key = key)
+        }
+        delete(path = "/event"){ _ ->
+            val key = queryParamsForKey("key")
+            SchedulerEvent.delete(user = user, key = key)
         }
     }
     post(path = "/mark_project_as") { _ ->

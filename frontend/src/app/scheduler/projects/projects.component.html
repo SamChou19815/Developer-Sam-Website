@@ -3,5 +3,5 @@
                        [schedulerProject]="project"
                        (editClicked)="editProject({ project: project, index: i})"
                        (deleteClicked)="deleteProject(project, i)"
-                       (markAsClicked)="markProjectAs($event, project)"></app-scheduler-project>
+                       (markAsClicked)="markProjectAs($event, project, i)"></app-scheduler-project>
 <button color="accent" mat-fab (click)="editProject()">+</button>

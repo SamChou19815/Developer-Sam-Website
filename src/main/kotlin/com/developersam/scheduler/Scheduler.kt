@@ -310,19 +310,6 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
         }
     }
 
-    /**
-     * [Interval] is a simple data class that represents an interval.
-     */
-    data class Interval(val start: Long, val end: Long)
-
-    /**
-     * [IntervalsAnnotatedRecord] represents a scheduler record annotated by a list of sorted,
-     * not-completed, non-conflicting intervals that is recommended by the system.
-     */
-    data class IntervalsAnnotatedRecord(
-            val record: SchedulerRecord, val intervals: List<Interval>
-    )
-
     /*
      * --------------------------------------------------------------------------------
      * Part 2: Pre-processors
@@ -498,10 +485,10 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
      */
 
     /**
-     * [schedule] returns a list of [IntervalsAnnotatedRecord] for a group in the perspective
-     * of the primary user.
+     * [schedule] returns a list of [IntervalsAnnotatedSchedulerRecord] for a group in the
+     * perspective of the primary user.
      */
-    fun schedule(): List<IntervalsAnnotatedRecord> {
+    fun schedule(): List<IntervalsAnnotatedSchedulerRecord> {
         val len = preparedIntervals.size
         // dp array
         val dp: Array<PlanPair> = Array(size = len) { PlanPair() }
@@ -527,7 +514,7 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
                     val intervalRepresentative = intervals[0] // ensured by groupBy
                     val record = mergedIntervalContainersMap[intervalRepresentative.key]?.original
                             ?: return@mapNotNull null
-                    IntervalsAnnotatedRecord(
+                    IntervalsAnnotatedSchedulerRecord(
                             record = record,
                             intervals = intervals.map { Interval(start = it.start, end = it.end) }
                     )

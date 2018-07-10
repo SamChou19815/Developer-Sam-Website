@@ -26,6 +26,7 @@ mat-toolbar {
   width: calc(100% - 250px) !important;
   transition: width 0.2s;
   z-index: 2;
+  font-weight: 400;
 }
 
 mat-toolbar.side-nav-closed {

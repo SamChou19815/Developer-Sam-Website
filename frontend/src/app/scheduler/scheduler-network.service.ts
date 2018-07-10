@@ -19,17 +19,15 @@ export class SchedulerNetworkService extends AuthenticatedNetworkService {
   }
 
   async editProject(data: SchedulerProject): Promise<string> {
-    return this.postDataForText('/apis/user/scheduler/edit?type=project', data);
+    return this.postDataForText('/apis/user/scheduler/edit/project', data);
   }
 
   async editEvent(data: SchedulerEvent): Promise<string> {
-    return this.postDataForText('/apis/user/scheduler/edit?type=event', data);
+    return this.postDataForText('/apis/user/scheduler/edit/event', data);
   }
 
   async deleteRecord(key: string, type: 'project' | 'event'): Promise<string> {
-    return this.deleteWithParams('/apis/user/scheduler/delete', {
-      'type': type, 'key': key
-    });
+    return this.deleteWithParams(`/apis/user/scheduler/delete/${type}`, { 'key': key });
   }
 
   async markProjectAs(completed: boolean, key: string) {

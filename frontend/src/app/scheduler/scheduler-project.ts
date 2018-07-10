@@ -1,7 +1,9 @@
+import { SchedulerRecord } from './scheduler-record';
+
 /**
  * A project in Scheduler.
  */
-export class SchedulerProject {
+export class SchedulerProject implements SchedulerRecord {
 
   /**
    * Key of the project.
@@ -18,7 +20,7 @@ export class SchedulerProject {
   /**
    * Whether the project is completed.
    */
-  isCompleted: boolean;
+  readonly isCompleted: boolean;
   /**
    * Detail of the project.
    */

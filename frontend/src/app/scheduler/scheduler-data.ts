@@ -8,9 +8,9 @@ export interface SchedulerData {
   /**
    * A list of all projects.
    */
-  projects: SchedulerProject[];
+  readonly projects: SchedulerProject[];
   /**
    * A list of all events.
    */
-  events: SchedulerEvent[];
+  readonly events: SchedulerEvent[];
 }

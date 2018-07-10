@@ -65,14 +65,17 @@ export class ProjectsComponent implements OnInit {
     this.projects.splice(index, 1);
   }
 
-  async markProjectAs(completed: boolean, project: SchedulerProject) {
+  async markProjectAs(completed: boolean, project: SchedulerProject, index: number) {
     if (project.key == null) {
       return;
     }
     const ref = this.loadingService.open();
     await this.networkService.markProjectAs(completed, project.key);
     ref.close();
-    project.isCompleted = completed;
+    const newProject = new SchedulerProject(<SchedulerProject>{
+      ...project, isCompleted: completed
+    });
+    this.projects.splice(index, 1, newProject);
   }
 
 }

@@ -1,3 +1,5 @@
+import { SchedulerRecord } from './scheduler-record';
+
 /**
  * All supported event type.
  */
@@ -89,7 +91,7 @@ export namespace SchedulerEventRepeats {
 /**
  * An event in scheduler.
  */
-export class SchedulerEvent {
+export class SchedulerEvent implements SchedulerRecord {
 
   /**
    * The commonly used date hour offset.

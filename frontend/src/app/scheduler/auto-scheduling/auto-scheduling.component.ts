@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FriendsNetworkService } from '../../friends/friends-network.service';
+import { GoogleUser } from '../../shared/google-user';
 import { GoogleUserService } from '../../shared/google-user.service';
 import { LoadingOverlayService } from '../../shared/overlay/loading-overlay.service';
 import { shortDelay } from '../../shared/util';
@@ -13,19 +15,44 @@ import { SchedulerTaggedInterval } from '../scheduler-tagged-interval';
 export class AutoSchedulingComponent implements OnInit {
 
   taggedIntervals: SchedulerTaggedInterval[] = [];
+  friends: GoogleUser[] = [];
+
+  selectedFriend: GoogleUser | undefined;
+  taggedIntervalsWithFriends: SchedulerTaggedInterval[] = [];
 
   constructor(private googleUserService: GoogleUserService,
-              private networkService: SchedulerNetworkService,
+              private schedulerNetworkService: SchedulerNetworkService,
+              private friendsNetworkService: FriendsNetworkService,
               private loadingService: LoadingOverlayService) {
   }
 
   ngOnInit() {
     shortDelay(async () => {
       const ref = this.loadingService.open();
-      this.networkService.firebaseAuthToken = await this.googleUserService.afterSignedIn();
-      this.taggedIntervals = await this.networkService.getAutoScheduling();
+      const firebaseAuthToken = await this.googleUserService.afterSignedIn();
+      this.schedulerNetworkService.firebaseAuthToken = firebaseAuthToken;
+      this.friendsNetworkService.firebaseAuthToken = firebaseAuthToken;
+      const [taggedIntervals, friendsData] = await Promise.all([
+        this.schedulerNetworkService.getAutoScheduling(),
+        this.friendsNetworkService.loadFriendsData()
+      ]);
+      this.taggedIntervals = taggedIntervals;
+      this.friends = friendsData.list;
       ref.close();
     });
+  }
+
+  async doAutoScheduling(friend: GoogleUser) {
+    this.taggedIntervalsWithFriends = [];
+    const ref = this.loadingService.open();
+    this.taggedIntervalsWithFriends =
+      await this.schedulerNetworkService.getAutoScheduling(friend.key);
+    ref.close();
+  }
+
+  clearIntervalsWithFriends() {
+    this.taggedIntervalsWithFriends = [];
+    this.selectedFriend = undefined;
   }
 
 }

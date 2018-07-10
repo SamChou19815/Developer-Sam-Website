@@ -146,7 +146,7 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
 
         override fun equals(other: Any?): Boolean = when {
             this === other -> true
-            other is AnnotatedProject -> key == other.key
+            other is IntervalContainer -> key == other.key
             else -> false
         }
 
@@ -214,7 +214,7 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
 
         override fun equals(other: Any?): Boolean = when {
             this === other -> true
-            other is AnnotatedEvent -> key == other.key
+            other is IntervalContainer -> key == other.key
             else -> false
         }
 
@@ -420,7 +420,7 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
          * It can be used for quick look up.
          */
         val mergedMap: Map<String, IntervalContainer>
-            get() = merged.parallelStream().collect(Collectors.toMap({ it.key }, { it }))
+            get() = merged.toSet().parallelStream().collect(Collectors.toMap({ it.key }, { it }))
 
     }
 

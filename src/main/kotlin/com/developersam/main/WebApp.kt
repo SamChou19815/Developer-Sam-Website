@@ -53,7 +53,6 @@ private enum class Role { USER, ADMIN }
  */
 private object Filters : SecurityFilters<Role>(roleAssigner = { Role.USER })
 
-
 /**
  * [KeyTypeAdapter] is the type adapter for [Key].
  */
@@ -239,10 +238,6 @@ private fun initializeSchedulerApiHandlers() {
 private fun initializeChunkReaderApiHandlers() {
     get(path = "/load") { _ -> Article[user] }
     post(path = "/analyze") { _ -> toJson<RawArticle>().process(user = user) }
-    get(path = "/article_detail") { _ ->
-        val key = queryParamsForKey(name = "key")
-        Article[user, key]
-    }
     get(path = "/adjust_summary") { _ ->
         val key = queryParamsForKey(name = "key")
         val limit = queryParams("limit")?.toInt() ?: badRequest()

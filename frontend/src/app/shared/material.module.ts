@@ -8,6 +8,7 @@ import {
   MatDatepickerModule,
   MatDialogModule,
   MatDividerModule,
+  MatExpansionModule,
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
@@ -30,16 +31,16 @@ import {
   imports: [
     MatSidenavModule, MatToolbarModule, MatProgressSpinnerModule, MatTabsModule,
     MatIconModule, MatListModule, MatMenuModule, MatCardModule, MatBadgeModule, MatButtonModule,
-    MatCheckboxModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatRadioModule,
-    MatSelectModule, MatNativeDateModule, MatDatepickerModule, MatSliderModule, MatTableModule,
-    MatProgressBarModule, MatDialogModule, MatChipsModule, MatTooltipModule
+    MatCheckboxModule, MatDividerModule, MatFormFieldModule, MatExpansionModule, MatInputModule,
+    MatRadioModule, MatSelectModule, MatNativeDateModule, MatDatepickerModule, MatSliderModule,
+    MatTableModule, MatProgressBarModule, MatDialogModule, MatChipsModule, MatTooltipModule
   ],
   exports: [
     MatSidenavModule, MatToolbarModule, MatProgressSpinnerModule, MatTabsModule,
     MatIconModule, MatListModule, MatMenuModule, MatCardModule, MatBadgeModule, MatButtonModule,
-    MatCheckboxModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatRadioModule,
-    MatSelectModule, MatNativeDateModule, MatDatepickerModule, MatSliderModule, MatTableModule,
-    MatProgressBarModule, MatDialogModule, MatChipsModule, MatTooltipModule
+    MatCheckboxModule, MatDividerModule, MatFormFieldModule, MatExpansionModule, MatInputModule,
+    MatRadioModule, MatSelectModule, MatNativeDateModule, MatDatepickerModule, MatSliderModule,
+    MatTableModule, MatProgressBarModule, MatDialogModule, MatChipsModule, MatTooltipModule
   ],
   declarations: []
 })

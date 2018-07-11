@@ -6,7 +6,6 @@ import { LoadingOverlayService } from '../shared/overlay/loading-overlay.service
 import { PushControllerService } from '../shared/overlay/push-controller.service';
 import { shortDelay } from '../shared/util';
 import { AddArticleDialogComponent } from './add-article-dialog/add-article-dialog.component';
-import { ArticleDetailComponent } from './article-detail/article-detail.component';
 import { AnalyzedArticle, RawArticle } from './chunk-reader-data';
 import { ChunkReaderNetworkService } from './chunk-reader-network.service';
 
@@ -18,10 +17,10 @@ import { ChunkReaderNetworkService } from './chunk-reader-network.service';
 export class ChunkReaderComponent implements OnInit {
 
   /**
-   * A list of article for preview.
+   * A list of articles.
    * @type {AnalyzedArticle[]}
    */
-  articlesPreview: AnalyzedArticle[] = [];
+  articles: AnalyzedArticle[] = [];
 
   constructor(private googleUserService: GoogleUserService,
               private networkService: ChunkReaderNetworkService,
@@ -34,7 +33,7 @@ export class ChunkReaderComponent implements OnInit {
     shortDelay(async () => {
       const ref = this.loadingService.open();
       this.networkService.firebaseAuthToken = await this.googleUserService.afterSignedIn();
-      this.articlesPreview = await this.networkService.loadArticlesPreview();
+      this.articles = await this.networkService.loadArticles();
       ref.close();
     });
   }
@@ -58,18 +57,6 @@ export class ChunkReaderComponent implements OnInit {
   }
 
   /**
-   * Display the article detail.
-   *
-   * @param {AnalyzedArticle} analyzedArticle the article to display detail.
-   */
-  displayArticleDetails(analyzedArticle: AnalyzedArticle): void {
-    (async () => {
-      const article = await this.networkService.loadArticleDetail(analyzedArticle.key);
-      this.pushControllerService.open(ArticleDetailComponent, article);
-    })();
-  }
-
-  /**
    * Delete the given article.
    *
    * @param {AnalyzedArticle} article article to delete.
@@ -82,9 +69,41 @@ export class ChunkReaderComponent implements OnInit {
     (async () => {
       const ref = this.loadingService.open();
       await this.networkService.deleteArticle(article.key);
-      this.articlesPreview.splice(index, 1);
+      this.articles.splice(index, 1);
       ref.close();
     })();
+  }
+
+  /**
+   * Adjust the number of summaries for the given article.
+   *
+   * @param {AnalyzedArticle} article article to adjust summary.
+   * @param {number} limit the new limit.
+   */
+  private adjustSummary(article: AnalyzedArticle, limit: number): void {
+    (async () => {
+      const ref = this.loadingService.open();
+      article.summaries = await this.networkService.adjustSummary(article.key, limit);
+      ref.close();
+    })();
+  }
+
+  /**
+   * Fetch less summary for the given article.
+   *
+   * @param {AnalyzedArticle} article article to adjust summary.
+   */
+  lessSummary(article: AnalyzedArticle): void {
+    this.adjustSummary(article, article.summaries.length - 1);
+  }
+
+  /**
+   * Fetch more summary for the given article.
+   *
+   * @param {AnalyzedArticle} article article to adjust summary.
+   */
+  moreSummary(article: AnalyzedArticle): void {
+    this.adjustSummary(article, article.summaries.length + 1);
   }
 
 }

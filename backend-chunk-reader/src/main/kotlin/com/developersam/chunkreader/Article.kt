@@ -155,16 +155,7 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
                 Db.query {
                     filter = Table.userId eq user.uid
                     order = Table.time.desc()
-                }.map { Article(article = it, fullDetail = false) }.toList()
-
-        /**
-         * [get] returns a [Article] with full detail from a [key], which may not exist due to a
-         * wrong key. It also checks whether the [user] has the permission.
-         */
-        operator fun get(user: GoogleUser, key: Key): Article? =
-                Db[key]?.takeIf { it.userId == user.uid }?.let { article ->
-                    Article(article = article, fullDetail = true)
-                }
+                }.map { Article(article = it, fullDetail = true) }.toList()
 
         /**
          * [delete] deletes the article of [user] with the article [key].

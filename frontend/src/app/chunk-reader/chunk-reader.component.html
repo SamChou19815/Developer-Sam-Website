@@ -1,12 +1,30 @@
-<mat-drawer-container>
-  <mat-drawer mode="side" [opened]="false">Drawer content</mat-drawer>
-  <mat-drawer-content>
-    <app-chunk-reader-article-preview
-      *ngFor="let article of articlesPreview; let i = index"
-      [articlePreview]="article"
-      (viewDetailClicked)="displayArticleDetails(article)"
-      (deleteClicked)="deleteArticle(article, i)">
-    </app-chunk-reader-article-preview>
-    <button color="primary" mat-fab (click)="addArticle()">+</button>
-  </mat-drawer-content>
-</mat-drawer-container>
+<mat-expansion-panel *ngFor="let article of articles; let i = index">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      {{article.title}}
+    </mat-panel-title>
+    <mat-panel-description>
+      <span>Submitted Time: {{time}}</span>
+      <span>Word Count: {{article.tokenCount}}</span>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <mat-divider></mat-divider>
+  <app-chunk-reader-knowledge-graph [knowledgeGraph]="article.knowledgeMap">
+
+  </app-chunk-reader-knowledge-graph>
+  <mat-divider></mat-divider>
+  <div class="section-text">Original Content</div>
+  <div class="multi-line">{{article.content}}</div>
+  <mat-divider></mat-divider>
+  <div class="section-text">Summary</div>
+  <div class="sentence" *ngFor="let sentence of article.summaries">{{sentence}}</div>
+  <mat-action-row>
+    <button color="primary" [disabled]="article.summaries.length <= 1"
+            mat-button (click)="lessSummary(article)">
+      Less Summary
+    </button>
+    <button color="primary" mat-button (click)="moreSummary(article)">More Summary</button>
+    <button color="primary" mat-button (click)="deleteArticle(article, i)">Delete</button>
+  </mat-action-row>
+</mat-expansion-panel>
+<button color="primary" mat-fab (click)="addArticle()">+</button>

@@ -13,7 +13,7 @@ export interface RawArticle {
 }
 
 /**
- * Analyzed article contains basic information about the analyzed article.
+ * Analyzed article is the article with the full detail of analysis.
  */
 export interface AnalyzedArticle {
   /**
@@ -32,16 +32,36 @@ export interface AnalyzedArticle {
    * Number of tokens in the article.
    */
   readonly tokenCount: number;
+  /**
+   * Content of the article.
+   */
+  readonly content: string;
+  /**
+   * A list of keywords of the article.
+   */
+  readonly keywords: string[];
+  /**
+   * Knowledge map of the article.
+   */
+  readonly knowledgeMap: KnowledgeGraph;
+  /**
+   * Summaries of the article.
+   */
+  summaries: string[];
 }
 
 /**
- * Full analyzed article is the article with the full detail.
+ * A single knowledge point with a name and a link.
  */
-export interface FullAnalyzedArticle extends AnalyzedArticle {
-  readonly content: string;
-  readonly keywords: string[];
-  readonly knowledgeMap: KnowledgeGraph;
-  summaries: string[];
+export interface KnowledgePoint {
+  /**
+   * Name of the knowledge point.
+   */
+  readonly name: string;
+  /**
+   * Link of the knowledge point.
+   */
+  readonly url?: string;
 }
 
 /**
@@ -79,15 +99,10 @@ export interface KnowledgeGraph {
 }
 
 /**
- * A single knowledge point with a name and a link.
+ * A dummy [KnowledgeGraph].
+ * @type {KnowledgeGraph}
  */
-export interface KnowledgePoint {
-  /**
-   * Name of the knowledge point.
-   */
-  readonly name: string;
-  /**
-   * Link of the knowledge point.
-   */
-  readonly url?: string;
-}
+export const dummyKnowledgeGraph: KnowledgeGraph = <KnowledgeGraph>{
+  PERSON: [], LOCATION: [], ORGANIZATION: [], EVENT: [],
+  WORK_OF_ART: [], CONSUMER_GOOD: [], UNKNOWN: []
+};

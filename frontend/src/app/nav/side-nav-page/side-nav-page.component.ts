@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   HostListener,
@@ -16,10 +17,21 @@ import { NavData, navDataList } from '../nav-data';
   templateUrl: './side-nav-page.component.html',
   styleUrls: ['./side-nav-page.component.css']
 })
-export class SideNavPageComponent implements OnInit {
+export class SideNavPageComponent implements OnInit, AfterViewInit {
 
+  /**
+   * Exported navigation data list.
+   * @type {NavData[]}
+   */
   navDataList = navDataList;
+  /**
+   * Title displayed at the top.
+   * @type {string}
+   */
   title = navDataList[0].name;
+  /**
+   * Current width of the window.
+   */
   private windowWidth: number;
 
   /**
@@ -50,22 +62,34 @@ export class SideNavPageComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit() {
+    this.changeDetector.detectChanges();
+  }
+
+  /**
+   * Returns whether the screen is wide enough.
+   *
+   * @returns {boolean} whether the screen is wide enough.
+   */
+  private get isScreenWide(): boolean {
+    return this.windowWidth >= 600;
+  }
+
   /**
    * Mode for the drawer.
    *
    * @returns {string}
    */
   get mode(): string {
-    return this.windowWidth >= 800 ? 'side' : 'over';
+    return this.isScreenWide ? 'side' : 'over';
   }
-
   /**
    * Whether the side nav should be open initially.
    *
    * @returns {boolean}
    */
   get sideNavInitiallyOpened(): boolean {
-    return this.windowWidth >= 800;
+    return this.isScreenWide;
   }
 
   /**
@@ -74,7 +98,7 @@ export class SideNavPageComponent implements OnInit {
    * @returns {Promise<void>} dummy return value.
    */
   async clickNav(): Promise<void> {
-    if (window.innerWidth < 800 && this.drawer != null) {
+    if (!this.isScreenWide && this.drawer != null) {
       await this.drawer.close();
     }
   }
@@ -85,6 +109,7 @@ export class SideNavPageComponent implements OnInit {
   @HostListener('window:resize', ['$event'])
   onResize(): void {
     this.windowWidth = window.innerWidth;
+    this.changeDetector.detectChanges();
   }
 
 }

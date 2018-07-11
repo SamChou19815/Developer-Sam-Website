@@ -1,8 +1,13 @@
 <!--suppress JSIgnoredPromiseFromCall -->
-<app-chunk-reader-article-preview
-  *ngFor="let article of articlesPreview; let i = index"
-  [articlePreview]="article"
-  (viewDetailClicked)="displayArticleDetails(article)"
-  (deleteClicked)="deleteArticle(article, i)">
-</app-chunk-reader-article-preview>
-<button color="primary" mat-fab (click)="openAddArticleDialog()">+</button>
+<mat-drawer-container>
+  <mat-drawer mode="side" [opened]="false">Drawer content</mat-drawer>
+  <mat-drawer-content>
+    <app-chunk-reader-article-preview
+      *ngFor="let article of articlesPreview; let i = index"
+      [articlePreview]="article"
+      (viewDetailClicked)="displayArticleDetails(article)"
+      (deleteClicked)="deleteArticle(article, i)">
+    </app-chunk-reader-article-preview>
+    <button color="primary" mat-fab (click)="openAddArticleDialog()">+</button>
+  </mat-drawer-content>
+</mat-drawer-container>

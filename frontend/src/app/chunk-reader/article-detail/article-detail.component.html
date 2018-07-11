@@ -1,4 +1,4 @@
-<app-closable-controller [title]="articleDetail.title" (closeClicked)="popController()">
+<!--<app-closable-controller [title]="articleDetail.title" (closeClicked)="popController()">-->
   <mat-card>
     <mat-card-title>Knowledge Graph</mat-card-title>
     <mat-card-content *ngIf="articleDetail.knowledgeMap.PERSON">
@@ -65,4 +65,6 @@
     <mat-card-title>Original Content</mat-card-title>
     <mat-card-content class="multi-line">{{articleDetail.content}}</mat-card-content>
   </mat-card>
+<!--
 </app-closable-controller>
+-->

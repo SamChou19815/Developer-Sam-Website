@@ -1,6 +1,5 @@
 rootProject.name = 'website'
 include(
         'backend-auth', 'backend-friend',
-        'backend-scheduler', 'backend-chunk-reader',
-        'backend-main'
+        'backend-scheduler', 'backend-chunk-reader'
 )

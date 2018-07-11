@@ -1,24 +1,34 @@
-buildscript {
-    repositories {
-        jcenter()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.google.cloud.tools:appengine-gradle-plugin:+'
-    }
-}
-
 plugins {
     // 3rd-parties
     id 'org.jetbrains.kotlin.jvm' version '1.2.51'
     id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id 'com.google.cloud.tools.jib' version '0.9.2'
 }
 
 group = 'com.developersam'
 version = '5.0.0'
 
 dependencies {
-    compile project(':backend-main')
+    // Spark
+    implementation 'com.sparkjava:spark-core:2.7.2'
+    implementation 'com.sparkjava:spark-kotlin:1.0.0-alpha'
+    // Google Cloud API
+    implementation 'org.fluentd:fluent-logger:0.3.3' // Stackdriver
+    // GSON
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'org.danilopianini:gson-extras:0.2.1'
+    // Logging
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'org.slf4j:jcl-over-slf4j:1.7.25'
+    implementation 'org.slf4j:slf4j-log4j12:1.7.25'
+    implementation 'log4j:log4j:1.2.17'
+    // Apps Backend
+    implementation 'com.developersam:game-ten:1.0.1'
+    // Sub-modules
+    implementation project(':backend-auth')
+    implementation project(':backend-friend')
+    implementation project(':backend-scheduler')
+    implementation project(':backend-chunk-reader')
 }
 
 allprojects {
@@ -64,6 +74,15 @@ subprojects {
     }
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.developersam.main.WebApp'
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 shadowJar {
     baseName = "website"
     version = 5.0
@@ -78,10 +97,26 @@ shadowJar {
     }
 }
 
-build.dependsOn(shadowJar)
-
 test {
     testLogging {
         events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+}
+
+project.tasks.assemble.dependsOn(shadowJar)
+project.tasks.jib.dependsOn(build)
+
+jib {
+    from {
+        image = 'openjdk:8u171-jre-alpine3.7'
+        credHelper = 'docker-credential-osxkeychain'
+    }
+    to {
+        image = 'gcr.io/dev-sam/backend-container'
+        credHelper = 'docker-credential-gcr'
+    }
+    container {
+        mainClass = 'com.developersam.main.WebApp'
+        ports = ['1000', '2000-2003/udp', '8080']
     }
 }

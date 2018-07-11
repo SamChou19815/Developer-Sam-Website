@@ -1,3 +1,5 @@
-FROM gcr.io/google_appengine/openjdk
-ADD website-5.0-all.jar /app/
-CMD ["java", "-jar", "/app/website-5.0.0.jar"]
+FROM openjdk:8u171-jre-alpine3.7
+WORKDIR /
+ADD website-5.0-all.jar web.jar
+EXPOSE 8080
+CMD ["java", "-jar", "web.jar"]

@@ -12,8 +12,8 @@ import { ChunkReaderNetworkService } from './chunk-reader-network.service';
 
 @Component({
   selector: 'app-chunk-reader',
-  templateUrl: 'chunk-reader.component.html',
-  styleUrls: ['chunk-reader.component.css']
+  templateUrl: './chunk-reader.component.html',
+  styleUrls: ['./chunk-reader.component.css']
 })
 export class ChunkReaderComponent implements OnInit {
 

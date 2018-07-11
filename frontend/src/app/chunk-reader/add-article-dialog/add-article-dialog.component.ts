@@ -8,6 +8,9 @@ import { RawArticle } from '../chunk-reader-data';
 })
 export class AddArticleDialogComponent implements OnInit {
 
+  /**
+   * Raw article to edit.
+   */
   readonly rawArticle: RawArticle;
 
   constructor() {

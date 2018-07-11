@@ -8,7 +8,9 @@ import { AnalyzedArticle } from '../chunk-reader-data';
 })
 export class ArticlePreviewComponent implements OnInit {
 
-  @Input() articlePreview: AnalyzedArticle = AnalyzedArticle.defaultValue;
+  @Input() articlePreview: AnalyzedArticle = <AnalyzedArticle>{
+    key: '', time: 0, title: '', tokenCount: 0
+  };
   @Output() viewDetailClicked = new EventEmitter<undefined>();
   @Output() deleteClicked = new EventEmitter<undefined>();
 

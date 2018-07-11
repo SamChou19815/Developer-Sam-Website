@@ -6,5 +6,8 @@
   </mat-icon>
 </a>
 <ng-container *ngIf="shown">
-  <app-nav-item *ngFor="let item of group.children" [item]="item" [isChild]="true"></app-nav-item>
+  <app-nav-item *ngFor="let item of group.children"
+                [item]="item"
+                [isChild]="true"
+                (click)="navClicked.emit()"></app-nav-item>
 </ng-container>

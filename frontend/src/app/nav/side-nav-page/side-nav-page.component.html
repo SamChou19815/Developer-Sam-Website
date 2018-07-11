@@ -1,0 +1,25 @@
+<!--suppress JSIgnoredPromiseFromCall -->
+<mat-sidenav-container [autosize]="false">
+  <mat-sidenav [mode]="mode" [opened]="sideNavInitiallyOpened" #drawer>
+    <nav class="nav-toolbar">
+      <span class="title-nav">
+        <mat-icon class="close-icon" (click)="drawer.toggle()">close</mat-icon>
+        <span style="display: flex;">Developer Sam</span>
+      </span>
+      <app-nav-side-nav [navDataList]="navDataList" (navClicked)="clickNav()"></app-nav-side-nav>
+    </nav>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="mat-elevation-z2" [class.side-nav-closed]="!drawer.opened">
+      <mat-icon class="hamburger-icon"
+                (click)="drawer.toggle()"
+                *ngIf="!drawer.opened">menu
+      </mat-icon>
+      <span class="title-content">{{title}}</span>
+      <span style="flex: 1 1 auto;"></span>
+    </mat-toolbar>
+    <div class="content">
+      <ng-content></ng-content>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

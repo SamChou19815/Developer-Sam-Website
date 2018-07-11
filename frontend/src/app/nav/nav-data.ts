@@ -45,10 +45,10 @@ export interface NavGroup extends BaseNavData {
 export type NavData = NavItem | NavGroup;
 
 /**
- * [allData] is a collection of all nav related data.
+ * [navDataList] is a collection of all nav related data.
  * @type {NavData[]}
  */
-export const allData: NavData[] = [
+export const navDataList: NavData[] = [
   <NavItem>{
     name: 'Developer Sam', icon: Icon.ofMaterial('home'),
     link: '/', isInternal: true
@@ -105,7 +105,7 @@ export namespace NavData {
    */
   function computeNames(): Map<string, string> {
     const map = new Map<string, string>();
-    for (const data of allData) {
+    for (const data of navDataList) {
       if (data.hasOwnProperty('link')) {
         const item = <NavItem>data;
         map.set(item.link, item.name);

@@ -1,14 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NavData, NavGroup, NavItem } from '../nav-data';
 
 @Component({
-  selector: 'app-home-side-nav',
-  templateUrl: './home-side-nav.component.html',
-  styleUrls: ['./home-side-nav.component.css']
+  selector: 'app-nav-side-nav',
+  templateUrl: './side-nav.component.html',
+  styleUrls: ['./side-nav.component.css']
 })
-export class HomeSideNavComponent implements OnInit {
+export class SideNavComponent implements OnInit {
 
-  @Input() dataList: NavData[] = [];
+  @Input() navDataList: NavData[] = [];
+  @Output() navClicked = new EventEmitter<undefined>();
 
   /**
    * [isItem] checks whether the data is an item.

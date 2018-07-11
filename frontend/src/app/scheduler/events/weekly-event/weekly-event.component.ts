@@ -48,7 +48,7 @@ export class WeeklyEventComponent implements OnInit {
       }
     };
     const filter: (opt: string | null) => boolean = opt => opt != null;
-    return Repeats.toRepeatSelectedArray(this.schedulerEvent.repeatConfig)
+    return Repeats.toRepeatSelected(this.schedulerEvent.repeatConfig)
       .map(mapper).filter(filter).join(' ');
   }
 

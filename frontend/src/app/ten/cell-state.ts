@@ -12,9 +12,6 @@ export class CellState {
    */
   private highlight: boolean;
 
-  /**
-   * Construct to the default empty state.
-   */
   constructor() {
     this.state = 0;
     this.highlight = false;

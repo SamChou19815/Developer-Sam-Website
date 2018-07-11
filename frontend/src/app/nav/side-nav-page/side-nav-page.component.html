@@ -10,13 +10,14 @@
 <mat-sidenav-container [autosize]="false">
   <mat-sidenav [mode]="mode" [opened]="sideNavInitiallyOpened" class="mat-elevation-z4" #drawer>
     <nav class="nav-toolbar">
-      <!--
-    <span class="title-nav">
-      <mat-icon class="close-icon" (click)="drawer.close()">close</mat-icon>
-      <span style="display: flex;">Developer Sam</span>
-    </span>
-    -->
-      <app-nav-side-nav [navDataList]="navDataList" (navClicked)="clickNav()"></app-nav-side-nav>
+      <ng-container *ngFor="let data of navDataList">
+        <app-nav-item *ngIf="isItem(data)"
+                      [item]="getItem(data)"
+                      (click)="clickNav()"></app-nav-item>
+        <app-nav-group *ngIf="isGroup(data)"
+                       [group]="getGroup(data)"
+                       (navClicked)="clickNav()"></app-nav-group>
+      </ng-container>
     </nav>
   </mat-sidenav>
   <mat-sidenav-content>

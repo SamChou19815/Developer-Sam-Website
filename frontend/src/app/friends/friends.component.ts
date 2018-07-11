@@ -15,9 +15,20 @@ import { FriendsNetworkService } from './friends-network.service';
 })
 export class FriendsComponent implements OnInit {
 
+  /**
+   * The input value of email to search for a user.
+   * @type {string}
+   */
   emailInput = '';
+  /**
+   * The user found from the server, used for user searching.
+   */
   foundUser: GoogleUser | undefined;
-  data: FriendData = FriendData.dummyData;
+  /**
+   * All the friend data to display.
+   * @type {FriendData}
+   */
+  data: FriendData = <FriendData>{ list: [], requests: [] };
 
   constructor(private googleUserService: GoogleUserService,
               private networkService: FriendsNetworkService,
@@ -34,49 +45,74 @@ export class FriendsComponent implements OnInit {
     });
   }
 
-  async search() {
-    const ref = this.loadingService.open();
-    const user = await this.networkService.getUserInfo(this.emailInput);
-    ref.close();
-    if (user == null) {
-      this.dialog.open(AlertComponent, { data: 'There is no user with this email.' });
-      return;
-    }
-    this.foundUser = user;
+  /**
+   * Search for a user.
+   */
+  search(): void {
+    (async () => {
+      const ref = this.loadingService.open();
+      const user = await this.networkService.getUserInfo(this.emailInput);
+      ref.close();
+      if (user == null) {
+        this.dialog.open(AlertComponent, { data: 'There is no user with this email.' });
+        return;
+      }
+      this.foundUser = user;
+    })();
   }
 
-  async addFriendRequest() {
-    const ref = this.loadingService.open();
-    if (this.foundUser == null) {
-      throw new Error();
-    }
-    await this.networkService.addFriendRequest(this.foundUser.key);
-    ref.close();
-    this.dialog.open(AlertComponent, { data: 'Your friend request has been sent.' });
+  /**
+   * Add a friend from the recorded user.
+   */
+  addFriendRequest(): void {
+    (async () => {
+      if (this.foundUser == null) {
+        return;
+      }
+      const ref = this.loadingService.open();
+      await this.networkService.addFriendRequest(this.foundUser.key);
+      ref.close();
+      this.dialog.open(AlertComponent, { data: 'Your friend request has been sent.' });
+    })();
   }
 
-  async respond(user: GoogleUser, approved: boolean) {
-    const action = approved ? 'accept' : 'reject';
-    if (!confirm(`Do you want to ${action} this request?`)) {
-      return;
-    }
-    const ref = this.loadingService.open();
-    await this.networkService.respondFriendRequest(user.key, approved);
-    this.data.requests = this.data.requests.filter(u => u.key !== user.key);
-    if (approved) {
-      this.data.list.push(user);
-    }
-    ref.close();
+  /**
+   * Respond a friend request from the given user.
+   *
+   * @param {GoogleUser} user the user who sent the request.
+   * @param {boolean} isApproved whether to approve the request.
+   */
+  respond(user: GoogleUser, isApproved: boolean) {
+    (async () => {
+      const action = isApproved ? 'accept' : 'reject';
+      if (!confirm(`Do you want to ${action} this request?`)) {
+        return;
+      }
+      const ref = this.loadingService.open();
+      await this.networkService.respondFriendRequest(user.key, isApproved);
+      this.data.requests = this.data.requests.filter(u => u.key !== user.key);
+      if (isApproved) {
+        this.data.list.push(user);
+      }
+      ref.close();
+    })();
   }
 
-  async removeFriend(user: GoogleUser) {
-    if (!confirm(`Do you want to remove your friend (${user.name})?`)) {
-      return;
-    }
-    const ref = this.loadingService.open();
-    await this.networkService.removeFriend(user.key);
-    this.data.list = this.data.list.filter(u => u.key !== user.key);
-    ref.close();
+  /**
+   * Remove a user as friend.
+   *
+   * @param {GoogleUser} user the user to unfriend.
+   */
+  removeFriend(user: GoogleUser) {
+    (async () => {
+      if (!confirm(`Do you want to remove your friend (${user.name})?`)) {
+        return;
+      }
+      const ref = this.loadingService.open();
+      await this.networkService.removeFriend(user.key);
+      this.data.list = this.data.list.filter(u => u.key !== user.key);
+      ref.close();
+    })();
   }
 
 }

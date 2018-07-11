@@ -15,6 +15,10 @@ import {
 })
 export class EditorDialogComponent implements OnInit {
 
+  /**
+   * All possible hours.
+   * @type {number[]}
+   */
   readonly possibleHours: number[] = possibleHoursArray;
   types = SchedulerEventType;
 
@@ -25,10 +29,10 @@ export class EditorDialogComponent implements OnInit {
   endHourInThisTimeZone: number;
 
   // One-time specific
-  date: FormControl;
+  readonly dateFormControl: FormControl;
 
   // Weekly specific
-  repeatSelected: [boolean, boolean, boolean, boolean, boolean, boolean, boolean];
+  repeatSelected: Repeats.RepeatSelected;
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any) {
     const event = data as SchedulerEvent;
@@ -40,12 +44,15 @@ export class EditorDialogComponent implements OnInit {
     this.startHourInThisTimeZone = thisTimezoneStart;
     this.endHourInThisTimeZone = thisTimezoneEnd;
     if (this.isOneTimeEvent) {
-      this.date = new FormControl(SchedulerEvent.utcDateTimeAtZeroAMAndUTCHourToLocalDate(
-        event.repeatConfig, event.startHour));
+      this.dateFormControl = new FormControl(
+        SchedulerEvent.utcDateTimeAtZeroAMAndUTCHourToLocalDate(
+          event.repeatConfig, event.startHour
+        )
+      );
       this.repeatSelected = [true, true, true, true, true, true, true];
     } else {
-      this.date = new FormControl(new Date());
-      this.repeatSelected = Repeats.toRepeatSelectedArray(event.repeatConfig);
+      this.dateFormControl = new FormControl(new Date());
+      this.repeatSelected = Repeats.toRepeatSelected(event.repeatConfig);
     }
   }
 
@@ -63,6 +70,11 @@ export class EditorDialogComponent implements OnInit {
       : `Edit ${this.isOneTimeEvent ? 'One-time' : 'Weekly'} Scheduler Event`;
   }
 
+  /**
+   * Returns whether the edited event is a one-time event.
+   *
+   * @returns {boolean} whether the edited event is a one-time event.
+   */
   get isOneTimeEvent(): boolean {
     return this.type === SchedulerEventType.ONE_TIME;
   }
@@ -74,7 +86,7 @@ export class EditorDialogComponent implements OnInit {
    */
   private get repeatConfig(): number {
     return this.isOneTimeEvent
-      ? SchedulerEvent.dateToUTCDateAtZeroAm(<Date>this.date.value)
+      ? SchedulerEvent.dateToUTCDateAtZeroAm(<Date>this.dateFormControl.value)
       : Repeats.getDayConfig(Repeats.SUNDAY, this.repeatSelected[0]) |
       Repeats.getDayConfig(Repeats.MONDAY, this.repeatSelected[1]) |
       Repeats.getDayConfig(Repeats.TUESDAY, this.repeatSelected[2]) |
@@ -93,6 +105,11 @@ export class EditorDialogComponent implements OnInit {
     return this.isOneTimeEvent || Repeats.inConfig(this.repeatConfig, Repeats.EVERYDAY);
   }
 
+  /**
+   * Returns whether the submit button should be disabled.
+   *
+   * @returns {boolean} whether the submit button should be disabled.
+   */
   get submitDisabled(): boolean {
     return this.title.trim().length === 0 ||
       this.startHourInThisTimeZone >= this.endHourInThisTimeZone ||
@@ -100,9 +117,9 @@ export class EditorDialogComponent implements OnInit {
   }
 
   /**
-   * Returns the generated event from the content of the dialog.
+   * Returns the auto-generated event from valid user input.
    *
-   * @returns {SchedulerEvent} the generated event from the content of the dialog.
+   * @returns {SchedulerEvent} the auto-generated project from valid user input.
    */
   get generatedEvent(): SchedulerEvent {
     const [utcStart, utcEnd] = SchedulerEvent.convertHours(

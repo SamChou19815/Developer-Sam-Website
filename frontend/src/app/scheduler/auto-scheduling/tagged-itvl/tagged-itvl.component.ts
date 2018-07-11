@@ -3,10 +3,10 @@ import { SchedulerTaggedInterval } from '../../scheduler-tagged-interval';
 
 @Component({
   selector: 'app-scheduler-tagged-interval',
-  templateUrl: './tagged-interval.component.html',
-  styleUrls: ['./tagged-interval.component.css']
+  templateUrl: './tagged-itvl.component.html',
+  styleUrls: ['./tagged-itvl.component.css']
 })
-export class TaggedIntervalComponent implements OnInit {
+export class TaggedItvlComponent implements OnInit {
 
   @Input() taggedInterval: SchedulerTaggedInterval = {
     type: 'PROJECT', title: '', start: 0, end: 0

@@ -1,8 +1,0 @@
-<div class="data" *ngFor="let data of navDataList">
-  <app-nav-item *ngIf="isItem(data)"
-                [item]="getItem(data)"
-                (click)="navClicked.emit()"></app-nav-item>
-  <app-nav-group *ngIf="isGroup(data)"
-                 [group]="getGroup(data)"
-                 (navClicked)="navClicked.emit()"></app-nav-group>
-</div>

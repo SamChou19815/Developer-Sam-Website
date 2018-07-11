@@ -10,7 +10,7 @@ import {
 import { MatDrawer } from '@angular/material';
 import { Title } from '@angular/platform-browser';
 import { NavigationStart, Router, RouterEvent } from '@angular/router';
-import { NavData, navDataList } from '../nav-data';
+import { NavData, navDataList, NavGroup, NavItem } from '../nav-data';
 
 @Component({
   selector: 'app-nav-side-nav-page',
@@ -23,7 +23,7 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
    * Exported navigation data list.
    * @type {NavData[]}
    */
-  navDataList = navDataList;
+  readonly navDataList = navDataList;
   /**
    * Title displayed at the top.
    * @type {string}
@@ -44,6 +44,34 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
    * The reference to the drawer.
    */
   @ViewChild('drawer') private drawer: MatDrawer | undefined;
+
+  /**
+   * [isItem] checks whether the data is an item.
+   * @param {NavData} data the given data.
+   * @returns {boolean} whether the data is an item.
+   */
+  readonly isItem = (data: NavData) => data.hasOwnProperty('link');
+
+  /**
+   * [isGroup] checks whether the data is a group.
+   * @param {NavData} data the given data.
+   * @returns {boolean} whether the data is a group.
+   */
+  readonly isGroup = (data: NavData) => data.hasOwnProperty('children');
+
+  /**
+   * Returns the data as a nav item.
+   * @param {NavData} data the given data.
+   * @returns {NavItem} the data as a nav item.
+   */
+  readonly getItem = (data: NavData) => data as NavItem;
+
+  /**
+   * Returns the data as a nav group.
+   * @param {NavData} data the given data.
+   * @returns {NavGroup} the data as a nav group.
+   */
+  readonly getGroup = (data: NavData) => data as NavGroup;
 
   constructor(private titleService: Title,
               private changeDetector: ChangeDetectorRef,
@@ -83,6 +111,7 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
   get mode(): string {
     return this.isScreenWide ? 'side' : 'over';
   }
+
   /**
    * Whether the side nav should be open initially.
    *

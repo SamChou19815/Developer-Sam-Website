@@ -9,31 +9,31 @@ export namespace SchedulerEventRepeats {
   /**
    * [SUNDAY] means repeating on Sunday.
    */
-  export const SUNDAY: number = 1 << 0;
+  export const SUNDAY = 1;
   /**
    * [MONDAY] means repeating on Monday.
    */
-  export const MONDAY: number = 1 << 1;
+  export const MONDAY = 2;
   /**
    * [TUESDAY] means repeating on Tuesday.
    */
-  export const TUESDAY: number = 1 << 2;
+  export const TUESDAY = 4;
   /**
    * [WEDNESDAY] means repeating on Wednesday.
    */
-  export const WEDNESDAY: number = 1 << 3;
+  export const WEDNESDAY = 8;
   /**
    * [THURSDAY] means repeating on Thursday.
    */
-  export const THURSDAY: number = 1 << 4;
+  export const THURSDAY = 16;
   /**
    * [FRIDAY] means repeating on Friday.
    */
-  export const FRIDAY: number = 1 << 5;
+  export const FRIDAY = 32;
   /**
    * [SATURDAY] means repeating on Saturday.
    */
-  export const SATURDAY: number = 1 << 6;
+  export const SATURDAY = 64;
 
   /**
    * [WEEKDAYS] means repeating on weekdays.
@@ -71,14 +71,17 @@ export namespace SchedulerEventRepeats {
   }
 
   /**
+   * A short-hand for repeat selected config.
+   */
+  export type RepeatSelected = [boolean, boolean, boolean, boolean, boolean, boolean, boolean];
+
+  /**
    * Returns the repeat selected form of the given config.
    *
    * @param {number} config config to convert.
-   * @returns {[boolean]} the repeat selected form of the given config.
+   * @returns {RepeatSelected} the repeat selected form of the given config.
    */
-  export function toRepeatSelectedArray(
-    config: number
-  ): [boolean, boolean, boolean, boolean, boolean, boolean, boolean] {
+  export function toRepeatSelected(config: number): RepeatSelected {
     return [
       inConfig(SUNDAY, config), inConfig(MONDAY, config), inConfig(TUESDAY, config),
       inConfig(WEDNESDAY, config), inConfig(THURSDAY, config), inConfig(FRIDAY, config),
@@ -133,7 +136,7 @@ export class SchedulerEvent implements SchedulerRecord {
     if (another == null) {
       this.type = SchedulerEventType.ONE_TIME;
       this.title = '';
-      const [s, e] = SchedulerEvent.convertHours(0, 23, true);
+      const [s, e] = SchedulerEvent.convertHours(0, 24, true);
       this.startHour = s;
       this.endHour = e;
       const nowDate = new Date();
@@ -164,7 +167,7 @@ export class SchedulerEvent implements SchedulerRecord {
       return [utcStart, utcEnd];
     } else {
       const thisTimezoneStart = (start - SchedulerEvent.dateHourOffSet + 48) % 24;
-      const thisTimezoneEnd = (end - SchedulerEvent.dateHourOffSet + 48) % 24;
+      const thisTimezoneEnd = thisTimezoneStart + end - start;
       return [thisTimezoneStart, thisTimezoneEnd];
     }
   }

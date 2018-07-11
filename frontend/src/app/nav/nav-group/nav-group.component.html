@@ -1,11 +1,11 @@
 <a class="nav-item">
   <app-icon [icon]="group.icon"></app-icon>
   <span class="nav-item-text">{{group.name}}</span>
-  <mat-icon (click)="shown = !shown">
+  <mat-icon (click)="doesShowChild = !doesShowChild">
     {{shown ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}
   </mat-icon>
 </a>
-<ng-container *ngIf="shown">
+<ng-container *ngIf="doesShowChild">
   <app-nav-item *ngFor="let item of group.children"
                 [item]="item"
                 [isChild]="true"

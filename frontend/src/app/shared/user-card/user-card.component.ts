@@ -8,6 +8,10 @@ import { GoogleUser } from '../google-user';
 })
 export class UserCardComponent implements OnInit {
 
+  /**
+   * The user information to display.
+   * @type {GoogleUser}
+   */
   @Input() user: GoogleUser = GoogleUser.defaultDummyUser;
 
   constructor() {

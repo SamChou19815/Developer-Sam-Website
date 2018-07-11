@@ -11,11 +11,15 @@ import { SchedulerProject } from '../../scheduler-project';
 })
 export class EditorDialogComponent implements OnInit {
 
+  /**
+   * All possible hours.
+   * @type {number[]}
+   */
   readonly possibleHours: number[] = possibleHoursArray;
 
   readonly key: string | undefined;
   title: string;
-  date: FormControl;
+  readonly dateFormControl: FormControl;
   hour: number;
   private readonly isCompleted: boolean;
   detail: string;
@@ -29,7 +33,7 @@ export class EditorDialogComponent implements OnInit {
     this.key = item.key;
     this.title = item.title;
     const d = item.deadlineDate;
-    this.date = new FormControl(new Date(d.getTime()));
+    this.dateFormControl = new FormControl(new Date(d.getTime()));
     this.hour = d.getHours();
     this.isCompleted = item.isCompleted;
     this.detail = item.detail;
@@ -43,11 +47,16 @@ export class EditorDialogComponent implements OnInit {
   }
 
   private get deadline(): number {
-    const d: Date = this.date.value;
+    const d: Date = this.dateFormControl.value;
     d.setHours(this.hour, 0, 0, 0);
     return d.getTime();
   }
 
+  /**
+   * Returns whether the submit button should be disabled.
+   *
+   * @returns {boolean} whether the submit button should be disabled.
+   */
   get submitDisabled(): boolean {
     try {
       return this.title.trim().length === 0 || new Date().getTime() - this.deadline > 0;
@@ -56,6 +65,11 @@ export class EditorDialogComponent implements OnInit {
     }
   }
 
+  /**
+   * Returns the auto-generated project from valid user input.
+   *
+   * @returns {SchedulerProject} the auto-generated project from valid user input.
+   */
   get generatedProject(): SchedulerProject {
     return <SchedulerProject>{
       key: this.key,

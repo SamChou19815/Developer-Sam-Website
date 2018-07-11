@@ -2,7 +2,7 @@
   <app-icon [icon]="group.icon"></app-icon>
   <span class="nav-item-text">{{group.name}}</span>
   <mat-icon (click)="doesShowChild = !doesShowChild">
-    {{shown ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}
+    {{doesShowChild ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}
   </mat-icon>
 </a>
 <ng-container *ngIf="doesShowChild">

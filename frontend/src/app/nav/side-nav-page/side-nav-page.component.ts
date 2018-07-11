@@ -36,12 +36,6 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
   private windowWidth: number;
 
   /**
-   * The title for the side nav.
-   * @type {string}
-   */
-  @Input() sideNavTitle = '';
-
-  /**
    * The reference to the drawer.
    */
   @ViewChild('drawer') private drawer: MatDrawer | undefined;

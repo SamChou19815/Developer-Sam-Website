@@ -10,7 +10,8 @@ import {
 import { MatDrawer } from '@angular/material';
 import { Title } from '@angular/platform-browser';
 import { NavigationStart, Router, RouterEvent } from '@angular/router';
-import { NavData, navDataList, NavGroup, NavItem } from '../nav-data';
+import { NavData, NavDataList, NavGroup, NavItem } from '../nav-data';
+import { NavDataService } from '../nav-data.service';
 
 @Component({
   selector: 'app-nav-side-nav-page',
@@ -20,15 +21,15 @@ import { NavData, navDataList, NavGroup, NavItem } from '../nav-data';
 export class SideNavPageComponent implements OnInit, AfterViewInit {
 
   /**
-   * Exported navigation data list.
-   * @type {NavData[]}
+   * Navigation data list.
+   * @type {NavDataList}
    */
-  readonly navDataList = navDataList;
+  readonly navDataList: NavDataList;
   /**
    * Title displayed at the top.
    * @type {string}
    */
-  title = navDataList[0].name;
+  title: string;
   /**
    * Current width of the window.
    */
@@ -78,8 +79,11 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
   readonly getGroup = (data: NavData) => data as NavGroup;
 
   constructor(private titleService: Title,
+              private navDataService: NavDataService,
               private changeDetector: ChangeDetectorRef,
               private router: Router) {
+    this.navDataList = navDataService.navDataList;
+    this.title = this.navDataList.list[0].name;
     this.windowWidth = window.innerWidth;
   }
 
@@ -87,7 +91,7 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
     this.router.events.subscribe((e) => {
       if (e instanceof RouterEvent && e instanceof NavigationStart) {
         const currentUrl = e.url;
-        const title = NavData.getNameByUrl(currentUrl);
+        const title = this.navDataList.getNameByUrl(currentUrl);
         this.titleService.setTitle(title);
         this.title = title;
       }

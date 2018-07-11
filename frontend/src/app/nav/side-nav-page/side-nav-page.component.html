@@ -9,7 +9,7 @@
 <mat-sidenav-container [autosize]="false">
   <mat-sidenav [mode]="mode" [opened]="sideNavInitiallyOpened" class="mat-elevation-z4" #drawer>
     <nav class="nav-toolbar">
-      <ng-container *ngFor="let data of navDataList">
+      <ng-container *ngFor="let data of navDataList.list">
         <app-nav-item *ngIf="isItem(data)"
                       [item]="getItem(data)"
                       (click)="clickNav()"></app-nav-item>

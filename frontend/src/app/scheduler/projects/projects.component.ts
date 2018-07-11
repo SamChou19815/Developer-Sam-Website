@@ -14,6 +14,10 @@ import { EditorDialogComponent } from './editor-dialog/editor-dialog.component';
 })
 export class ProjectsComponent implements OnInit {
 
+  /**
+   * Projects to display.
+   * @type {SchedulerProject[]}
+   */
   projects: SchedulerProject[] = [];
 
   constructor(private googleUserService: GoogleUserService,
@@ -22,7 +26,7 @@ export class ProjectsComponent implements OnInit {
               private dialog: MatDialog) {
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     shortDelay(async () => {
       const ref = this.loadingService.open();
       this.networkService.firebaseAuthToken = await this.googleUserService.afterSignedIn();
@@ -32,7 +36,14 @@ export class ProjectsComponent implements OnInit {
     });
   }
 
-  async editProject(projectWithIndex?: { project: SchedulerProject, index: number }) {
+  /**
+   * Asynchronously edit a project with index attached.
+   *
+   * @param projectWithIndex the project with index, can be omitted.
+   */
+  private async asyncEditProject(
+    projectWithIndex?: { project: SchedulerProject, index: number }
+  ): Promise<void> {
     const toBeEdited = projectWithIndex == null
       ? new SchedulerProject() : new SchedulerProject(projectWithIndex.project);
     const value: any = await this.dialog
@@ -55,27 +66,54 @@ export class ProjectsComponent implements OnInit {
     ref.close();
   }
 
-  async deleteProject(project: SchedulerProject, index: number) {
-    if (project.key == null) {
-      return;
-    }
-    const ref = this.loadingService.open();
-    await this.networkService.deleteRecord(project.key, 'project');
-    ref.close();
-    this.projects.splice(index, 1);
+  /**
+   * Edit a project with index attached.
+   *
+   * @param projectWithIndex the project with index, can be omitted.
+   */
+  editProject(projectWithIndex?: { project: SchedulerProject, index: number }): void {
+    this.asyncEditProject(projectWithIndex).then(() => {
+    });
   }
 
-  async markProjectAs(completed: boolean, project: SchedulerProject, index: number) {
-    if (project.key == null) {
-      return;
-    }
-    const ref = this.loadingService.open();
-    await this.networkService.markProjectAs(completed, project.key);
-    ref.close();
-    const newProject = new SchedulerProject(<SchedulerProject>{
-      ...project, isCompleted: completed
-    });
-    this.projects.splice(index, 1, newProject);
+  /**
+   * Delete a project.
+   *
+   * @param {SchedulerProject} project project to delete.
+   * @param {number} index index of the project.
+   */
+  deleteProject(project: SchedulerProject, index: number): void {
+    (async () => {
+      if (project.key == null) {
+        return;
+      }
+      const ref = this.loadingService.open();
+      await this.networkService.deleteRecord(project.key, 'project');
+      ref.close();
+      this.projects.splice(index, 1);
+    })();
+  }
+
+  /**
+   * Mark project as completed or not.
+   *
+   * @param {boolean} completed whether the project should be marked as completed.
+   * @param {SchedulerProject} project the project to mark.
+   * @param {number} index index of the project.
+   */
+  markProjectAs(completed: boolean, project: SchedulerProject, index: number): void {
+    (async () => {
+      if (project.key == null) {
+        return;
+      }
+      const ref = this.loadingService.open();
+      await this.networkService.markProjectAs(completed, project.key);
+      ref.close();
+      const newProject = new SchedulerProject(<SchedulerProject>{
+        ...project, isCompleted: completed
+      });
+      this.projects.splice(index, 1, newProject);
+    })();
   }
 
 }

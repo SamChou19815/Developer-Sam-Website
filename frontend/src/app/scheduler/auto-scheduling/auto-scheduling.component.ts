@@ -14,10 +14,25 @@ import { SchedulerTaggedInterval } from '../scheduler-tagged-interval';
 })
 export class AutoSchedulingComponent implements OnInit {
 
+  /**
+   * A list of all tagged intervals for user only.
+   * @type {SchedulerTaggedInterval[]}
+   */
   taggedIntervals: SchedulerTaggedInterval[] = [];
+  /**
+   * A list of all friends.
+   * @type {GoogleUser[]}
+   */
   friends: GoogleUser[] = [];
 
+  /**
+   * The selected friend.
+   */
   selectedFriend: GoogleUser | undefined;
+  /**
+   * A list of all tagged intervals for user and his friend.
+   * @type {SchedulerTaggedInterval[]}
+   */
   taggedIntervalsWithFriends: SchedulerTaggedInterval[] = [];
 
   constructor(private googleUserService: GoogleUserService,
@@ -42,17 +57,26 @@ export class AutoSchedulingComponent implements OnInit {
     });
   }
 
-  async doAutoScheduling() {
-    if (this.selectedFriend == null) {
-      throw new Error();
-    }
-    this.taggedIntervalsWithFriends = [];
-    const ref = this.loadingService.open();
-    this.taggedIntervalsWithFriends =
-      await this.schedulerNetworkService.getAutoScheduling(this.selectedFriend.key);
-    ref.close();
+  /**
+   * Do auto scheduling with selected friend. Must be called only when the friend selected is
+   * active.
+   */
+  doAutoSchedulingWithFriend() {
+    (async () => {
+      if (this.selectedFriend == null) {
+        throw new Error();
+      }
+      this.taggedIntervalsWithFriends = [];
+      const ref = this.loadingService.open();
+      this.taggedIntervalsWithFriends =
+        await this.schedulerNetworkService.getAutoScheduling(this.selectedFriend.key);
+      ref.close();
+    })();
   }
 
+  /**
+   * Clear intervals with friends to start over.
+   */
   clearIntervalsWithFriends() {
     this.taggedIntervalsWithFriends = [];
     this.selectedFriend = undefined;

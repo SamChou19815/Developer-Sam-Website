@@ -8,8 +8,20 @@ import { SchedulerEvent } from '../../scheduler-event';
 })
 export class OneTimeEventComponent implements OnInit {
 
+  /**
+   * The one-time event to display.
+   * @type {SchedulerEvent}
+   */
   @Input() schedulerEvent: SchedulerEvent = new SchedulerEvent();
+  /**
+   * Used to report when edit button is clicked.
+   * @type {EventEmitter<undefined>}
+   */
   @Output() editClicked = new EventEmitter<undefined>();
+  /**
+   * Used to report when delete button is clicked.
+   * @type {EventEmitter<undefined>}
+   */
   @Output() deleteClicked = new EventEmitter<undefined>();
 
   constructor() {

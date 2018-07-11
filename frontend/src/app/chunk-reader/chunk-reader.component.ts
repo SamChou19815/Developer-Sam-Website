@@ -12,11 +12,15 @@ import { ChunkReaderNetworkService } from './chunk-reader-network.service';
 
 @Component({
   selector: 'app-chunk-reader',
-  templateUrl: './chunk-reader.component.html',
-  styleUrls: ['./chunk-reader.component.css']
+  templateUrl: 'chunk-reader.component.html',
+  styleUrls: ['chunk-reader.component.css']
 })
 export class ChunkReaderComponent implements OnInit {
 
+  /**
+   * A list of article for preview.
+   * @type {AnalyzedArticle[]}
+   */
   articlesPreview: AnalyzedArticle[] = [];
 
   constructor(private googleUserService: GoogleUserService,
@@ -35,32 +39,52 @@ export class ChunkReaderComponent implements OnInit {
     });
   }
 
-  async openAddArticleDialog() {
-    const value: any = await this.dialog.open(AddArticleDialogComponent).afterClosed().toPromise();
-    if (value == null) {
-      return;
-    }
-    const successful = await this.networkService.analyzeArticle(value as RawArticle);
-    const message = successful
-      ? `Your article is being analyzed right now. Refresh the page later to see its analysis.`
-      : `Sorry, your article cannot be analyzed for some unknown reasons.
+  /**
+   * Open an add article dialog and registers the callback.
+   */
+  addArticle(): void {
+    (async () => {
+      const value = await this.dialog.open(AddArticleDialogComponent).afterClosed().toPromise();
+      if (value == null) {
+        return;
+      }
+      const successful = await this.networkService.analyzeArticle(value as RawArticle);
+      const message = successful
+        ? `Your article is being analyzed right now. Refresh the page later to see its result.`
+        : `Sorry, your article cannot be analyzed for some unknown reasons.
       The failure has been logged in the system and we will try to figure out why.`;
-    this.dialog.open(AlertComponent, { data: message });
+      this.dialog.open(AlertComponent, { data: message });
+    })();
   }
 
-  async displayArticleDetails(analyzedArticle: AnalyzedArticle) {
-    const article = await this.networkService.loadArticleDetail(analyzedArticle.key);
-    this.pushControllerService.open(ArticleDetailComponent, article);
+  /**
+   * Display the article detail.
+   *
+   * @param {AnalyzedArticle} analyzedArticle the article to display detail.
+   */
+  displayArticleDetails(analyzedArticle: AnalyzedArticle): void {
+    (async () => {
+      const article = await this.networkService.loadArticleDetail(analyzedArticle.key);
+      this.pushControllerService.open(ArticleDetailComponent, article);
+    })();
   }
 
-  async deleteArticle(article: AnalyzedArticle, index: number) {
+  /**
+   * Delete the given article.
+   *
+   * @param {AnalyzedArticle} article article to delete.
+   * @param {number} index index of the article.
+   */
+  deleteArticle(article: AnalyzedArticle, index: number): void {
     if (!confirm('Do you really want to delete this article?')) {
       return;
     }
-    const ref = this.loadingService.open();
-    await this.networkService.deleteArticle(article.key);
-    this.articlesPreview.splice(index, 1);
-    ref.close();
+    (async () => {
+      const ref = this.loadingService.open();
+      await this.networkService.deleteArticle(article.key);
+      this.articlesPreview.splice(index, 1);
+      ref.close();
+    })();
   }
 
 }

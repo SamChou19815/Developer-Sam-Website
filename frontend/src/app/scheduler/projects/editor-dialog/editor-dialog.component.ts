@@ -17,15 +17,45 @@ export class EditorDialogComponent implements OnInit {
    */
   readonly possibleHours: number[] = possibleHoursArray;
 
+  /**
+   * Key of the project.
+   */
   readonly key: string | undefined;
+  /**
+   * Title of the project.
+   */
   title: string;
+  /**
+   * Date control to select the deadline date.
+   */
   readonly dateFormControl: FormControl;
+  /**
+   * Deadline hour.
+   */
   hour: number;
+  /**
+   * Whether the project is completed.
+   */
   private readonly isCompleted: boolean;
+  /**
+   * Detail of the project.
+   */
   detail: string;
+  /**
+   * Minimum time units required to work on it consecutively.
+   */
   minimumTimeUnits: number;
+  /**
+   * Estimated number of time units to complete it.
+   */
   estimatedTimeUnits: number;
+  /**
+   * Whether it's a group project.
+   */
   isGroupProject: boolean;
+  /**
+   * Weight of the project.
+   */
   weight: number;
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any) {
@@ -46,7 +76,12 @@ export class EditorDialogComponent implements OnInit {
   ngOnInit() {
   }
 
-  private get deadline(): number {
+  /**
+   * Returns the deadline time of the given input.
+   *
+   * @returns {number} the deadline time of the given input.
+   */
+  private get deadlineTime(): number {
     const d: Date = this.dateFormControl.value;
     d.setHours(this.hour, 0, 0, 0);
     return d.getTime();
@@ -59,7 +94,7 @@ export class EditorDialogComponent implements OnInit {
    */
   get submitDisabled(): boolean {
     try {
-      return this.title.trim().length === 0 || new Date().getTime() - this.deadline > 0;
+      return this.title.trim().length === 0 || new Date().getTime() - this.deadlineTime > 0;
     } catch (e) {
       return true;
     }
@@ -74,7 +109,7 @@ export class EditorDialogComponent implements OnInit {
     return <SchedulerProject>{
       key: this.key,
       title: this.title,
-      deadline: this.deadline,
+      deadline: this.deadlineTime,
       isCompleted: this.isCompleted,
       detail: this.detail,
       minimumTimeUnits: this.minimumTimeUnits,

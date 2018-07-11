@@ -47,6 +47,7 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
 
   /**
    * [isItem] checks whether the data is an item.
+   *
    * @param {NavData} data the given data.
    * @returns {boolean} whether the data is an item.
    */
@@ -54,6 +55,7 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
 
   /**
    * [isGroup] checks whether the data is a group.
+   *
    * @param {NavData} data the given data.
    * @returns {boolean} whether the data is a group.
    */
@@ -61,6 +63,7 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
 
   /**
    * Returns the data as a nav item.
+   *
    * @param {NavData} data the given data.
    * @returns {NavItem} the data as a nav item.
    */
@@ -68,6 +71,7 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
 
   /**
    * Returns the data as a nav group.
+   *
    * @param {NavData} data the given data.
    * @returns {NavGroup} the data as a nav group.
    */
@@ -123,13 +127,13 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
 
   /**
    * Handle clicking nav.
-   *
-   * @returns {Promise<void>} dummy return value.
    */
-  async clickNav(): Promise<void> {
-    if (!this.isScreenWide && this.drawer != null) {
-      await this.drawer.close();
-    }
+  clickNav(): void {
+    (async () => {
+      if (!this.isScreenWide && this.drawer != null) {
+        await this.drawer.close();
+      }
+    })();
   }
 
   /**

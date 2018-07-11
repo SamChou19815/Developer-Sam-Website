@@ -20,29 +20,50 @@ export class EditorDialogComponent implements OnInit {
    * @type {number[]}
    */
   readonly possibleHours: number[] = possibleHoursArray;
-  types = SchedulerEventType;
+  /**
+   * All possible SchedulerEventTypes.
+   * @type {SchedulerEventType}
+   */
+  readonly types = SchedulerEventType;
 
+  /**
+   * Key of the event.
+   */
   readonly key: string | undefined;
+  /**
+   * Type of the event.
+   */
   type: SchedulerEventType;
+  /**
+   * Title of the event.
+   */
   title: string;
+  /**
+   * Start hour in this time zone, instead of in UTC.
+   */
   startHourInThisTimeZone: number;
+  /**
+   * End hour in this time zone, instead of in UTC.
+   */
   endHourInThisTimeZone: number;
 
-  // One-time specific
+  /**
+   * One-time event specific form control for date.
+   */
   readonly dateFormControl: FormControl;
-
-  // Weekly specific
-  repeatSelected: Repeats.RepeatSelected;
+  /**
+   * Weekly event specific repeat config.
+   */
+  readonly repeatSelected: Repeats.RepeatSelected;
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any) {
     const event = data as SchedulerEvent;
     this.key = event.key;
     this.type = event.type;
     this.title = event.title;
-    const [thisTimezoneStart, thisTimezoneEnd] =
-      SchedulerEvent.convertHours(event.startHour, event.endHour, false);
-    this.startHourInThisTimeZone = thisTimezoneStart;
-    this.endHourInThisTimeZone = thisTimezoneEnd;
+    [this.startHourInThisTimeZone, this.endHourInThisTimeZone] = SchedulerEvent.convertHours(
+      event.startHour, event.endHour, false
+    );
     if (this.isOneTimeEvent) {
       this.dateFormControl = new FormControl(
         SchedulerEvent.utcDateTimeAtZeroAMAndUTCHourToLocalDate(
@@ -123,7 +144,8 @@ export class EditorDialogComponent implements OnInit {
    */
   get generatedEvent(): SchedulerEvent {
     const [utcStart, utcEnd] = SchedulerEvent.convertHours(
-      this.startHourInThisTimeZone, this.endHourInThisTimeZone, true);
+      this.startHourInThisTimeZone, this.endHourInThisTimeZone, true
+    );
     return <SchedulerEvent>{
       key: this.key, type: this.type, title: this.title,
       startHour: utcStart, endHour: utcEnd, repeatConfig: this.repeatConfig

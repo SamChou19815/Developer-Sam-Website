@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AlertComponent } from '../shared/alert/alert.component';
 import { GoogleUser } from '../shared/google-user';
-import { GoogleUserService } from '../shared/google-user.service';
 import { LoadingOverlayService } from '../shared/overlay/loading-overlay.service';
-import { shortDelay } from '../shared/util';
+import { asyncRun, shortDelay } from '../shared/util';
 import { FriendData } from './friend-data';
+import { FriendsDataService } from './friends-data.service';
 import { FriendsNetworkService } from './friends-network.service';
 
 @Component({
@@ -24,32 +24,39 @@ export class FriendsComponent implements OnInit {
    * The user found from the server, used for user searching.
    */
   foundUser: GoogleUser | undefined;
-  /**
-   * All the friend data to display.
-   * @type {FriendData}
-   */
-  data: FriendData = <FriendData>{ list: [], requests: [] };
 
-  constructor(private googleUserService: GoogleUserService,
-              private networkService: FriendsNetworkService,
+  constructor(private networkService: FriendsNetworkService,
+              private dataService: FriendsDataService,
               private loadingService: LoadingOverlayService,
               private dialog: MatDialog) {
   }
 
   ngOnInit() {
-    shortDelay(async () => {
+    shortDelay(() => {
       const ref = this.loadingService.open();
-      this.networkService.firebaseAuthToken = await this.googleUserService.afterSignedIn();
-      this.data = await this.networkService.loadFriendsData();
-      ref.close();
+      this.dataService.initializedFriendsApp().then(ref.close);
     });
   }
 
   /**
-   * Search for a user.
+   * Returns all the friend data to display.
+   *
+   * @returns {FriendData} all the friend data to display.
    */
-  search(): void {
-    (async () => {
+  get data(): FriendData {
+    return this.dataService.data;
+  }
+
+  /**
+   * Search for a user.
+   *
+   * @param {KeyboardEvent} event the optional keyboard event.
+   */
+  search(event?: KeyboardEvent): void {
+    if (!event || event.code !== 'Enter') {
+      return;
+    }
+    asyncRun(async () => {
       const ref = this.loadingService.open();
       const user = await this.networkService.getUserInfo(this.emailInput);
       ref.close();
@@ -58,14 +65,14 @@ export class FriendsComponent implements OnInit {
         return;
       }
       this.foundUser = user;
-    })();
+    });
   }
 
   /**
    * Add a friend from the recorded user.
    */
   addFriendRequest(): void {
-    (async () => {
+    asyncRun(async () => {
       if (this.foundUser == null) {
         return;
       }
@@ -73,46 +80,36 @@ export class FriendsComponent implements OnInit {
       await this.networkService.addFriendRequest(this.foundUser.key);
       ref.close();
       this.dialog.open(AlertComponent, { data: 'Your friend request has been sent.' });
-    })();
+    });
   }
 
   /**
    * Respond a friend request from the given user.
    *
    * @param {GoogleUser} user the user who sent the request.
-   * @param {boolean} isApproved whether to approve the request.
+   * @param {index} index of the user in the list.
+   * @param {boolean} approved whether to approve the request.
    */
-  respond(user: GoogleUser, isApproved: boolean) {
-    (async () => {
-      const action = isApproved ? 'accept' : 'reject';
-      if (!confirm(`Do you want to ${action} this request?`)) {
-        return;
-      }
-      const ref = this.loadingService.open();
-      await this.networkService.respondFriendRequest(user.key, isApproved);
-      this.data.requests = this.data.requests.filter(u => u.key !== user.key);
-      if (isApproved) {
-        this.data.list.push(user);
-      }
-      ref.close();
-    })();
+  respondToFriendRequest(user: GoogleUser, index: number, approved: boolean): void {
+    if (!confirm(`Do you want to ${approved ? 'accept' : 'reject'} this request?`)) {
+      return;
+    }
+    const ref = this.loadingService.open();
+    this.dataService.respondToFriendRequest(user, index, approved).then(ref.close);
   }
 
   /**
    * Remove a user as friend.
    *
    * @param {GoogleUser} user the user to unfriend.
+   * @param {index} index of the user in the list.
    */
-  removeFriend(user: GoogleUser) {
-    (async () => {
-      if (!confirm(`Do you want to remove your friend (${user.name})?`)) {
-        return;
-      }
-      const ref = this.loadingService.open();
-      await this.networkService.removeFriend(user.key);
-      this.data.list = this.data.list.filter(u => u.key !== user.key);
-      ref.close();
-    })();
+  removeFriend(user: GoogleUser, index: number): void {
+    if (!confirm(`Do you want to remove your friend (${user.name})?`)) {
+      return;
+    }
+    const ref = this.loadingService.open();
+    this.dataService.removeFriend(user, index).then(ref.close);
   }
 
 }

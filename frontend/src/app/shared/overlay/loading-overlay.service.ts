@@ -1,7 +1,7 @@
-import { Overlay, OverlayConfig, OverlayRef } from "@angular/cdk/overlay";
-import { ComponentPortal } from "@angular/cdk/portal";
-import { Injectable } from "@angular/core";
-import { LoadingOverlayComponent } from "./loading-overlay.component";
+import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
+import { Injectable } from '@angular/core';
+import { LoadingOverlayComponent } from './loading-overlay.component';
 
 @Injectable({
   providedIn: 'root'
@@ -23,8 +23,8 @@ export class LoadingOverlayService {
       .global().centerHorizontally().centerVertically();
     this.overlayConfig = new OverlayConfig({
       hasBackdrop: true,
-      backdropClass: "cdk-overlay-light-backdrop",
-      panelClass: "",
+      backdropClass: 'cdk-overlay-light-backdrop',
+      panelClass: '',
       scrollStrategy: overlay.scrollStrategies.block(),
       positionStrategy
     });
@@ -61,8 +61,6 @@ export class LoadingOverlayRef {
   /**
    * Close the global loading overlay.
    */
-  close(): void {
-    this.overlayRef.dispose();
-  }
+  close: () => void = () => this.overlayRef.dispose();
 
 }

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
 import { GoogleUser } from '../shared/google-user';
+import { wait } from '../shared/util';
 import { FriendData } from './friend-data';
 
 @Injectable({
@@ -18,7 +19,7 @@ export class FriendsNetworkService extends AuthenticatedNetworkService {
    *
    * @returns {Promise<FriendData>} the promise of all friend data.
    */
-  async loadFriendsData(): Promise<FriendData> {
+  get friendData$(): Promise<FriendData> {
     return this.getData<FriendData>('/apis/user/friends/load');
   }
 

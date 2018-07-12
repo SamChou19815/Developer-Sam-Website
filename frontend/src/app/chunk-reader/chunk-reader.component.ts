@@ -4,7 +4,7 @@ import { AlertComponent } from '../shared/alert/alert.component';
 import { GoogleUserService } from '../shared/google-user.service';
 import { LoadingOverlayService } from '../shared/overlay/loading-overlay.service';
 import { PushControllerService } from '../shared/overlay/push-controller.service';
-import { shortDelay } from '../shared/util';
+import { asyncRun, shortDelay } from '../shared/util';
 import { AddArticleDialogComponent } from './add-article-dialog/add-article-dialog.component';
 import { AnalyzedArticle, RawArticle } from './chunk-reader-data';
 import { ChunkReaderNetworkService } from './chunk-reader-network.service';
@@ -42,7 +42,7 @@ export class ChunkReaderComponent implements OnInit {
    * Open an add article dialog and registers the callback.
    */
   addArticle(): void {
-    (async () => {
+    asyncRun(async () => {
       const value = await this.dialog.open(AddArticleDialogComponent).afterClosed().toPromise();
       if (value == null) {
         return;
@@ -53,7 +53,7 @@ export class ChunkReaderComponent implements OnInit {
         : `Sorry, your article cannot be analyzed for some unknown reasons.
       The failure has been logged in the system and we will try to figure out why.`;
       this.dialog.open(AlertComponent, { data: message });
-    })();
+    });
   }
 
   /**
@@ -66,12 +66,12 @@ export class ChunkReaderComponent implements OnInit {
     if (!confirm('Do you really want to delete this article?')) {
       return;
     }
-    (async () => {
+    asyncRun(async () => {
       const ref = this.loadingService.open();
       await this.networkService.deleteArticle(article.key);
       this.articles.splice(index, 1);
       ref.close();
-    })();
+    });
   }
 
   /**
@@ -81,11 +81,11 @@ export class ChunkReaderComponent implements OnInit {
    * @param {number} limit the new limit.
    */
   private adjustSummary(article: AnalyzedArticle, limit: number): void {
-    (async () => {
+    asyncRun(async () => {
       const ref = this.loadingService.open();
       article.summaries = await this.networkService.adjustSummary(article.key, limit);
       ref.close();
-    })();
+    });
   }
 
   /**

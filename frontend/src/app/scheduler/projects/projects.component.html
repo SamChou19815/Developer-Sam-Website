@@ -1,6 +1,7 @@
-<app-scheduler-project *ngFor="let project of projects; let i = index"
-                       [schedulerProject]="project"
-                       (editClicked)="editProject({ project: project, index: i})"
-                       (deleteClicked)="deleteProject(project, i)"
-                       (markAsClicked)="markProjectAs($event, project, i)"></app-scheduler-project>
+<app-scheduler-project
+  *ngFor="let project of projects; let i = index"
+  [schedulerProject]="project"
+  (editClicked)="editProject({ project: project, index: i})"
+  (deleteClicked)="deleteProject({project: project, index: i})"
+  (markAsClicked)="markProjectAs({project: project, index: i}, $event)"></app-scheduler-project>
 <button color="accent" mat-fab (click)="editProject()">+</button>

@@ -74,6 +74,17 @@ export class SchedulerProject implements SchedulerRecord {
   }
 
   /**
+   * Compare two scheduler projects.
+   *
+   * @param {SchedulerProject} a the first one.
+   * @param {SchedulerProject} b the second one.
+   * @returns {number} the comparison result.
+   */
+  static compare(a: SchedulerProject, b: SchedulerProject): number {
+    return a.deadline - b.deadline;
+  }
+
+  /**
    * Returns the deadline as a Date object.
    *
    * @returns {Date} the deadline as a Date object.
@@ -119,4 +130,18 @@ export class SchedulerProject implements SchedulerRecord {
     return Math.floor(this.totalHoursLeft % 24);
   }
 
+}
+
+/**
+ * A scheduler project with its index.
+ */
+export interface SchedulerProjectWithIndex {
+  /**
+   * Project.
+   */
+  project: SchedulerProject;
+  /**
+   * Index
+   */
+  index: number;
 }

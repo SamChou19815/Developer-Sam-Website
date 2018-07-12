@@ -226,6 +226,20 @@ export class SchedulerEvent implements SchedulerRecord {
 }
 
 /**
+ * A scheduler event with its index.
+ */
+export interface SchedulerEventWithIndex {
+  /**
+   * Event.
+   */
+  event: SchedulerEvent;
+  /**
+   * Index.
+   */
+  index: number;
+}
+
+/**
  * Classified Events for Scheduler.
  */
 export interface SchedulerEvents {

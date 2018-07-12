@@ -3,7 +3,8 @@
   <mat-card-content>
     <div class="search-box-container">
       <mat-form-field class="search-box">
-        <input matInput type="email" [(ngModel)]="emailInput" placeholder="Friend's Email">
+        <input matInput type="email" [(ngModel)]="emailInput"
+               placeholder="Friend's Email" (keypress)="search($event)">
       </mat-form-field>
       <button mat-button color="primary"
               [disabled]="!emailInput.trim()"
@@ -18,14 +19,14 @@
 <mat-divider></mat-divider>
 <div class="section-text" *ngIf="data.list.length > 0">Your Friends</div>
 <app-user-card *ngFor="let user of data.list" [user]="user">
-  <button mat-button color="accent" (click)="removeFriend(user)">Unfriend</button>
+  <button mat-button color="accent" (click)="removeFriend(user, i)">Unfriend</button>
 </app-user-card>
 <div class="section-text" *ngIf="data.list.length === 0">You do not have any friends.</div>
 <mat-divider></mat-divider>
 <div class="section-text" *ngIf="data.requests.length > 0">Your Friend Requests</div>
-<app-user-card *ngFor="let user of data.requests" [user]="user">
-  <button mat-button color="accent" (click)="respond(user, true)">Accept</button>
-  <button mat-button color="accent" (click)="respond(user, false)">Reject</button>
+<app-user-card *ngFor="let user of data.requests; let i = index" [user]="user">
+  <button mat-button color="accent" (click)="respondToFriendRequest(user, i, true)">Accept</button>
+  <button mat-button color="accent" (click)="respondToFriendRequest(user, i, false)">Reject</button>
 </app-user-card>
 <div class="section-text" *ngIf="data.requests.length === 0">
   You do not have any friend requests.

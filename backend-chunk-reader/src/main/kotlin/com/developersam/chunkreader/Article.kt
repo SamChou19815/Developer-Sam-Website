@@ -120,11 +120,11 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
                 return
             }
             val textKey = Db.insert {
-                it[Table.userId] = user.uid
-                it[Table.time] = nowInUTC()
-                it[Table.title] = title
-                it[Table.tokenCount] = analyzer.tokenCount.toLong()
-                it[Table.content] = content
+                table.userId gets user.uid
+                table.time gets nowInUTC()
+                table.title gets title
+                table.tokenCount gets analyzer.tokenCount.toLong()
+                table.content gets content
             }.key
             measureTimeMillis {
                 Knowledge.buildKnowledgeGraph(textKey = textKey, entities = analyzer.entities)
@@ -153,8 +153,10 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
          */
         operator fun get(user: GoogleUser): List<Article> =
                 Db.query {
-                    filter = Table.userId eq user.uid
-                    order = Table.time.desc()
+                    filter {
+                        table.userId eq user.uid
+                    }
+                    table.time.desc()
                 }.map { Article(article = it, fullDetail = true) }.toList()
 
         /**

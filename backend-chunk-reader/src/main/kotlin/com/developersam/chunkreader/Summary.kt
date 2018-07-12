@@ -255,8 +255,8 @@ class Summary private constructor() {
          */
         internal fun getFromKey(textKey: Key, limit: Int = 5): List<String> =
                 SentenceEntity.query(ancestor = textKey) {
-                    this.order = Table.salience.desc()
-                    this.limit = limit
+                    Table.salience.desc()
+                    withLimit(limit = limit)
                 }.sortedBy { it.beginOffset }.map { it.text }.toList()
 
         /**
@@ -286,12 +286,14 @@ class Summary private constructor() {
         internal fun markSentenceSalience(
                 textKey: Key, sentences: List<Sentence>, entities: List<LanguageEntity>
         ) {
-            val marker = SentenceSalienceMarker(sentences, entities).apply { randomVisit() }
-            val source = Arrays.asList(*marker.annotatedSentences)
-            SentenceEntity.batchInsert(parent = textKey, source = source) { t, sentence ->
-                t[Table.beginOffset] = sentence.beginOffset
-                t[Table.salience] = sentence.salience
-                t[Table.text] = sentence.text
+            val source = SentenceSalienceMarker(sentences, entities)
+                    .apply { randomVisit() }
+                    .annotatedSentences
+                    .toList()
+            SentenceEntity.batchInsert(parent = textKey, source = source) { sentence ->
+                table.beginOffset gets sentence.beginOffset
+                table.salience gets sentence.salience
+                table.text gets sentence.text
             }
         }
 

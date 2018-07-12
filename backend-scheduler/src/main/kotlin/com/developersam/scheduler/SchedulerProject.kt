@@ -50,16 +50,16 @@ data class SchedulerProject(
         if (entityOpt != null && entityOpt.userId != user.uid) {
             return null // Illegal Access
         }
-        return SchedulerItemEntity.upsert(entity = entityOpt) { t ->
-            t[Table.userId] = user.uid
-            t[Table.title] = title
-            t[Table.deadline] = toLocalDateTimeInUTC(date = deadline)
-            t[Table.isCompleted] = isCompleted
-            t[Table.detail] = detail
-            t[Table.minimumTimeUnits] = minimumTimeUnits
-            t[Table.estimatedTimeUnits] = estimatedTimeUnits
-            t[Table.isGroupProject] = isGroupProject
-            t[Table.weight] = weight
+        return SchedulerItemEntity.upsert(entity = entityOpt) {
+            table.userId gets user.uid
+            table.title gets title
+            table.deadline gets toLocalDateTimeInUTC(date = deadline)
+            table.isCompleted gets isCompleted
+            table.detail gets detail
+            table.minimumTimeUnits gets minimumTimeUnits
+            table.estimatedTimeUnits gets estimatedTimeUnits
+            table.isGroupProject gets isGroupProject
+            table.weight gets weight
         }.key
     }
 
@@ -116,8 +116,11 @@ data class SchedulerProject(
          */
         internal operator fun get(user: GoogleUser): List<SchedulerProject> =
                 SchedulerItemEntity.query {
-                    filter = (Table.userId eq user.uid) and Table.deadline.isFuture()
-                    order = Table.deadline.asc()
+                    filter  {
+                        table.userId eq user.uid
+                        table.deadline.isFuture()
+                    }
+                    Table.deadline.asc()
                 }.map { it.asSchedulerProject }.toList()
 
         /**
@@ -129,7 +132,7 @@ data class SchedulerProject(
             defaultDatastore.transaction {
                 SchedulerItemEntity[key]?.let { item ->
                     if (item.userId == user.uid) {
-                        SchedulerItemEntity.update(item) { it[Table.isCompleted] = isCompleted }
+                        SchedulerItemEntity.update(item) { table.isCompleted gets isCompleted }
                     }
                 }
             }

@@ -34,11 +34,11 @@ data class GoogleUser(
      */
     fun upsert(): GoogleUser {
         val entityOpt = getEntityByUid(uid = uid)
-        return UserEntity.upsert(entity = entityOpt) { t ->
-            t[Table.uid] = uid
-            t[Table.name] = name
-            t[Table.email] = email
-            t[Table.picture] = picture
+        return UserEntity.upsert(entity = entityOpt) {
+            table.uid gets uid
+            table.name gets name
+            table.email gets email
+            table.picture gets picture
         }.asGoogleUser
     }
 
@@ -75,7 +75,7 @@ data class GoogleUser(
          * [getEntityByUid] returns a [UserEntity] by [uid], which may be `null`.
          */
         private fun getEntityByUid(uid: String): UserEntity? =
-                UserEntity.query { filter = Table.uid eq uid }.firstOrNull()
+                UserEntity.query { filter { table.uid eq uid } }.firstOrNull()
 
         /**
          * [getByKey] returns a [GoogleUser] by the given [key], which may be `null`.
@@ -91,7 +91,7 @@ data class GoogleUser(
          * [getByEmail] returns a [GoogleUser] by [email], which may be `null`.
          */
         fun getByEmail(email: String): GoogleUser? =
-                UserEntity.query { filter = Table.email eq email }.firstOrNull()?.asGoogleUser
+                UserEntity.query { filter { table.email eq email } }.firstOrNull()?.asGoogleUser
 
     }
 

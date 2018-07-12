@@ -37,7 +37,7 @@ object FriendRequest {
     @JvmStatic
     internal operator fun get(responder: GoogleUser): List<GoogleUser> {
         val responderKey = responder.keyNotNull
-        return RequestEntity.query { filter = Table.responderUserKey eq responderKey }
+        return RequestEntity.query { filter { table.responderUserKey eq responderKey } }
                 .mapNotNull { entity -> GoogleUser.getByKey(key = entity.requesterUserKey) }
                 .toList()
     }
@@ -50,15 +50,17 @@ object FriendRequest {
     fun add(requester: GoogleUser, responderUserKey: Key): Boolean {
         val requesterUserKey = requester.keyNotNull
         val exists = RequestEntity.any {
-            filter = (Table.responderUserKey eq responderUserKey) and
-                    (Table.requesterUserKey eq requesterUserKey)
+            filter {
+                table.responderUserKey eq responderUserKey
+                table.requesterUserKey eq requesterUserKey
+            }
         }
         if (exists) {
             return true
         }
-        RequestEntity.insert { t ->
-            t[Table.requesterUserKey] = requesterUserKey
-            t[Table.responderUserKey] = responderUserKey
+        RequestEntity.insert {
+            table.requesterUserKey gets requesterUserKey
+            table.responderUserKey gets responderUserKey
         }
         return true
     }
@@ -73,8 +75,10 @@ object FriendRequest {
     fun respond(responder: GoogleUser, requesterUserKey: Key, approved: Boolean): Boolean {
         val responderUserKey = responder.keyNotNull
         val requestKey = RequestEntity.query {
-            filter = (Table.responderUserKey eq responderUserKey) and
-                    (Table.requesterUserKey eq requesterUserKey)
+            filter {
+                table.responderUserKey eq responderUserKey
+                table.requesterUserKey eq requesterUserKey
+            }
         }.firstOrNull()?.key ?: return false
         RequestEntity.delete(requestKey)
         if (approved) {

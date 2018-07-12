@@ -36,12 +36,10 @@ object FriendPair {
      * [get] returns a list of friends for [user].
      */
     @JvmStatic
-    internal operator fun get(user: GoogleUser): Set<GoogleUser> {
-        val userKey = user.keyNotNull
-        return PairEntity.query { filter = Table.firstUserKey eq userKey }
-                .mapNotNull { entity -> GoogleUser.getByKey(key = entity.secondUserKey) }
-                .toSet()
-    }
+    internal operator fun get(user: GoogleUser): Set<GoogleUser> =
+            PairEntity.query { filter { table.firstUserKey eq user.keyNotNull } }
+                    .mapNotNull { entity -> GoogleUser.getByKey(key = entity.secondUserKey) }
+                    .toSet()
 
     /**
      * [exists] reports whether the friend pair with [firstUserKey] and [secondUserKey] exists
@@ -50,8 +48,10 @@ object FriendPair {
     @JvmStatic
     fun exists(firstUserKey: Key, secondUserKey: Key): Boolean =
             PairEntity.any {
-                filter = (Table.firstUserKey eq firstUserKey) and
-                        (Table.secondUserKey eq secondUserKey)
+                filter {
+                    table.firstUserKey eq firstUserKey
+                    table.secondUserKey eq secondUserKey
+                }
             }
 
     /**
@@ -64,11 +64,15 @@ object FriendPair {
         if (exists(firstUserKey, secondUserKey)) {
             return false
         }
-        PairEntity.batchInsert(
-                source = listOf(firstUserKey to secondUserKey, secondUserKey to firstUserKey)
-        ) { t, (first, second) ->
-            t[Table.firstUserKey] = first
-            t[Table.secondUserKey] = second
+        val source = if (firstUserKey == secondUserKey) {
+            // Optimize for add self as friend case
+            listOf(firstUserKey to secondUserKey)
+        } else {
+            listOf(firstUserKey to secondUserKey, secondUserKey to firstUserKey)
+        }
+        PairEntity.batchInsert(source = source) { (first, second) ->
+            table.firstUserKey gets first
+            table.secondUserKey gets second
         }
         return true
     }
@@ -81,13 +85,17 @@ object FriendPair {
     fun delete(firstUserKey: Key, secondUserKey: Key) {
         val entitiesToDelete = arrayListOf<PairEntity>()
         PairEntity.query {
-            filter = (Table.firstUserKey eq firstUserKey) and
-                    (Table.secondUserKey eq secondUserKey)
-        }.forEach { entitiesToDelete.add(element = it) }
+            filter {
+                table.firstUserKey eq firstUserKey
+                table.secondUserKey eq secondUserKey
+            }
+        }.forEach { entitiesToDelete.add(it) }
         PairEntity.query {
-            filter = (Table.firstUserKey eq secondUserKey) and
-                    (Table.secondUserKey eq firstUserKey)
-        }.forEach { entitiesToDelete.add(element = it) }
+            filter {
+                table.firstUserKey eq secondUserKey
+                table.secondUserKey eq firstUserKey
+            }
+        }.forEach { entitiesToDelete.add(it) }
         PairEntity.delete(entities = *entitiesToDelete.toTypedArray())
     }
 

@@ -47,13 +47,13 @@ data class SchedulerEvent(
         if (entityOpt != null && entityOpt.userId != user.uid) {
             return null // Illegal Access
         }
-        return SchedulerEventEntity.upsert(entity = entityOpt) { t ->
-            t[Table.userId] = user.uid
-            t[Table.type] = type
-            t[Table.title] = title
-            t[Table.startHour] = startHour
-            t[Table.endHour] = endHour
-            t[Table.repeatConfig] = repeatConfig
+        return SchedulerEventEntity.upsert(entity = entityOpt) {
+            table.userId gets user.uid
+            table.type gets type
+            table.title gets title
+            table.startHour gets startHour
+            table.endHour gets endHour
+            table.repeatConfig gets repeatConfig
         }.key
     }
 
@@ -199,16 +199,14 @@ data class SchedulerEvent(
          * @param user the user whose events need to be fetched. This user must exist.
          */
         internal operator fun get(user: GoogleUser): List<SchedulerEvent> =
-                SchedulerEventEntity.query { filter = Table.userId eq user.uid }
+                SchedulerEventEntity.query { filter { table.userId eq user.uid } }
                         .map { it.asSchedulerEvent }
                         .filter { event ->
                             if (event.type == EventType.WEEKLY) true else {
                                 val endTime = event.repeatConfig + event.endHour * 3600 * 1000
                                 endTime > System.currentTimeMillis()
                             }
-                        }
-                        .sorted()
-                        .toList()
+                        }.sorted().toList()
 
         /**
          * [delete] removes a scheduler event from database with a given [key] if the event really

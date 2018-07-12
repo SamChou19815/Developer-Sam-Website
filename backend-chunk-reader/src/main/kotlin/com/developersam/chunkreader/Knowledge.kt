@@ -71,7 +71,7 @@ internal data class Knowledge(
          * [get] returns a map of categorized knowledge list for the given [textKey].
          */
         operator fun get(textKey: Key): Map<Type, List<Knowledge>> = KnowledgeEntity
-                .query(ancestor = textKey) { order = Table.salience.desc() }
+                .query(ancestor = textKey) { Table.salience.desc() }
                 .map { it.asKnowledge }
                 .groupBy { it.type }
                 .mapValues { (_, v) -> v.distinctBy { it.name } }
@@ -89,11 +89,11 @@ internal data class Knowledge(
          * knowledge graph for the given text.
          */
         fun buildKnowledgeGraph(textKey: Key, entities: List<LanguageEntity>) {
-            KnowledgeEntity.batchInsert(parent = textKey, source = entities) { t, entity ->
-                t[Table.name] = entity.name
-                t[Table.type] = entity.type.toType()
-                t[Table.url] = entity.metadataMap["wikipedia_url"]
-                t[Table.salience] = entity.salience.toDouble()
+            KnowledgeEntity.batchInsert(parent = textKey, source = entities) { entity ->
+                table.name gets entity.name
+                table.type gets entity.type.toType()
+                table.url gets entity.metadataMap["wikipedia_url"]
+                table.salience gets entity.salience.toDouble()
             }
         }
 

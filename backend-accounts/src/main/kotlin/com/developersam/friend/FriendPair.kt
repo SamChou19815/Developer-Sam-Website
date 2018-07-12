@@ -28,7 +28,8 @@ object FriendPair {
         val secondUserKey: Key = Table.secondUserKey.delegatedValue
 
         companion object : TypedEntityCompanion<Table, PairEntity>(table = Table) {
-            override fun create(entity: Entity): PairEntity = PairEntity(entity = entity)
+            override fun create(entity: Entity): PairEntity =
+                    PairEntity(entity = entity)
         }
     }
 
@@ -37,7 +38,7 @@ object FriendPair {
      */
     @JvmStatic
     internal operator fun get(user: GoogleUser): Set<GoogleUser> =
-            PairEntity.query { filter { table.firstUserKey eq user.keyNotNull } }
+            PairEntity.query { filter { Table.firstUserKey eq user.keyNotNull } }
                     .mapNotNull { entity -> GoogleUser.getByKey(key = entity.secondUserKey) }
                     .toSet()
 
@@ -49,8 +50,8 @@ object FriendPair {
     fun exists(firstUserKey: Key, secondUserKey: Key): Boolean =
             PairEntity.any {
                 filter {
-                    table.firstUserKey eq firstUserKey
-                    table.secondUserKey eq secondUserKey
+                    Table.firstUserKey eq firstUserKey
+                    Table.secondUserKey eq secondUserKey
                 }
             }
 
@@ -71,8 +72,8 @@ object FriendPair {
             listOf(firstUserKey to secondUserKey, secondUserKey to firstUserKey)
         }
         PairEntity.batchInsert(source = source) { (first, second) ->
-            table.firstUserKey gets first
-            table.secondUserKey gets second
+            Table.firstUserKey gets first
+            Table.secondUserKey gets second
         }
         return true
     }
@@ -86,14 +87,14 @@ object FriendPair {
         val entitiesToDelete = arrayListOf<PairEntity>()
         PairEntity.query {
             filter {
-                table.firstUserKey eq firstUserKey
-                table.secondUserKey eq secondUserKey
+                Table.firstUserKey eq firstUserKey
+                Table.secondUserKey eq secondUserKey
             }
         }.forEach { entitiesToDelete.add(it) }
         PairEntity.query {
             filter {
-                table.firstUserKey eq secondUserKey
-                table.secondUserKey eq firstUserKey
+                Table.firstUserKey eq secondUserKey
+                Table.secondUserKey eq firstUserKey
             }
         }.forEach { entitiesToDelete.add(it) }
         PairEntity.delete(entities = *entitiesToDelete.toTypedArray())

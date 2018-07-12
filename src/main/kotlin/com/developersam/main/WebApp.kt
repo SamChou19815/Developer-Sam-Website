@@ -3,6 +3,7 @@
 package com.developersam.main
 
 import com.developersam.auth.GoogleUser
+import com.developersam.auth.Role
 import com.developersam.auth.SecurityFilters
 import com.developersam.auth.SecurityFilters.Companion.user
 import com.developersam.chunkreader.Article
@@ -32,7 +33,6 @@ import spark.Route
 import spark.Spark
 import spark.Spark.get
 import spark.Spark.path
-import spark.kotlin.before
 import spark.kotlin.halt
 import java.lang.reflect.Type
 import kotlin.system.measureTimeMillis
@@ -44,14 +44,9 @@ import kotlin.system.measureTimeMillis
  */
 
 /**
- * [Role] defines a set of roles supported by the system.
- */
-private enum class Role { USER, ADMIN }
-
-/**
  * [Filters] can be used to create security filters.
  */
-private object Filters : SecurityFilters<Role>(roleAssigner = { Role.USER })
+private object Filters : SecurityFilters(adminEmails = setOf())
 
 /**
  * [KeyTypeAdapter] is the type adapter for [Key].
@@ -105,12 +100,6 @@ private fun Request.queryParamsForKeyOpt(name: String): Key? =
  */
 private fun Request.queryParamsForKey(name: String): Key =
         queryParamsForKeyOpt(name = name) ?: badRequest()
-
-/**
- * [before] registers a before security filter with [path] and a user given a required [role].
- */
-private fun before(path: String, role: Role): Unit =
-        Spark.before(path, Filters.withRole(role = role))
 
 /**
  * [get] registers a GET handler with [path] and a user given function [f].
@@ -253,7 +242,7 @@ private fun initializeChunkReaderApiHandlers() {
  * [initializeUserApiHandlers] initializes a list of user API handlers.
  */
 private fun initializeUserApiHandlers() {
-    before(path = "/*", role = Role.USER)
+    Filters.before(path = "/*", role = Role.USER)
     path("/friends", ::initializeFriendSystemApiHandlers)
     path("/scheduler", ::initializeSchedulerApiHandlers)
     path("/chunkreader", ::initializeChunkReaderApiHandlers)

@@ -25,7 +25,7 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
     /**
      * [key] is the key string of the article.
      */
-    private val key: Key = article.key
+    private val key: String = article.key.toUrlSafe()
     /**
      * [time] is the submitted time of the article.
      */

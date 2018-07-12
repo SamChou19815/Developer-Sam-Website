@@ -1,4 +1,0 @@
-dependencies {
-    // Auth
-    implementation project(':backend-auth')
-}

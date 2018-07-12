@@ -1,5 +1,2 @@
 rootProject.name = 'website'
-include(
-        'backend-auth', 'backend-friend',
-        'backend-scheduler', 'backend-chunk-reader'
-)
+include('backend-accounts', 'backend-scheduler', 'backend-chunk-reader')

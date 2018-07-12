@@ -18,21 +18,20 @@ import org.pac4j.sparkjava.SecurityFilter
 import org.pac4j.sparkjava.SparkWebContext
 import spark.Request
 import spark.Response
+import spark.Spark
+import spark.kotlin.before
 import spark.kotlin.halt
 import java.net.URI
 import java.util.logging.Level
 import java.util.logging.Logger
 
 /**
- * [SecurityFilters] can build different specialized security filters from a common
- * [firebaseAuth] to extract users.
+ * [SecurityFilters] can build different specialized security filters.
  * Best practice: when using it, you should create a singleton from this class.
  *
- * @param R the enum type of user role.
+ * @property adminEmails the list of emails belong to the admin user.
  */
-open class SecurityFilters<R : Enum<R>>(
-        private val roleAssigner: (GoogleUser) -> R
-) {
+open class SecurityFilters(private val adminEmails: Set<String>) {
 
     /**
      * [firebaseAuth] is the global Authentication Handler.
@@ -48,7 +47,11 @@ open class SecurityFilters<R : Enum<R>>(
      * [authorizationGenerator] is the generator used to assign roles to users.
      */
     private val authorizationGenerator = AuthorizationGenerator<CommonProfile> { _, p ->
-        p.apply { addRole(roleAssigner((p as Profile).user).name) }
+        p.apply {
+            val user = (p as Profile).user
+            val role = if (user.email in adminEmails) Role.ADMIN else Role.USER
+            addRole(role.name)
+        }
     }
 
     /**
@@ -78,11 +81,16 @@ open class SecurityFilters<R : Enum<R>>(
     /**
      * [withRole] returns a new security filter that requires the user to have certain [role].
      */
-    fun withRole(role: R): SecurityFilter = Config(clients).apply {
+    private fun withRole(role: Role): SecurityFilter = Config(clients).apply {
         addAuthorizer(ROLE_AUTHORIZER_NAME,
                 RequireAllRolesAuthorizer<Profile>(role.name))
         httpActionAdapter = DefaultHttpActionAdapter()
     }.let { UserSecurityFilter(config = it) }
+
+    /**
+     * [before] registers a before security filter with [path] and a user given a required [role].
+     */
+    fun before(path: String, role: Role): Unit = Spark.before(path, withRole(role = role))
 
     /**
      * [Profile] is the user profile of the firebase user.

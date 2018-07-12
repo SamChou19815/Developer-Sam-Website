@@ -25,8 +25,7 @@ dependencies {
     // Apps Backend
     implementation 'com.developersam:game-ten:1.0.1'
     // Sub-modules
-    implementation project(':backend-auth')
-    implementation project(':backend-friend')
+    implementation project(':backend-accounts')
     implementation project(':backend-scheduler')
     implementation project(':backend-chunk-reader')
 }
@@ -49,7 +48,7 @@ allprojects {
         // Test
         testImplementation 'junit:junit:4.12'
         // DB
-        implementation 'com.github.SamChou19815:TypedStore:0.2.0'
+        implementation 'com.github.SamChou19815:TypedStore:0.2.1'
     }
 
     compileKotlin {

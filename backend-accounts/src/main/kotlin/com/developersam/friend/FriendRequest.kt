@@ -27,7 +27,8 @@ object FriendRequest {
         val requesterUserKey: Key = Table.requesterUserKey.delegatedValue
 
         companion object : TypedEntityCompanion<Table, RequestEntity>(table = Table) {
-            override fun create(entity: Entity): RequestEntity = RequestEntity(entity = entity)
+            override fun create(entity: Entity): RequestEntity =
+                    RequestEntity(entity = entity)
         }
     }
 
@@ -37,7 +38,7 @@ object FriendRequest {
     @JvmStatic
     internal operator fun get(responder: GoogleUser): List<GoogleUser> {
         val responderKey = responder.keyNotNull
-        return RequestEntity.query { filter { table.responderUserKey eq responderKey } }
+        return RequestEntity.query { filter { Table.responderUserKey eq responderKey } }
                 .mapNotNull { entity -> GoogleUser.getByKey(key = entity.requesterUserKey) }
                 .toList()
     }
@@ -51,16 +52,16 @@ object FriendRequest {
         val requesterUserKey = requester.keyNotNull
         val exists = RequestEntity.any {
             filter {
-                table.responderUserKey eq responderUserKey
-                table.requesterUserKey eq requesterUserKey
+                Table.responderUserKey eq responderUserKey
+                Table.requesterUserKey eq requesterUserKey
             }
         }
         if (exists) {
             return true
         }
         RequestEntity.insert {
-            table.requesterUserKey gets requesterUserKey
-            table.responderUserKey gets responderUserKey
+            Table.requesterUserKey gets requesterUserKey
+            Table.responderUserKey gets responderUserKey
         }
         return true
     }
@@ -76,8 +77,8 @@ object FriendRequest {
         val responderUserKey = responder.keyNotNull
         val requestKey = RequestEntity.query {
             filter {
-                table.responderUserKey eq responderUserKey
-                table.requesterUserKey eq requesterUserKey
+                Table.responderUserKey eq responderUserKey
+                Table.requesterUserKey eq requesterUserKey
             }
         }.firstOrNull()?.key ?: return false
         RequestEntity.delete(requestKey)

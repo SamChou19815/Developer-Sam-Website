@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material';
 import { AlertComponent } from '../shared/alert/alert.component';
 import { GoogleUserService } from '../shared/google-user.service';
 import { LoadingOverlayService } from '../shared/overlay/loading-overlay.service';
-import { PushControllerService } from '../shared/overlay/push-controller.service';
 import { asyncRun, shortDelay } from '../shared/util';
 import { AddArticleDialogComponent } from './add-article-dialog/add-article-dialog.component';
 import { AnalyzedArticle, RawArticle } from './chunk-reader-data';
@@ -24,7 +23,6 @@ export class ChunkReaderComponent implements OnInit {
 
   constructor(private googleUserService: GoogleUserService,
               private networkService: ChunkReaderNetworkService,
-              private pushControllerService: PushControllerService,
               private loadingService: LoadingOverlayService,
               private dialog: MatDialog) {
   }

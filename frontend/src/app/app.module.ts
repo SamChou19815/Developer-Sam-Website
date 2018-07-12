@@ -9,28 +9,22 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { NavModule } from './nav/nav.module';
-import { LoadingOverlayComponent } from './shared/overlay/loading-overlay.component';
 import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    LoadingOverlayComponent
   ],
   imports: [
-    BrowserModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFireAuthModule,
-    BrowserAnimationsModule,
-    SharedModule,
-    AppRoutingModule,
+    BrowserModule, NavModule, BrowserAnimationsModule,
+    AngularFireModule.initializeApp(environment.firebase), AngularFireAuthModule,
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
-    NavModule
+    AppRoutingModule,
+    SharedModule
   ],
   providers: [Title],
-  bootstrap: [AppComponent],
-  entryComponents: [LoadingOverlayComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule {
 }

@@ -3,9 +3,9 @@ package com.developersam.friend
 import com.developersam.auth.GoogleUser
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
-import typestore.TypedEntity
-import typestore.TypedEntityCompanion
-import typestore.TypedTable
+import typedstore.TypedEntity
+import typedstore.TypedEntityCompanion
+import typedstore.TypedTable
 
 /**
  * [FriendPair] represents a pair of friends in the database.
@@ -97,7 +97,7 @@ object FriendPair {
                 Table.secondUserKey eq firstUserKey
             }
         }.forEach { entitiesToDelete.add(it) }
-        PairEntity.delete(entities = *entitiesToDelete.toTypedArray())
+        PairEntity.delete(keys = entitiesToDelete.map { it.key })
     }
 
 }

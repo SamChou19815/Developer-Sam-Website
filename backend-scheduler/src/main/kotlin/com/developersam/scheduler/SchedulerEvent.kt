@@ -3,9 +3,9 @@ package com.developersam.scheduler
 import com.developersam.auth.GoogleUser
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
-import typestore.TypedEntity
-import typestore.TypedEntityCompanion
-import typestore.TypedTable
+import typedstore.TypedEntity
+import typedstore.TypedEntityCompanion
+import typedstore.TypedTable
 import java.time.DayOfWeek
 
 /**
@@ -214,7 +214,7 @@ data class SchedulerEvent(
          */
         fun delete(user: GoogleUser, key: Key) {
             SchedulerEventEntity[key]?.takeIf { it.userId == user.uid }
-                    ?.let { SchedulerEventEntity.delete(it) }
+                    ?.let { SchedulerEventEntity.delete(key) }
         }
 
     }

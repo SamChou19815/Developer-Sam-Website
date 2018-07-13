@@ -6,9 +6,9 @@ import com.developersam.fp.cons
 import com.developersam.scheduler.SchedulerEvent.Repeats.inConfig
 import com.developersam.scheduler.TaggedInterval.Type.EVENT
 import com.developersam.scheduler.TaggedInterval.Type.PROJECT
-import typestore.nowInUTC
-import typestore.toLocalDateTimeInUTC
-import typestore.toUTCMillis
+import typedstore.nowInUTC
+import typedstore.toLocalDateTimeInUTC
+import typedstore.toUTCMillis
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.stream.Collectors

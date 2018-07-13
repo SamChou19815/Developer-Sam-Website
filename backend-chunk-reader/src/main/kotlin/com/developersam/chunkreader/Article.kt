@@ -5,11 +5,11 @@ import com.developersam.chunkreader.Article.Table.content
 import com.developersam.chunkreader.Article.Table.title
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
-import typestore.TypedEntity
-import typestore.TypedEntityCompanion
-import typestore.TypedTable
-import typestore.nowInUTC
-import typestore.toUTCMillis
+import typedstore.TypedEntity
+import typedstore.TypedEntityCompanion
+import typedstore.TypedTable
+import typedstore.nowInUTC
+import typedstore.toUTCMillis
 import kotlin.system.measureTimeMillis
 import com.google.cloud.language.v1beta2.Entity as LanguageEntity
 
@@ -25,7 +25,7 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
     /**
      * [key] is the key string of the article.
      */
-    private val key: String = article.key.toUrlSafe()
+    private val key: Key = article.key
     /**
      * [time] is the submitted time of the article.
      */

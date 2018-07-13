@@ -38,7 +38,7 @@ allprojects {
         // Test
         testImplementation 'junit:junit:4.12'
         // DB
-        implementation 'com.github.SamChou19815:TypedStore:0.2.1'
+        api 'com.github.SamChou19815:TypedStore:0.3.0'
     }
 
     compileKotlin {
@@ -76,8 +76,7 @@ dependencies {
     // Google Cloud API
     implementation 'org.fluentd:fluent-logger:0.3.3' // Stackdriver
     // GSON
-    implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'org.danilopianini:gson-extras:0.2.1'
+    // implementation 'com.google.code.gson:gson:2.8.5'
     // Logging
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'org.slf4j:jcl-over-slf4j:1.7.25'
@@ -88,6 +87,7 @@ dependencies {
     // Sub-modules
     implementation project(':backend-accounts')
     implementation project(':backend-scheduler')
+    implementation project(':backend-rss-reader')
     implementation project(':backend-chunk-reader')
 }
 

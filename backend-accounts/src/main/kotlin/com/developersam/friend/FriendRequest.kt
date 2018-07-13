@@ -3,9 +3,9 @@ package com.developersam.friend
 import com.developersam.auth.GoogleUser
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
-import typestore.TypedEntity
-import typestore.TypedEntityCompanion
-import typestore.TypedTable
+import typedstore.TypedEntity
+import typedstore.TypedEntityCompanion
+import typedstore.TypedTable
 
 /**
  * [FriendRequest] defines a set of methods for handling adding friends.

@@ -2,9 +2,9 @@ package com.developersam.chunkreader
 
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
-import typestore.TypedEntity
-import typestore.TypedEntityCompanion
-import typestore.TypedTable
+import typedstore.TypedEntity
+import typedstore.TypedEntityCompanion
+import typedstore.TypedTable
 import com.google.cloud.language.v1beta2.Entity as LanguageEntity
 
 /**
@@ -80,8 +80,8 @@ internal data class Knowledge(
          * [deleteAll] deletes all knowledge for a given article with [articleKey].
          */
         internal fun deleteAll(articleKey: Key) {
-            val keys = KnowledgeEntity.query(ancestor = articleKey).toList().toTypedArray()
-            KnowledgeEntity.delete(*keys)
+            val keys = KnowledgeEntity.query(ancestor = articleKey).toList().map { it.key }
+            KnowledgeEntity.delete(keys = keys)
         }
 
         /**

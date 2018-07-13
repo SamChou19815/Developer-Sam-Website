@@ -2,9 +2,9 @@ package com.developersam.auth
 
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
-import typestore.TypedEntity
-import typestore.TypedEntityCompanion
-import typestore.TypedTable
+import typedstore.TypedEntity
+import typedstore.TypedEntityCompanion
+import typedstore.TypedTable
 
 /**
  * A [GoogleUser] is an class that contains many information of a Google user, obtained from a

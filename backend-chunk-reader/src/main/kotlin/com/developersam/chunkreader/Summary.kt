@@ -6,9 +6,9 @@ import com.google.cloud.datastore.Key
 import com.google.cloud.language.v1beta2.Sentence
 import com.google.cloud.language.v1beta2.TextSpan
 import com.google.common.collect.Sets
-import typestore.TypedEntity
-import typestore.TypedEntityCompanion
-import typestore.TypedTable
+import typedstore.TypedEntity
+import typedstore.TypedEntityCompanion
+import typedstore.TypedTable
 import java.util.Arrays
 import com.google.cloud.language.v1beta2.Entity as LanguageEntity
 
@@ -263,8 +263,8 @@ class Summary private constructor() {
          * [deleteAll] deletes all summaries for a given article with [articleKey].
          */
         internal fun deleteAll(articleKey: Key) {
-            val keys = SentenceEntity.query(ancestor = articleKey).toList().toTypedArray()
-            SentenceEntity.delete(*keys)
+            val keys = SentenceEntity.query(ancestor = articleKey).toList().map { it.key }
+            SentenceEntity.delete(keys = keys)
         }
 
         /**

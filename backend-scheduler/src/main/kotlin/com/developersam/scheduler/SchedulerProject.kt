@@ -3,13 +3,13 @@ package com.developersam.scheduler
 import com.developersam.auth.GoogleUser
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
-import typestore.TypedEntity
-import typestore.TypedEntityCompanion
-import typestore.TypedTable
-import typestore.defaultDatastore
-import typestore.toLocalDateTimeInUTC
-import typestore.toUTCMillis
-import typestore.transaction
+import typedstore.TypedEntity
+import typedstore.TypedEntityCompanion
+import typedstore.TypedTable
+import typedstore.defaultDatastore
+import typedstore.toLocalDateTimeInUTC
+import typedstore.toUTCMillis
+import typedstore.transaction
 import java.time.LocalDateTime
 
 /**
@@ -116,7 +116,7 @@ data class SchedulerProject(
          */
         internal operator fun get(user: GoogleUser): List<SchedulerProject> =
                 SchedulerItemEntity.query {
-                    filter  {
+                    filter {
                         table.userId eq user.uid
                         table.deadline.isFuture()
                     }
@@ -144,7 +144,7 @@ data class SchedulerProject(
          */
         fun delete(user: GoogleUser, key: Key) {
             SchedulerItemEntity[key]?.takeIf { it.userId == user.uid }
-                    ?.let { SchedulerItemEntity.delete(it) }
+                    ?.let { SchedulerItemEntity.delete(key) }
         }
 
     }

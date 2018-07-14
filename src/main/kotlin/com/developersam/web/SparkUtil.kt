@@ -3,7 +3,6 @@ package com.developersam.web
 import com.google.cloud.datastore.Cursor
 import com.google.cloud.datastore.Key
 import spark.Request
-import spark.Response
 import spark.ResponseTransformer
 import spark.Route
 import spark.Spark
@@ -25,18 +24,11 @@ private object Transformer : ResponseTransformer {
 internal inline fun <reified T> Request.toJson(): T = gson.fromJson(body(), T::class.java)
 
 /**
- * [Request.queryParamsForKeyOpt] returns the key from the given query params in this [Request].
- * If the data with [name] is not a key, it will return null.
- */
-internal fun Request.queryParamsForKeyOpt(name: String): Key? =
-        queryParams(name)?.let(block = Key::fromUrlSafe)
-
-/**
  * [Request.queryParamsForKey] returns the key from the given query params in this [Request].
  * If the data with [name] is not a key, it will end with a 400 error.
  */
 internal fun Request.queryParamsForKey(name: String): Key =
-        queryParamsForKeyOpt(name = name) ?: badRequest()
+        queryParams(name)?.let(block = Key::fromUrlSafe) ?: badRequest()
 
 /**
  * [Request.queryParamsForCursor] returns the cursor from the given query params in this [Request].

@@ -255,7 +255,7 @@ class Summary private constructor() {
          */
         internal fun getFromKey(textKey: Key, limit: Int = 5): List<String> =
                 SentenceEntity.query(ancestor = textKey) {
-                    Table.salience.desc()
+                    order { table.salience.desc() }
                     withLimit(limit = limit)
                 }.sortedBy { it.beginOffset }.map { it.text }.toList()
 

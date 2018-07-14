@@ -79,9 +79,10 @@ data class Feed(
         private const val MIN_REFRESH_FREQUENCY: Long = 1000 * 1200
 
         /**
-         * [get] returns the optional [Feed] given the [key] for the feed.
+         * [get] returns a list of [Feed] given the their [keys].
          */
-        internal operator fun get(key: Key): Feed? = FeedEntity[key]?.asRssFeed
+        internal operator fun get(keys: Iterable<Key>): List<Feed> =
+                FeedEntity[keys].map { it.asRssFeed }.toList()
 
         /**
          * [refreshByUrl] refreshes a given feed by its RSS [url].

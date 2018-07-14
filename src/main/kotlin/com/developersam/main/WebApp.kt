@@ -13,9 +13,8 @@ import com.developersam.friend.FriendPair
 import com.developersam.friend.FriendRequest
 import com.developersam.game.ten.Board
 import com.developersam.rss.Feed
-import com.developersam.rss.RssReaderData
-import com.developersam.rss.UserFeedItem
-import com.developersam.rss.UserFeedSubscription
+import com.developersam.rss.FeedItem
+import com.developersam.rss.UserFeed
 import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerData
 import com.developersam.scheduler.SchedulerEvent
@@ -27,7 +26,6 @@ import com.developersam.web.get
 import com.developersam.web.post
 import com.developersam.web.queryParamsForCursor
 import com.developersam.web.queryParamsForKey
-import com.developersam.web.queryParamsForKeyOpt
 import com.developersam.web.toJson
 import spark.Spark
 import spark.Spark.path
@@ -100,9 +98,11 @@ private fun initializeSchedulerApiHandlers() {
         val completed = queryParams("completed")?.toBoolean() ?: badRequest()
         SchedulerProject.markAs(user = user, key = key, isCompleted = completed)
     }
-    get(path = "/auto_schedule") {
-        val friendKey = queryParamsForKeyOpt(name = "friend_key")
-                ?: return@get Scheduler(config1 = SchedulerData(user = user)).schedule()
+    get(path = "/personal_auto_schedule") {
+        Scheduler(config1 = SchedulerData(user = user)).schedule()
+    }
+    get(path = "/friend_auto_schedule") {
+        val friendKey = queryParamsForKey(name = "friend_key")
         val myKey = user.keyNotNull
         if (!FriendPair.exists(firstUserKey = myKey, secondUserKey = friendKey)) {
             throw halt(code = 403)
@@ -118,14 +118,14 @@ private fun initializeSchedulerApiHandlers() {
  * [initializeRssReaderApiHandlers] initializes a list of RSS Reader API handlers.
  */
 private fun initializeRssReaderApiHandlers() {
-    get(path = "/load") { RssReaderData[user] }
+    get(path = "/load") { UserFeed.getUserData(user = user) }
     get(path = "/load_more_feed") {
         val cursor = queryParamsForCursor(name = "cursor")
-        UserFeedItem[user, cursor]
+        UserFeed.getFeed(user = user, startCursor = cursor)
     }
     post(path = "/add_feed") {
         val url = queryParams("url") ?: badRequest()
-        UserFeedSubscription.makeSubscription(user, url)
+        UserFeed.makeSubscription(user = user, url = url)
     }
 }
 

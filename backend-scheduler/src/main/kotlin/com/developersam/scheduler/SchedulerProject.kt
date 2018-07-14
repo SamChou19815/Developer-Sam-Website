@@ -120,7 +120,7 @@ data class SchedulerProject(
                         table.userId eq user.uid
                         table.deadline.isFuture()
                     }
-                    Table.deadline.asc()
+                    order { table.deadline.asc() }
                 }.map { it.asSchedulerProject }.toList()
 
         /**

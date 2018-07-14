@@ -71,7 +71,7 @@ internal data class Knowledge(
          * [get] returns a map of categorized knowledge list for the given [textKey].
          */
         operator fun get(textKey: Key): Map<Type, List<Knowledge>> = KnowledgeEntity
-                .query(ancestor = textKey) { Table.salience.desc() }
+                .query(ancestor = textKey) { order { table.salience.desc() } }
                 .map { it.asKnowledge }
                 .groupBy { it.type }
                 .mapValues { (_, v) -> v.distinctBy { it.name } }

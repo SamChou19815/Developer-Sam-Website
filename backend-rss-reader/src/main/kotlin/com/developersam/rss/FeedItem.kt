@@ -2,7 +2,6 @@ package com.developersam.rss
 
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
-import com.sun.tools.doclets.internal.toolkit.util.DocPath.parent
 import typedstore.TypedEntity
 import typedstore.TypedEntityBuilder
 import typedstore.TypedEntityCompanion
@@ -53,15 +52,17 @@ data class FeedItem(
     internal companion object {
 
         /**
-         * Returns the [FeedItem] given a [key].
+         * Returns a list of [FeedItem] given their [keys].
          */
-        operator fun get(key: Key): FeedItem? = ItemEntity[key]?.asRssFeedItem
+        operator fun get(keys: Iterable<Key>): List<FeedItem> =
+                ItemEntity[keys].map { it.asRssFeedItem }.toList()
 
         /**
          * [batchRefresh] will refresh a list of items in batch to automatically reconcile the info
          * recorded in DB.
          */
         fun batchRefresh(feedKey: Key, items: List<FeedItem>) {
+            // Step 1: Classify items to new and existing ones
             val newItems = arrayListOf<FeedItem>()
             val existingItems = arrayListOf<FeedItem>()
             val entities = arrayListOf<ItemEntity>()
@@ -74,6 +75,7 @@ data class FeedItem(
                     entities.add(element = entity)
                 }
             }
+            // Step 2: Update them separately
             val builder: TypedEntityBuilder<Table, ItemEntity>.(FeedItem) -> Unit = { item ->
                 table.title to item.title
                 table.link to item.link
@@ -84,7 +86,8 @@ data class FeedItem(
                     .forEach { itemKeys.add(element = it.key) }
             ItemEntity.batchUpdate(entities = entities, source = existingItems, builder = builder)
             entities.forEach { itemKeys.add(element = it.key) }
-            UserFeedSubscription.batchUserFeedRefresh(feedItemKeys = itemKeys)
+            // Step 3: Collect items keys to update user feed.
+            UserFeed.batchRefresh(feedItemKeys = itemKeys)
         }
 
     }

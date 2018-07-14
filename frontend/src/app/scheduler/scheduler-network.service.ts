@@ -78,8 +78,8 @@ export class SchedulerNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<SchedulerTaggedInterval[]>} the promise of auto scheduling result.
    */
   async getAutoScheduling(friendKey?: string): Promise<SchedulerTaggedInterval[]> {
-    const url = '/apis/user/scheduler/auto_schedule';
-    const params: HttpClientConfig = friendKey == null ? {} : { 'friend_key': friendKey };
+    const url = `/apis/user/scheduler/${friendKey ? 'friend' : 'personal' }_auto_schedule`;
+    const params: HttpClientConfig = friendKey ? { 'friend_key': friendKey } : {};
     return this.getData<SchedulerTaggedInterval[]>(url, params);
   }
 

@@ -1,5 +1,6 @@
 package com.developersam.web
 
+import com.google.cloud.datastore.Cursor
 import com.google.cloud.datastore.Key
 import spark.Request
 import spark.Response
@@ -28,7 +29,7 @@ internal inline fun <reified T> Request.toJson(): T = gson.fromJson(body(), T::c
  * If the data with [name] is not a key, it will return null.
  */
 internal fun Request.queryParamsForKeyOpt(name: String): Key? =
-        queryParams(name)?.let { Key.fromUrlSafe(it) }
+        queryParams(name)?.let(block = Key::fromUrlSafe)
 
 /**
  * [Request.queryParamsForKey] returns the key from the given query params in this [Request].
@@ -36,6 +37,13 @@ internal fun Request.queryParamsForKeyOpt(name: String): Key? =
  */
 internal fun Request.queryParamsForKey(name: String): Key =
         queryParamsForKeyOpt(name = name) ?: badRequest()
+
+/**
+ * [Request.queryParamsForCursor] returns the cursor from the given query params in this [Request].
+ * If the data with [name] is not a cursor, it will end with a 400 error.
+ */
+internal fun Request.queryParamsForCursor(name: String): Cursor =
+        queryParams(name)?.let(block = Cursor::fromUrlSafe) ?: badRequest()
 
 /**
  * [get] registers a GET handler with [path] and a user given function [f].

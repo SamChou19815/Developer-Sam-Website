@@ -18,7 +18,7 @@ export class ChunkReaderNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<AnalyzedArticle[]>} the promise of a list of analyzed articles.
    */
   async loadArticles(): Promise<AnalyzedArticle[]> {
-    return this.getData<AnalyzedArticle[]>('/apis/user/chunkreader/load');
+    return this.getData<AnalyzedArticle[]>('/apis/user/chunk_reader/load');
   }
 
   /**
@@ -29,7 +29,7 @@ export class ChunkReaderNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<string[]>} the promise of adjusted summaries.
    */
   async adjustSummary(key: string, limit: number): Promise<string[]> {
-    const url = '/apis/user/chunkreader/adjust_summary';
+    const url = '/apis/user/chunk_reader/adjust_summary';
     return this.getData<string[]>(url, { 'key': key, 'limit': limit.toString(10) });
   }
 
@@ -40,7 +40,7 @@ export class ChunkReaderNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<boolean>} the promise of the success report.
    */
   async analyzeArticle(rawArticle: RawArticle): Promise<boolean> {
-    const resp = await this.postDataForText('/apis/user/chunkreader/analyze', rawArticle);
+    const resp = await this.postDataForText('/apis/user/chunk_reader/analyze', rawArticle);
     return resp === 'true';
   }
 
@@ -51,7 +51,7 @@ export class ChunkReaderNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<void>} the promise when done.
    */
   async deleteArticle(key: string): Promise<void> {
-    await this.deleteData('/apis/user/chunkreader/delete', { 'key': key });
+    await this.deleteData('/apis/user/chunk_reader/delete', { 'key': key });
   }
 
 }

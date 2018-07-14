@@ -153,10 +153,8 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
          */
         operator fun get(user: GoogleUser): List<Article> =
                 Db.query {
-                    filter {
-                        table.userId eq user.uid
-                    }
-                    table.time.desc()
+                    filter { table.userId eq user.uid }
+                    order { table.time.desc() }
                 }.map { Article(article = it, fullDetail = true) }.toList()
 
         /**
@@ -164,7 +162,7 @@ class Article private constructor(article: ArticleEntity, fullDetail: Boolean) {
          */
         fun delete(user: GoogleUser, key: Key) {
             if (Db[key]?.userId == user.uid) {
-                Db.delete(key)
+                Db.delete(key = key)
                 Knowledge.deleteAll(articleKey = key)
                 Summary.deleteAll(articleKey = key)
             }

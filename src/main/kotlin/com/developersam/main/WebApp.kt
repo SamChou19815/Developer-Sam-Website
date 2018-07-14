@@ -12,6 +12,10 @@ import com.developersam.friend.FriendData
 import com.developersam.friend.FriendPair
 import com.developersam.friend.FriendRequest
 import com.developersam.game.ten.Board
+import com.developersam.rss.Feed
+import com.developersam.rss.RssReaderData
+import com.developersam.rss.UserFeedItem
+import com.developersam.rss.UserFeedSubscription
 import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerData
 import com.developersam.scheduler.SchedulerEvent
@@ -21,6 +25,7 @@ import com.developersam.web.badRequest
 import com.developersam.web.delete
 import com.developersam.web.get
 import com.developersam.web.post
+import com.developersam.web.queryParamsForCursor
 import com.developersam.web.queryParamsForKey
 import com.developersam.web.queryParamsForKeyOpt
 import com.developersam.web.toJson
@@ -110,6 +115,21 @@ private fun initializeSchedulerApiHandlers() {
 }
 
 /**
+ * [initializeRssReaderApiHandlers] initializes a list of RSS Reader API handlers.
+ */
+private fun initializeRssReaderApiHandlers() {
+    get(path = "/load") { RssReaderData[user] }
+    get(path = "/load_more_feed") {
+        val cursor = queryParamsForCursor(name = "cursor")
+        UserFeedItem[user, cursor]
+    }
+    post(path = "/add_feed") {
+        val url = queryParams("url") ?: badRequest()
+        UserFeedSubscription.makeSubscription(user, url)
+    }
+}
+
+/**
  * [initializeChunkReaderApiHandlers] initializes a list of Chunk Reader API handlers.
  */
 private fun initializeChunkReaderApiHandlers() {
@@ -133,13 +153,16 @@ private fun initializeUserApiHandlers() {
     Filters.before(path = "/*", role = Role.USER)
     path("/friends", ::initializeFriendSystemApiHandlers)
     path("/scheduler", ::initializeSchedulerApiHandlers)
-    path("/chunkreader", ::initializeChunkReaderApiHandlers)
+    path("/rss_reader", ::initializeRssReaderApiHandlers)
+    path("/chunk_reader", ::initializeChunkReaderApiHandlers)
 }
 
 /**
  * [initializePublicApiHandlers] initializes a list of public API handlers.
  */
 private fun initializePublicApiHandlers() {
+    // RSS Reader Cron Job
+    get(path = "/rss_reader/cron") { Feed.refresh() }
     // TEN
     post(path = "/ten/response") { Board.respond(toJson()) }
 }

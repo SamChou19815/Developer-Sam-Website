@@ -1,4 +1,4 @@
-<div *ngIf="isInitialized">
+<ng-container *ngIf="isInitialized">
   <app-scheduler-project
     *ngFor="let project of projects; let i = index"
     [schedulerProject]="project"
@@ -6,4 +6,4 @@
     (deleteClicked)="deleteProject({project: project, index: i})"
     (markAsClicked)="markProjectAs({project: project, index: i}, $event)"></app-scheduler-project>
   <button color="accent" mat-fab (click)="editProject()">+</button>
-</div>
+</ng-container>

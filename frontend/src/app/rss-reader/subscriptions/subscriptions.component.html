@@ -1,3 +1,26 @@
-<p>
-  subscriptions works!
-</p>
+<!--suppress HtmlUnknownAttribute -->
+<ng-container *ngIf="isInitialized">
+  <mat-card>
+    <mat-card-title>Add a New Subscription</mat-card-title>
+    <mat-card-content>
+      TODO
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button color="primary" [disabled]="true">Submit</button>
+    </mat-card-actions>
+  </mat-card>
+  <mat-divider></mat-divider>
+  <div class="section-text" *ngIf="subscriptions.length === 0">
+    You don't have any subscriptions. :(
+  </div>
+  <mat-card *ngFor="let feed of subscriptions">
+    <mat-card-title>{{feed.title}}</mat-card-title>
+    <mat-card-content class="multi-line">
+      Description:<br>
+      {{feed.description}}
+    </mat-card-content>
+    <mat-card-actions *ngIf="feed.link">
+      <a mat-button color="primary" [href]="feed.link" target="_blank"></a>
+    </mat-card-actions>
+  </mat-card>
+</ng-container>

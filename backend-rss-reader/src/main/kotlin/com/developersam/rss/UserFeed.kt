@@ -193,7 +193,7 @@ object UserFeed {
         val feedKey = feed.key!!
         val exists = SubscriptionEntity.any { filter { table.feedKey eq feedKey } }
         if (exists) {
-            return true
+            return false
         }
         SubscriptionEntity.insert(parent = feedKey) {
             table.userKey gets userKey

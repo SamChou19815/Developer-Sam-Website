@@ -1,4 +1,4 @@
-<div *ngIf="isInitialized">
+<ng-container *ngIf="isInitialized">
   <div class="section-text" *ngIf="events.oneTimeEvents.length > 0">Your One-time Events</div>
   <div class="event-container">
     <app-scheduler-one-time-event
@@ -25,4 +25,4 @@
     You do not have any weekly events.
   </div>
   <button color="accent" mat-fab (click)="editEvent()">+</button>
-</div>
+</ng-container>

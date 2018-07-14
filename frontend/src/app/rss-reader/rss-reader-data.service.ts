@@ -34,6 +34,15 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
   }
 
   /**
+   * Returns the RSS data for display.
+   *
+   * @returns {RssReaderData} the RSS data for display.
+   */
+  get data(): RssReaderData {
+    return this._data;
+  }
+
+  /**
    * Returns the promise of the full RssReaderData.
    *
    * @returns {Promise<RssReaderData>} the promise of the full RssReaderData.

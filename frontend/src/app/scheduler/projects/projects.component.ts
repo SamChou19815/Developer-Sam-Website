@@ -26,6 +26,15 @@ export class ProjectsComponent implements OnInit {
   }
 
   /**
+   * Returns whether the data is initialized.
+   *
+   * @returns {boolean} whether the data is initialized.
+   */
+  get isInitialized(): boolean {
+    return !this.dataService.schedulerData.isNotInitialized;
+  }
+
+  /**
    * Returns the projects to display.
    *
    * @returns {SchedulerProject[]} the projects to display.

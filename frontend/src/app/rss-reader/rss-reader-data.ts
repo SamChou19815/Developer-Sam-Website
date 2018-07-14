@@ -79,7 +79,7 @@ export interface CursoredFeed {
 }
 
 /**
- * [RssReaderData] defines
+ * [RssReaderData] defines the collection of user data in RSS Reader.
  */
 export interface RssReaderData {
   /**

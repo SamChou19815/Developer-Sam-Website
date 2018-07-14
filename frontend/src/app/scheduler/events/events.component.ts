@@ -26,6 +26,15 @@ export class EventsComponent implements OnInit {
   }
 
   /**
+   * Returns whether the data is initialized.
+   *
+   * @returns {boolean} whether the data is initialized.
+   */
+  get isInitialized(): boolean {
+    return !this.dataService.schedulerData.isNotInitialized;
+  }
+
+  /**
    * Returns the events to display.
    *
    * @returns {SchedulerEvents} the events to display.

@@ -1,26 +1,28 @@
-<div class="section-text" *ngIf="events.oneTimeEvents.length > 0">Your One-time Events</div>
-<div class="event-container">
-  <app-scheduler-one-time-event
-    *ngFor="let e of events.oneTimeEvents; let i = index"
-    [schedulerEvent]="e"
-    (editClicked)="editEvent({event: e, index: i})"
-    (deleteClicked)="deleteEvent({event: e, index: i})"
-  ></app-scheduler-one-time-event>
+<div *ngIf="isInitialized">
+  <div class="section-text" *ngIf="events.oneTimeEvents.length > 0">Your One-time Events</div>
+  <div class="event-container">
+    <app-scheduler-one-time-event
+      *ngFor="let e of events.oneTimeEvents; let i = index"
+      [schedulerEvent]="e"
+      (editClicked)="editEvent({event: e, index: i})"
+      (deleteClicked)="deleteEvent({event: e, index: i})"
+    ></app-scheduler-one-time-event>
+  </div>
+  <div class="section-text" *ngIf="events.oneTimeEvents.length === 0">
+    You do not have any one-time events.
+  </div>
+  <mat-divider></mat-divider>
+  <div class="section-text" *ngIf="events.weeklyEvents.length > 0">Your Weekly Events</div>
+  <div class="event-container">
+    <app-scheduler-weekly-event
+      *ngFor="let e of events.weeklyEvents; let i = index"
+      [schedulerEvent]="e"
+      (editClicked)="editEvent({event: e, index: i})"
+      (deleteClicked)="deleteEvent({event: e, index: i})"
+    ></app-scheduler-weekly-event>
+  </div>
+  <div class="section-text" *ngIf="events.weeklyEvents.length === 0">
+    You do not have any weekly events.
+  </div>
+  <button color="accent" mat-fab (click)="editEvent()">+</button>
 </div>
-<div class="section-text" *ngIf="events.oneTimeEvents.length === 0">
-  You do not have any one-time events.
-</div>
-<mat-divider></mat-divider>
-<div class="section-text" *ngIf="events.weeklyEvents.length > 0">Your Weekly Events</div>
-<div class="event-container">
-  <app-scheduler-weekly-event
-    *ngFor="let e of events.weeklyEvents; let i = index"
-    [schedulerEvent]="e"
-    (editClicked)="editEvent({event: e, index: i})"
-    (deleteClicked)="deleteEvent({event: e, index: i})"
-  ></app-scheduler-weekly-event>
-</div>
-<div class="section-text" *ngIf="events.weeklyEvents.length === 0">
-  You do not have any weekly events.
-</div>
-<button color="accent" mat-fab (click)="editEvent()">+</button>

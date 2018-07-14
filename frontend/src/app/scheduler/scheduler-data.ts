@@ -30,7 +30,7 @@ export interface SchedulerProcessData {
   /**
    * A marker to tell whether the data set has been initialized.
    */
-  isNotInitialized?: boolean;
+  readonly isNotInitialized?: boolean;
 }
 
 /**

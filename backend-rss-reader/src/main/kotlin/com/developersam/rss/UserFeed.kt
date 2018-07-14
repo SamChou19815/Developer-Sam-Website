@@ -7,8 +7,6 @@ import com.google.cloud.datastore.Key
 import typedstore.TypedEntity
 import typedstore.TypedEntityCompanion
 import typedstore.TypedTable
-import typedstore.nowInUTC
-import java.time.LocalDateTime
 
 /**
  * [UserFeed] contains a collection of operations related to user and feed.
@@ -38,7 +36,7 @@ object UserFeed {
         val userKey = keyProperty(name = "user_key")
         val feedItemKey = keyProperty(name = "feed_item_key")
         val isRead = boolProperty(name = "is_read")
-        val lastUpdatedTime = datetimeProperty(name = "last_updated_time")
+        val lastUpdatedTime = longProperty(name = "last_updated_time")
     }
 
     /*
@@ -67,7 +65,7 @@ object UserFeed {
     private class ItemEntity(entity: Entity) : TypedEntity<ItemTable>(entity = entity) {
         val feedItemKey: Key = ItemTable.feedItemKey.delegatedValue
         val isRead: Boolean = ItemTable.isRead.delegatedValue
-        val lastUpdatedTime: LocalDateTime = ItemTable.lastUpdatedTime.delegatedValue
+        val lastUpdatedTime: Long = ItemTable.lastUpdatedTime.delegatedValue
 
         companion object : TypedEntityCompanion<ItemTable, ItemEntity>(table = ItemTable) {
 
@@ -104,7 +102,7 @@ object UserFeed {
      */
     data class Item(
             private val item: FeedItem, private val isRead: Boolean,
-            private val lastUpdatedTime: LocalDateTime
+            private val lastUpdatedTime: Long
     )
 
     /**
@@ -113,10 +111,6 @@ object UserFeed {
      */
     data class CursoredFeed(val items: List<Item>, val cursor: Cursor)
 
-    /**
-     * [UserData] is the collection of all RSS reader data load for the user.
-     */
-    data class UserData(val feed: UserFeed.CursoredFeed, val subscriptions: List<Feed>)
 
     /*
      * --------------------------------------------------------------------------------
@@ -150,11 +144,11 @@ object UserFeed {
                     .mapNotNull { it.feedKey }.toList()
 
     /**
-     * [getUserData] returns the [UserData] for the given [user].
+     * [getUserData] returns the [RssReaderData] for the given [user].
      */
     @JvmStatic
-    fun getUserData(user: GoogleUser): UserData =
-            UserData(
+    fun getUserData(user: GoogleUser): RssReaderData =
+            RssReaderData(
                     feed = getFeed(user = user), subscriptions = Feed[getFeedKeys(user = user)]
             )
 
@@ -179,7 +173,7 @@ object UserFeed {
                     }
                 }.firstOrNull()
             }
-            val nowTime = nowInUTC()
+            val nowTime = System.currentTimeMillis()
             ItemEntity.batchUpdate(entities = entities) {
                 table.isRead gets false
                 table.lastUpdatedTime gets nowTime
@@ -190,23 +184,23 @@ object UserFeed {
     /**
      * [makeSubscription] makes the [user] subscribes [url].
      *
-     * It will return the feed if it succeeds, or `null` if it fails.
+     * @return whether the subscription attempt is successful.
      */
     @JvmStatic
-    fun makeSubscription(user: GoogleUser, url: String): Feed? {
+    fun makeSubscription(user: GoogleUser, url: String): Boolean {
         val userKey = user.keyNotNull
-        val (feed, items) = FeedParser.parse(url = url) ?: return null
+        val (feed, items) = FeedParser.parse(url = url) ?: return false
         val feedKey = feed.key!!
         val exists = SubscriptionEntity.any { filter { table.feedKey eq feedKey } }
         if (exists) {
-            return feed
+            return true
         }
         SubscriptionEntity.insert(parent = feedKey) {
             table.userKey gets userKey
             table.feedKey gets feedKey
         }
         FeedItem.batchRefresh(feedKey = feedKey, items = items)
-        return feed
+        return true
     }
 
 }

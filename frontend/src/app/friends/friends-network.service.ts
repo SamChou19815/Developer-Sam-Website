@@ -11,7 +11,7 @@ import { FriendData } from './friend-data';
 export class FriendsNetworkService extends AuthenticatedNetworkService {
 
   constructor(http: HttpClient) {
-    super(http);
+    super(http, '/apis/user/friends');
   }
 
   /**
@@ -20,7 +20,7 @@ export class FriendsNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<FriendData>} the promise of all friend data.
    */
   get friendData$(): Promise<FriendData> {
-    return this.getData<FriendData>('/apis/user/friends/load');
+    return this.getData<FriendData>('/load');
   }
 
   /**
@@ -30,7 +30,7 @@ export class FriendsNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<GoogleUser | null>} the promise of a friend information or `null`.
    */
   async getUserInfo(email: string): Promise<GoogleUser | null> {
-    return this.getData<GoogleUser | null>(`/apis/user/friends/get_user_info?email=${email}`);
+    return this.getData<GoogleUser | null>(`/get_user_info?email=${email}`);
   }
 
   /**
@@ -40,7 +40,7 @@ export class FriendsNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<void>} the promise when done.
    */
   async addFriendRequest(key: string): Promise<void> {
-    await this.postParams('/apis/user/friends/add_friend_request', {
+    await this.postParamsForText('/add_friend_request', {
       'responder_user_key': key
     });
   }
@@ -53,7 +53,7 @@ export class FriendsNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<void>} the promise when done.
    */
   async respondFriendRequest(key: string, isApproved: boolean): Promise<void> {
-    await this.postParams('/apis/user/friends/respond_friend_request', {
+    await this.postParamsForText('/respond_friend_request', {
       'requester_user_key': key, 'approved': String(isApproved)
     });
   }
@@ -65,7 +65,7 @@ export class FriendsNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<void>} the promise when done.
    */
   async removeFriend(key: string): Promise<void> {
-    await this.deleteData('/apis/user/friends/remove_friend', {
+    await this.deleteData('/remove_friend', {
       'removed_friend_key': key
     });
   }

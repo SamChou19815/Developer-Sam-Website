@@ -125,7 +125,10 @@ private fun initializeRssReaderApiHandlers() {
     }
     post(path = "/add_feed") {
         val url = queryParams("url") ?: badRequest()
-        UserFeed.makeSubscription(user = user, url = url)
+        val user = user
+        if (UserFeed.makeSubscription(user = user, url = url))  {
+            UserFeed.getUserData(user = user)
+        } else null
     }
 }
 

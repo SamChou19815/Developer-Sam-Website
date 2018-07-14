@@ -27,8 +27,9 @@ export class AuthenticatedNetworkService {
    * Construct itself by Angular's HTTP Client.
    *
    * @param {HttpClient} http Angular's HTTP Client.
+   * @param {string} baseUrl the base URL.
    */
-  constructor(protected http: HttpClient) {
+  constructor(protected http: HttpClient, private baseUrl: string) {
   }
 
   /**
@@ -77,8 +78,22 @@ export class AuthenticatedNetworkService {
    * @returns {Promise<T>} the promise of data of type T.
    */
   protected async getData<T>(url: string, params: HttpClientConfig = {}): Promise<T> {
-    return this.http.get<T>(url, {
+    return this.http.get<T>(this.baseUrl + url, {
       params: params, withCredentials: true, headers: this.firebaseAuthHeader
+    }).pipe(catchError(AuthenticatedNetworkService.handleHttpError)).toPromise();
+  }
+
+  /**
+   * Returns the promise of data after posting the specified data.
+   *
+   * @param {string} url url to post.
+   * @param data data to post.
+   * @param {HttpClientConfig} params optional params to post.
+   * @returns {Promise<T>} the promise of data after posting data.
+   */
+  protected async postData<T>(url: string, data: any, params?: HttpClientConfig): Promise<T> {
+    return this.http.post<T>(this.baseUrl + url, data, {
+      withCredentials: true, params: params, headers: this.firebaseAuthHeader
     }).pipe(catchError(AuthenticatedNetworkService.handleHttpError)).toPromise();
   }
 
@@ -90,20 +105,33 @@ export class AuthenticatedNetworkService {
    * @returns {Promise<string>} the promise of text after posting data.
    */
   protected async postDataForText(url: string, data: any): Promise<string> {
-    return this.http.post(url, data, {
+    return this.http.post(this.baseUrl + url, data, {
       responseType: 'text', withCredentials: true, headers: this.firebaseAuthHeader
     }).pipe(catchError(AuthenticatedNetworkService.handleHttpError)).toPromise();
   }
 
   /**
-   * Asynchronously post a set of params.
+   * Asynchronously post a set of params for data.
    *
    * @param {string} url url to post.
    * @param {HttpClientConfig} params params to post.
-   * @returns {Promise<Object>} the promise of indicating finishing.
+   * @returns {Promise<string>} the promise of data after finishing.
    */
-  protected async postParams(url: string, params: HttpClientConfig): Promise<string> {
-    return this.http.post(url, '', {
+  protected async postParamsForData<T>(url: string, params: HttpClientConfig): Promise<T> {
+    return this.http.post<T>(this.baseUrl + url, '', {
+      params: params, withCredentials: true, headers: this.firebaseAuthHeader
+    }).pipe(catchError(AuthenticatedNetworkService.handleHttpError)).toPromise();
+  }
+
+  /**
+   * Asynchronously post a set of params for text.
+   *
+   * @param {string} url url to post.
+   * @param {HttpClientConfig} params params to post.
+   * @returns {Promise<string>} the promise of indicating finishing.
+   */
+  protected async postParamsForText(url: string, params: HttpClientConfig): Promise<string> {
+    return this.http.post(this.baseUrl + url, '', {
       responseType: 'text', params: params, withCredentials: true, headers: this.firebaseAuthHeader
     }).pipe(catchError(AuthenticatedNetworkService.handleHttpError)).toPromise();
   }
@@ -116,7 +144,7 @@ export class AuthenticatedNetworkService {
    * @returns {Promise<string>} the promise of text after deletion.
    */
   protected async deleteData(url: string, params: HttpClientConfig = {}): Promise<string> {
-    return this.http.delete<string>(url, {
+    return this.http.delete<string>(this.baseUrl + url, {
       params: params, withCredentials: true, headers: this.firebaseAuthHeader
     }).pipe(catchError(AuthenticatedNetworkService.handleHttpError)).toPromise();
   }

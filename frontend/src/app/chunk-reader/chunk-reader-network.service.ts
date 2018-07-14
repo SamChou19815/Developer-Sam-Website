@@ -9,7 +9,7 @@ import { AnalyzedArticle, RawArticle } from './chunk-reader-data';
 export class ChunkReaderNetworkService extends AuthenticatedNetworkService {
 
   constructor(http: HttpClient) {
-    super(http);
+    super(http, '/apis/user/chunk_reader');
   }
 
   /**
@@ -18,7 +18,7 @@ export class ChunkReaderNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<AnalyzedArticle[]>} the promise of a list of analyzed articles.
    */
   async loadArticles(): Promise<AnalyzedArticle[]> {
-    return this.getData<AnalyzedArticle[]>('/apis/user/chunk_reader/load');
+    return this.getData<AnalyzedArticle[]>('/load');
   }
 
   /**
@@ -29,8 +29,9 @@ export class ChunkReaderNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<string[]>} the promise of adjusted summaries.
    */
   async adjustSummary(key: string, limit: number): Promise<string[]> {
-    const url = '/apis/user/chunk_reader/adjust_summary';
-    return this.getData<string[]>(url, { 'key': key, 'limit': limit.toString(10) });
+    return this.getData<string[]>('/adjust_summary', {
+      'key': key, 'limit': limit.toString(10)
+    });
   }
 
   /**
@@ -40,7 +41,7 @@ export class ChunkReaderNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<boolean>} the promise of the success report.
    */
   async analyzeArticle(rawArticle: RawArticle): Promise<boolean> {
-    const resp = await this.postDataForText('/apis/user/chunk_reader/analyze', rawArticle);
+    const resp = await this.postDataForText('/analyze', rawArticle);
     return resp === 'true';
   }
 
@@ -51,7 +52,7 @@ export class ChunkReaderNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<void>} the promise when done.
    */
   async deleteArticle(key: string): Promise<void> {
-    await this.deleteData('/apis/user/chunk_reader/delete', { 'key': key });
+    await this.deleteData('/delete', { 'key': key });
   }
 
 }

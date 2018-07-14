@@ -15,7 +15,7 @@ import { SchedulerTaggedInterval } from './scheduler-tagged-interval';
 export class SchedulerNetworkService extends AuthenticatedNetworkService {
 
   constructor(http: HttpClient) {
-    super(http);
+    super(http, '/apis/user/scheduler');
   }
 
   /**
@@ -24,7 +24,7 @@ export class SchedulerNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<SchedulerData>} the promise of all scheduler related data.
    */
   async loadData(): Promise<SchedulerData> {
-    return this.getData<SchedulerData>('/apis/user/scheduler/load');
+    return this.getData<SchedulerData>('/load');
   }
 
   /**
@@ -34,7 +34,7 @@ export class SchedulerNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<string>} the promise of the key of the edited project.
    */
   async editProject(data: SchedulerProject): Promise<string> {
-    return this.postDataForText('/apis/user/scheduler/edit/project', data);
+    return this.postDataForText('/edit/project', data);
   }
 
   /**
@@ -44,7 +44,7 @@ export class SchedulerNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<string>} the promise of the key of the edited event.
    */
   async editEvent(data: SchedulerEvent): Promise<string> {
-    return this.postDataForText('/apis/user/scheduler/edit/event', data);
+    return this.postDataForText('/edit/event', data);
   }
 
   /**
@@ -55,7 +55,7 @@ export class SchedulerNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<string>} promise of completion.
    */
   async deleteRecord(key: string, type: 'project' | 'event'): Promise<void> {
-    await this.deleteData(`/apis/user/scheduler/delete/${type}`, { 'key': key });
+    await this.deleteData(`/delete/${type}`, { 'key': key });
   }
 
   /**
@@ -66,7 +66,7 @@ export class SchedulerNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<void>} promise of completion.
    */
   async markProjectAs(completed: boolean, key: string): Promise<void> {
-    await this.postParams('/apis/user/scheduler/mark_project_as', {
+    await this.postParamsForText('/mark_project_as', {
       'key': key, 'completed': String(completed)
     });
   }
@@ -78,7 +78,7 @@ export class SchedulerNetworkService extends AuthenticatedNetworkService {
    * @returns {Promise<SchedulerTaggedInterval[]>} the promise of auto scheduling result.
    */
   async getAutoScheduling(friendKey?: string): Promise<SchedulerTaggedInterval[]> {
-    const url = `/apis/user/scheduler/${friendKey ? 'friend' : 'personal' }_auto_schedule`;
+    const url = `/${friendKey ? 'friend' : 'personal' }_auto_schedule`;
     const params: HttpClientConfig = friendKey ? { 'friend_key': friendKey } : {};
     return this.getData<SchedulerTaggedInterval[]>(url, params);
   }

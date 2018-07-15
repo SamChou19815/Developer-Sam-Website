@@ -5,7 +5,6 @@ import com.google.cloud.datastore.Key
 import typedstore.TypedEntity
 import typedstore.TypedEntityCompanion
 import typedstore.TypedTable
-import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -19,14 +18,17 @@ import java.util.concurrent.atomic.AtomicReference
  * @property description description of the feed.
  */
 data class Feed(
-        val key: Key? = null, val rssUrl: String,
-        val title: String, val link: String, val description: String
+        private val key: Key? = null,
+        private val rssUrl: String,
+        private val title: String,
+        private val link: String,
+        private val description: String
 ) {
 
     /**
      * [upsert] upserts the given feed data into the database.
      */
-    fun upsert(): Key {
+    internal fun upsert(): Key {
         val entity = FeedEntity.query { filter { table.rssUrl eq rssUrl } }.firstOrNull()
         return FeedEntity.upsert(entity = entity) {
             table.rssUrl gets rssUrl

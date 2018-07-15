@@ -14,8 +14,20 @@ import typedstore.TypedTable
  */
 data class FeedItem(
         private val feedKey: Key? = null,
-        val title: String, val link: String, val description: String
+        private val title: String,
+        private val link: String,
+        private val description: String
 ) {
+
+    /**
+     * [toUserFeedItem] returns the [UserFeedItem] form of the this item with required additional
+     * info [isRead] and [lastUpdatedTime].
+     */
+    internal fun toUserFeedItem(isRead: Boolean, lastUpdatedTime: Long): UserFeedItem =
+            UserFeedItem(
+                    feedKey = feedKey, title = title, link = link, description = description,
+                    isRead = isRead, lastUpdatedTime = lastUpdatedTime
+            )
 
     /**
      * [Table] is the table definition of [FeedItem].
@@ -88,7 +100,7 @@ data class FeedItem(
                 ItemEntity.batchUpdate(entities = this, source = existingItems, builder = builder)
             }.forEach { itemKeys.add(element = it.key) }
             // Step 3: Collect items keys to update user feed.
-            UserFeed.batchRefresh(feedItemKeys = itemKeys)
+            UserData.Subscriptions.batchRefresh(feedItemKeys = itemKeys)
         }
 
     }

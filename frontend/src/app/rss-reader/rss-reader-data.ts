@@ -49,11 +49,7 @@ export interface FeedItem {
 /**
  * [UserFeedItem] defines a user information annotated RSS feed item.
  */
-export interface UserFeedItem {
-  /**
-   * The raw item.
-   */
-  readonly item: FeedItem;
+export interface UserFeedItem extends FeedItem {
   /**
    * Whether the item is read.
    */
@@ -65,9 +61,9 @@ export interface UserFeedItem {
 }
 
 /**
- * [CursoredFeed] defines a collection feed with a cursor for pagination fetch.
+ * [CursoredUserFeed] defines a collection feed with a cursor for pagination fetch.
  */
-export interface CursoredFeed {
+export interface CursoredUserFeed {
   /**
    * The collection of items.
    */
@@ -85,7 +81,7 @@ export interface RssReaderData {
   /**
    * Feed data.
    */
-  readonly feed: CursoredFeed;
+  readonly feed: CursoredUserFeed;
   /**
    * Subscription data.
    */
@@ -101,5 +97,5 @@ export interface RssReaderData {
  * @type {RssReaderData}
  */
 export const dummyRssReaderData: RssReaderData = <RssReaderData>{
-  feed: <CursoredFeed>{ items: [], cursor: '' }, subscriptions: [], isNotInitialized: true
+  feed: <CursoredUserFeed>{ items: [], cursor: '' }, subscriptions: [], isNotInitialized: true
 };

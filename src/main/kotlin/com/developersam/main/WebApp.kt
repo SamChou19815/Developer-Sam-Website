@@ -13,8 +13,7 @@ import com.developersam.friend.FriendPair
 import com.developersam.friend.FriendRequest
 import com.developersam.game.ten.Board
 import com.developersam.rss.Feed
-import com.developersam.rss.FeedItem
-import com.developersam.rss.UserFeed
+import com.developersam.rss.UserData
 import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerData
 import com.developersam.scheduler.SchedulerEvent
@@ -118,16 +117,16 @@ private fun initializeSchedulerApiHandlers() {
  * [initializeRssReaderApiHandlers] initializes a list of RSS Reader API handlers.
  */
 private fun initializeRssReaderApiHandlers() {
-    get(path = "/load") { UserFeed.getUserData(user = user) }
+    get(path = "/load") { UserData.getRssReaderData(user = user) }
     get(path = "/load_more_feed") {
         val cursor = queryParamsForCursor(name = "cursor")
-        UserFeed.getFeed(user = user, startCursor = cursor)
+        UserData.CursoredUserFeed[user, cursor]
     }
     post(path = "/add_feed") {
         val url = queryParams("url") ?: badRequest()
         val user = user
-        if (UserFeed.makeSubscription(user = user, url = url))  {
-            UserFeed.getUserData(user = user)
+        if (UserData.Subscriptions.subscribe(user = user, url = url)) {
+            UserData.getRssReaderData(user = user)
         } else null
     }
 }

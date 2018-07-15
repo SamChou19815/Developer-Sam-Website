@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
 import { GoogleUserService } from '../shared/google-user.service';
-import { CursoredFeed, dummyRssReaderData, RssReaderData } from './rss-reader-data';
+import { CursoredUserFeed, dummyRssReaderData, RssReaderData } from './rss-reader-data';
 
 @Injectable({
   providedIn: 'root'
@@ -57,7 +57,7 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
    * @returns {Promise<void>} promise when done.
    */
   async loadMoreFeed(): Promise<void> {
-    const { cursor, items } = await this.getData<CursoredFeed>('/load_more_feed', {
+    const { cursor, items } = await this.getData<CursoredUserFeed>('/load_more_feed', {
       'cursor': this._data.feed.cursor
     });
     this._data.feed.cursor = cursor;

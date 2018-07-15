@@ -48,20 +48,21 @@ object FriendRequest {
      * If the request is invalid, it will reject and return false.
      * Otherwise, it will proceed and return true.
      */
+    @JvmStatic
     fun add(requester: GoogleUser, responderUserKey: Key): Boolean {
         val requesterUserKey = requester.keyNotNull
         val exists = RequestEntity.any {
             filter {
-                Table.responderUserKey eq responderUserKey
-                Table.requesterUserKey eq requesterUserKey
+                table.requesterUserKey eq requesterUserKey
+                table.responderUserKey eq responderUserKey
             }
-        }
+        } || FriendPair.exists(firstUserKey = requesterUserKey, secondUserKey = responderUserKey)
         if (exists) {
             return true
         }
         RequestEntity.insert {
-            Table.requesterUserKey gets requesterUserKey
-            Table.responderUserKey gets responderUserKey
+            table.requesterUserKey gets requesterUserKey
+            table.responderUserKey gets responderUserKey
         }
         return true
     }

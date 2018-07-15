@@ -12,7 +12,7 @@ import spark.kotlin.halt
 /**
  * [Transformer] transforms the response to correct form.
  */
-private object Transformer : ResponseTransformer {
+internal object Transformer : ResponseTransformer {
     override fun render(model: Any?): String = when (model) {
         Unit -> ""; is String -> model; else -> gson.toJson(model)
     }

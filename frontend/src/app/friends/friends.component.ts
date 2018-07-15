@@ -53,7 +53,7 @@ export class FriendsComponent implements OnInit {
    * @param {KeyboardEvent} event the optional keyboard event.
    */
   search(event?: KeyboardEvent): void {
-    if (!event || event.code !== 'Enter') {
+    if (event && event.code !== 'Enter') {
       return;
     }
     asyncRun(async () => {

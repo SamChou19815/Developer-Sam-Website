@@ -32,6 +32,11 @@ allprojects {
         }
     }
 
+    configurations {
+        // Suppress Old Guava
+        all*.exclude group: 'com.google.guava', module:'guava-jdk5'
+    }
+
     dependencies {
         // Kotlin
         implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
@@ -75,8 +80,6 @@ dependencies {
     implementation 'com.sparkjava:spark-kotlin:1.0.0-alpha'
     // Google Cloud API
     implementation 'org.fluentd:fluent-logger:0.3.3' // Stackdriver
-    // GSON
-    // implementation 'com.google.code.gson:gson:2.8.5'
     // Logging
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'org.slf4j:jcl-over-slf4j:1.7.25'

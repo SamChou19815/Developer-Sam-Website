@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
 import { GoogleUserService } from '../shared/google-user.service';
-import { CursoredUserFeed, dummyRssReaderData, Feed, RssReaderData } from './rss-reader-data';
+import { CursoredUserFeed, Feed, RssReaderData } from './rss-reader-data';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,11 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
    * @type {RssReaderData}
    * @private
    */
-  private _data: RssReaderData = dummyRssReaderData;
+  private _data: RssReaderData = <RssReaderData>{
+    feed: <CursoredUserFeed>{ items: [], cursor: '' },
+    subscriptions: [],
+    isNotInitialized: true
+  };
 
   constructor(http: HttpClient, private googleUserService: GoogleUserService) {
     super(http, '/apis/user/rss_reader/');

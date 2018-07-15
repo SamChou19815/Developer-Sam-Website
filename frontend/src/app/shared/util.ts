@@ -1,4 +1,10 @@
 /**
+ * Ignore is used as a callback to ignore things.
+ */
+export const ignore: () => void = () => {
+};
+
+/**
  * Run a block of code.
  *
  * @param {() => void} action the code to run.

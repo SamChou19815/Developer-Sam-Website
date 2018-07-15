@@ -1,3 +1,21 @@
-<div *ngIf="isInitialized">
-
-</div>
+<ng-container *ngIf="isInitialized">
+  <!-- All Items View -->
+  <ng-container *ngIf="!hasSelectedItem">
+    <mat-list>
+      <mat-list-item *ngFor="let item of feed; let i = index"
+                     [class.item-read]="item.isRead"
+                     (click)="readItem(item, i)">
+        <app-rss-reader-user-feed-item [item]="item"></app-rss-reader-user-feed-item>
+        <mat-divider></mat-divider>
+      </mat-list-item>
+    </mat-list>
+  </ng-container>
+  <!-- Article View -->
+  <ng-container *ngIf="hasSelectedItem">
+    <mat-toolbar>
+      <mat-icon class="back-button" (click)="goBackToItemList()">arrow_back</mat-icon>
+      <span>{{selectedItem.title}}</span>
+    </mat-toolbar>
+    <div class="article-box" [innerHTML]="selectedItem.description"></div>
+  </ng-container>
+</ng-container>

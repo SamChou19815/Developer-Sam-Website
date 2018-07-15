@@ -91,11 +91,3 @@ export interface RssReaderData {
    */
   readonly isNotInitialized?: boolean;
 }
-
-/**
- * The dummy data as placeholder.
- * @type {RssReaderData}
- */
-export const dummyRssReaderData: RssReaderData = <RssReaderData>{
-  feed: <CursoredUserFeed>{ items: [], cursor: '' }, subscriptions: [], isNotInitialized: true
-};

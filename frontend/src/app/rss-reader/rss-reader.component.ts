@@ -12,6 +12,13 @@ import { RssReaderDataService } from './rss-reader-data.service';
 })
 export class RssReaderComponent implements OnInit {
 
+  /**
+   * Selected item is the current article selected by the user, which can be null to indicate that
+   * the user is not reading any one now.
+   * @type {UserFeedItem | null}
+   */
+  private _selectedItem: UserFeedItem | null = null;
+
   constructor(private dataService: RssReaderDataService,
               private loadingService: LoadingOverlayService,
               private dialog: MatDialog) {
@@ -40,6 +47,44 @@ export class RssReaderComponent implements OnInit {
    */
   get feed(): UserFeedItem[] {
     return this.dataService.data.feed.items;
+  }
+
+  /**
+   * Returns whether we have a selected item.
+   *
+   * @returns {boolean} whether we have a selected item.
+   */
+  get hasSelectedItem(): boolean {
+    return this._selectedItem != null;
+  }
+
+  /**
+   * Returns the current article selected by the user, which must be be non-null by contract.
+   *
+   * @returns {UserFeedItem} the current article selected by the user.
+   */
+  get selectedItem(): UserFeedItem {
+    if (this._selectedItem == null) {
+      throw new Error();
+    }
+    return this._selectedItem;
+  }
+
+  /**
+   * Read an item at the specified index.
+   *
+   * @param {UserFeedItem} item the item to read.
+   * @param {number} index the index of the item.
+   */
+  readItem(item: UserFeedItem, index: number) {
+    this._selectedItem = item;
+  }
+
+  /**
+   * Go back to the item list.
+   */
+  goBackToItemList() {
+    this._selectedItem = null;
   }
 
 }

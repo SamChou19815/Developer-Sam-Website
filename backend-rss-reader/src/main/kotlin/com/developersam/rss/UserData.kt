@@ -222,8 +222,8 @@ data class UserData(val feed: CursoredUserFeed, val subscriptions: List<Feed>) {
                 val (sequence, cursor) = ItemEntity.queryCursored {
                     filter { table.userKey eq user.keyNotNull }
                     order {
-                        table.isRead.asc()
                         table.lastUpdatedTime.desc()
+                        table.isRead.asc()
                     }
                     withLimit(limit = Constants.FETCH_LIMIT)
                     startCursor?.let { startAt(cursor = it) }

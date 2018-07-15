@@ -132,7 +132,8 @@ object UserFeed {
             withLimit(limit = Constants.FETCH_LIMIT)
             startCursor?.let { startAt(cursor = it) }
         }
-        return CursoredFeed(items = ItemEntity.entitiesToItems(sequence.toList()), cursor = cursor)
+        val items = ItemEntity.entitiesToItems(entities = sequence.toList())
+        return CursoredFeed(items = items, cursor = cursor)
     }
 
     /**
@@ -165,15 +166,26 @@ object UserFeed {
     @JvmStatic
     internal fun batchRefresh(feedItemKeys: List<Key>) {
         SubscriptionEntity.all().map { it.userKey }.forEach { userKey ->
+            val newKeys = arrayListOf<Key>()
             val entities = feedItemKeys.mapNotNull { key ->
-                ItemEntity.query {
+                val keyOpt = ItemEntity.query {
                     filter {
                         table.userKey eq userKey
                         table.feedItemKey eq key
                     }
                 }.firstOrNull()
+                if (keyOpt == null) {
+                    newKeys.add(element = key)
+                }
+                keyOpt
             }
             val nowTime = System.currentTimeMillis()
+            ItemEntity.batchInsert(source = newKeys) { feedItemKey ->
+                table.userKey gets userKey
+                table.feedItemKey gets feedItemKey
+                table.isRead gets false
+                table.lastUpdatedTime gets nowTime
+            }
             ItemEntity.batchUpdate(entities = entities) {
                 table.isRead gets false
                 table.lastUpdatedTime gets nowTime

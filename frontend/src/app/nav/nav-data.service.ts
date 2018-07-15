@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Icon } from '../shared/icon';
 import { NavData, NavDataList, NavGroup, NavItem } from './nav-data';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -35,6 +34,19 @@ export class NavDataService {
           name: 'Auto Scheduling', icon: Icon.ofMaterial('dashboard'),
           link: '/scheduler/auto', isInternal: true
         }
+      ]
+    },
+    <NavGroup>{
+      name: 'Rss Reader', icon: Icon.ofMaterial('chrome_reader_mode'),
+      children: [
+        {
+          name: 'Articles', icon: Icon.ofMaterial('library_books'),
+          link: '/rss_reader/articles', isInternal: true
+        },
+        {
+          name: 'Subscriptions', icon: Icon.ofMaterial('rss_feed'),
+          link: '/rss_reader/subscriptions', isInternal: true
+        },
       ]
     },
     <NavItem>{

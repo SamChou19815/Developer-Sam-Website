@@ -66,7 +66,7 @@ export class SubscriptionsComponent implements OnInit {
    * @param {KeyboardEvent} event the optional keyboard event.
    */
   addFeed(event?: KeyboardEvent): void {
-    if (event && event.code !== 'Enter') {
+    if (event != null && event.code !== 'Enter') {
       return;
     }
     asyncRun(async () => {

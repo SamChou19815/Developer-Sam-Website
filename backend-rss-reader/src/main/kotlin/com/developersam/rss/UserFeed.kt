@@ -74,8 +74,8 @@ object UserFeed {
             /**
              * [entitiesToItems] converts this collection of [entities] to a list of [Item]s.
              */
-            fun entitiesToItems(entities: Sequence<ItemEntity>): List<Item> {
-                val entitiesKeyList = entities.map { it.feedItemKey }.toList()
+            fun entitiesToItems(entities: List<ItemEntity>): List<Item> {
+                val entitiesKeyList = entities.map { it.feedItemKey }
                 val feedItems = FeedItem[entitiesKeyList]
                 if (feedItems.size != entitiesKeyList.size) {
                     error(message = "DB corrupted")
@@ -85,7 +85,7 @@ object UserFeed {
                             item = feedItems[index], isRead = entity.isRead,
                             lastUpdatedTime = entity.lastUpdatedTime
                     )
-                }.toList()
+                }
             }
 
         }
@@ -132,7 +132,7 @@ object UserFeed {
             withLimit(limit = Constants.FETCH_LIMIT)
             startCursor?.let { startAt(cursor = it) }
         }
-        return CursoredFeed(items = ItemEntity.entitiesToItems(sequence), cursor = cursor)
+        return CursoredFeed(items = ItemEntity.entitiesToItems(sequence.toList()), cursor = cursor)
     }
 
     /**

@@ -5,6 +5,7 @@ import { SubscriptionsComponent } from './subscriptions/subscriptions.component'
 
 const routes = [
   { path: '', component: RssReaderComponent },
+  { path: 'articles', component: RssReaderComponent },
   { path: 'subscriptions', component: SubscriptionsComponent }
 ];
 

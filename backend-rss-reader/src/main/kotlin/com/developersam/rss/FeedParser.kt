@@ -27,11 +27,16 @@ internal object FeedParser {
             val description = rawFeed.description ?: ""
             Feed(rssUrl = url, title = title, link = link, description = description)
         }
+        val nowTime = System.currentTimeMillis()
         val items = rawFeed.entries?.mapNotNull { entry ->
             val title = entry.title ?: return@mapNotNull null
             val link = entry.link ?: return@mapNotNull null
             val description = entry.description?.value ?: return@mapNotNull null
-            FeedItem(title = title, link = link, description = description)
+            val publicationTime = entry.publishedDate?.time ?: nowTime
+            FeedItem(
+                    title = title, link = link,
+                    description = description, publicationTime = publicationTime
+            )
         } ?: return null
         return feed to items
     }

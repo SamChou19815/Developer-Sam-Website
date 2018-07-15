@@ -14,7 +14,7 @@
   <ng-container *ngIf="hasSelectedItem">
     <mat-toolbar>
       <mat-icon class="back-button" (click)="goBackToItemList()">arrow_back</mat-icon>
-      <span>{{selectedItem.title}}</span>
+      <span class="article-title">{{selectedItem.title}}</span>
     </mat-toolbar>
     <div class="article-box" [innerHTML]="selectedItem.description"></div>
   </ng-container>

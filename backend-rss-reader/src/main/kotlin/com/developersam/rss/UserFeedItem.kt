@@ -10,6 +10,6 @@ data class UserFeedItem(
         private val title: String,
         private val link: String,
         private val description: String,
-        private val isRead: Boolean,
-        private val lastUpdatedTime: Long
+        private val publicationTime: Long,
+        private val isRead: Boolean
 )

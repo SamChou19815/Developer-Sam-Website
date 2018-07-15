@@ -13,7 +13,7 @@ export class UserFeedItemComponent implements OnInit {
    * @type {UserFeedItem}
    */
   @Input() item: UserFeedItem = <UserFeedItem>{
-    feedKey: '', title: '', link: '', description: '', isRead: false, lastUpdatedTime: 0
+    feedKey: '', title: '', link: '', description: '', publicationTime: 0, isRead: false
   };
 
   constructor() {
@@ -23,12 +23,12 @@ export class UserFeedItemComponent implements OnInit {
   }
 
   /**
-   * Returns the last updated time in string.
+   * Returns the publication time in string.
    *
-   * @returns {string} the last updated time in string.
+   * @returns {string} the publication time in string.
    */
-  get lastUpdatedTime(): string {
-    return new Date(this.item.lastUpdatedTime).toLocaleDateString();
+  get publicationTime(): string {
+    return new Date(this.item.publicationTime).toLocaleDateString();
   }
 
 }

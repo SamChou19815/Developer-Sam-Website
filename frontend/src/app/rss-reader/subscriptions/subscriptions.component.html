@@ -20,10 +20,7 @@
   </div>
   <mat-card *ngFor="let feed of subscriptions; let i = index">
     <mat-card-title>{{feed.title}}</mat-card-title>
-    <mat-card-content class="multi-line">
-      Description:<br>
-      {{feed.description}}
-    </mat-card-content>
+    <mat-card-content class="multi-line">{{feed.description}}</mat-card-content>
     <mat-card-actions *ngIf="feed.link">
       <a mat-button color="primary" [href]="feed.link" target="_blank">Website</a>
       <button mat-button color="accent" (click)="unsubscribe(feed, i)">Unsubscribe</button>

@@ -66,7 +66,6 @@ data class UserData(val feed: CursoredUserFeed, val subscriptions: List<Feed>) {
     private class ItemEntity(entity: Entity) : TypedEntity<ItemTable>(entity = entity) {
         val feedItemKey: Key = ItemTable.feedItemKey.delegatedValue
         val isRead: Boolean = ItemTable.isRead.delegatedValue
-        val lastUpdatedTime: Long = ItemTable.lastUpdatedTime.delegatedValue
 
         companion object : TypedEntityCompanion<ItemTable, ItemEntity>(table = ItemTable) {
 
@@ -82,9 +81,7 @@ data class UserData(val feed: CursoredUserFeed, val subscriptions: List<Feed>) {
                     error(message = "DB corrupted")
                 }
                 return entities.mapIndexed { index, entity ->
-                    feedItems[index].toUserFeedItem(
-                            isRead = entity.isRead, lastUpdatedTime = entity.lastUpdatedTime
-                    )
+                    feedItems[index].toUserFeedItem(isRead = entity.isRead)
                 }
             }
 
@@ -104,50 +101,53 @@ data class UserData(val feed: CursoredUserFeed, val subscriptions: List<Feed>) {
 
         /**
          * [batchRefreshUserFeedItems] refreshes the feed subscription data for the user with given
-         * [userKey] whose feed items with the given [feedItemKeys] with common parent [feedKey]
-         * needed to be refreshed.
+         * [userKey] whose [feedItems] with common parent [feedKey] needed to be refreshed.
          */
         @JvmStatic
-        private fun batchRefreshUserFeedItems(userKey: Key, feedKey: Key, feedItemKeys: List<Key>) {
+        private fun batchRefreshUserFeedItems(
+                userKey: Key, feedKey: Key, feedItems: List<FeedItem>
+        ) {
             // Find new keys to insert and old entities to update.
-            val newKeys = arrayListOf<Key>()
-            val entities = feedItemKeys.mapNotNull { key ->
+            val newItems = arrayListOf<FeedItem>()
+            val existingItems = arrayListOf<FeedItem>()
+            val entities = feedItems.mapNotNull { item ->
                 val keyOpt = ItemEntity.query {
                     filter {
                         table.userKey eq userKey
-                        table.feedItemKey eq key
+                        table.feedItemKey eq item.feedItemKeyNotNull
                     }
                 }.firstOrNull()
                 if (keyOpt == null) {
-                    newKeys.add(element = key)
+                    newItems.add(element = item)
+                } else {
+                    existingItems.add(element = item)
                 }
                 keyOpt
             }
             // Insert and update
-            val nowTime = System.currentTimeMillis()
-            ItemEntity.batchInsert(source = newKeys) { feedItemKey ->
+            ItemEntity.batchInsert(source = newItems) { feedItem ->
                 table.userKey gets userKey
                 table.feedKey gets feedKey
-                table.feedItemKey gets feedItemKey
+                table.feedItemKey gets feedItem.feedItemKeyNotNull
                 table.isRead gets false
-                table.lastUpdatedTime gets nowTime
+                table.lastUpdatedTime gets feedItem.publicationTime
             }
-            ItemEntity.batchUpdate(entities = entities) {
+            ItemEntity.batchUpdate(entities = entities, source = existingItems) { feedItem ->
                 table.isRead gets false
-                table.lastUpdatedTime gets nowTime
+                table.lastUpdatedTime gets feedItem.publicationTime
             }
         }
 
         /**
-         * [batchRefresh] refreshes the feed subscription data for all users whose feed items with
-         * the given [feedItemKeys] with common parent [feedKey] needed to be refreshed.
+         * [batchRefresh] refreshes the feed subscription data for all users whose [feedItems] with
+         * common parent [feedKey] needed to be refreshed.
          */
         @JvmStatic
-        internal fun batchRefresh(feedKey: Key, feedItemKeys: List<Key>) {
+        internal fun batchRefresh(feedKey: Key, feedItems: List<FeedItem>) {
             // Find all users and update for each user.
             SubscriptionEntity.all().map { it.userKey }.forEach { userKey ->
                 batchRefreshUserFeedItems(
-                        userKey = userKey, feedKey = feedKey, feedItemKeys = feedItemKeys
+                        userKey = userKey, feedKey = feedKey, feedItems = feedItems
                 )
             }
         }

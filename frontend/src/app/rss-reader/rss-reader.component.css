@@ -15,6 +15,11 @@ mat-list-item.item-read {
   margin-right: 0.5em;
 }
 
+.article-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .article-box {
   background-color: white;
   padding: 1em;

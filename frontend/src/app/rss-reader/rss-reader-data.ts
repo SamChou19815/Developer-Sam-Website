@@ -44,6 +44,10 @@ export interface FeedItem {
    * Description of the item.
    */
   readonly description: string;
+  /**
+   * Time of publication of the item.
+   */
+  readonly publicationTime: number;
 }
 
 /**
@@ -54,10 +58,6 @@ export interface UserFeedItem extends FeedItem {
    * Whether the item is read.
    */
   readonly isRead: boolean;
-  /**
-   * Last updated time of the item.
-   */
-  readonly lastUpdatedTime: number;
 }
 
 /**

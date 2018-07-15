@@ -4,6 +4,13 @@
   align-items: center;
 }
 
-.mid {
+.title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   flex: 1 1;
+}
+
+.pub-time {
+  width: 210px;
 }

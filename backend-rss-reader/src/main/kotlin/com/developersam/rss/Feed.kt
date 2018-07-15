@@ -6,6 +6,7 @@ import typedstore.TypedEntity
 import typedstore.TypedEntityCompanion
 import typedstore.TypedTable
 import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * [Feed] represents the basic information of a feed, which only contains standard RSS 2.0
@@ -25,7 +26,7 @@ data class Feed(
     /**
      * [upsert] upserts the given feed data into the database.
      */
-    private fun upsert(): Key {
+    fun upsert(): Key {
         val entity = FeedEntity.query { filter { table.rssUrl eq rssUrl } }.firstOrNull()
         return FeedEntity.upsert(entity = entity) {
             table.rssUrl gets rssUrl
@@ -71,7 +72,7 @@ data class Feed(
         /**
          * [lastRefreshedTime] records the last refreshed time for the feed.
          */
-        private val lastRefreshedTime: AtomicLong = AtomicLong(System.currentTimeMillis())
+        private val lastRefreshedTime: AtomicReference<Long?> = AtomicReference(null)
 
         /**
          * [MIN_REFRESH_FREQUENCY] is the minimum allowed refresh frequency.
@@ -97,11 +98,12 @@ data class Feed(
          * Refresh all feed in the database.
          */
         fun refresh() {
-            if (System.currentTimeMillis() - lastRefreshedTime.get() < MIN_REFRESH_FREQUENCY) {
+            val lastRefreshedTime: Long = lastRefreshedTime.get() ?: 0
+            if (System.currentTimeMillis() - lastRefreshedTime < MIN_REFRESH_FREQUENCY) {
                 return
             }
             FeedEntity.all().map { it.rssUrl }.forEach(action = ::refreshByUrl)
-            lastRefreshedTime.set(System.currentTimeMillis())
+            this.lastRefreshedTime.set(System.currentTimeMillis())
         }
 
     }

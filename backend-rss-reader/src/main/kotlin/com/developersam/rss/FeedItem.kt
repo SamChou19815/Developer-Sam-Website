@@ -23,7 +23,7 @@ data class FeedItem(
     private object Table : TypedTable<Table>(tableName = "RssFeedItem") {
         val title = stringProperty(name = "title")
         val link = stringProperty(name = "link")
-        val description = stringProperty(name = "description")
+        val description = longStringProperty(name = "description")
     }
 
     /**
@@ -77,15 +77,16 @@ data class FeedItem(
             }
             // Step 2: Update them separately
             val builder: TypedEntityBuilder<Table, ItemEntity>.(FeedItem) -> Unit = { item ->
-                table.title to item.title
-                table.link to item.link
-                table.description to item.description
+                table.title gets item.title
+                table.link gets item.link
+                table.description gets item.description
             }
             val itemKeys = ArrayList<Key>(newItems.size + existingItems.size)
             ItemEntity.batchInsert(parent = feedKey, source = newItems, builder = builder)
                     .forEach { itemKeys.add(element = it.key) }
-            ItemEntity.batchUpdate(entities = entities, source = existingItems, builder = builder)
-            entities.forEach { itemKeys.add(element = it.key) }
+            entities.apply {
+                ItemEntity.batchUpdate(entities = this, source = existingItems, builder = builder)
+            }.forEach { itemKeys.add(element = it.key) }
             // Step 3: Collect items keys to update user feed.
             UserFeed.batchRefresh(feedItemKeys = itemKeys)
         }

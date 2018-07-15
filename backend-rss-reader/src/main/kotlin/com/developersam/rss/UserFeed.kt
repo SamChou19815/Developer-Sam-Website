@@ -190,7 +190,7 @@ object UserFeed {
     fun makeSubscription(user: GoogleUser, url: String): Boolean {
         val userKey = user.keyNotNull
         val (feed, items) = FeedParser.parse(url = url) ?: return false
-        val feedKey = feed.key!!
+        val feedKey = feed.upsert()
         val exists = SubscriptionEntity.any { filter { table.feedKey eq feedKey } }
         if (exists) {
             return false

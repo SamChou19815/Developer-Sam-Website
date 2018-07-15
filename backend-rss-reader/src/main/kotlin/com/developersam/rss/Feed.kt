@@ -63,7 +63,7 @@ data class Feed(
          */
         val asRssFeed: Feed
             get() = Feed(
-                    rssUrl = rssUrl, title = Table.title.delegatedValue,
+                    key = key, rssUrl = rssUrl, title = Table.title.delegatedValue,
                     link = Table.link.delegatedValue, description = Table.description.delegatedValue
             )
 

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
 import { GoogleUserService } from '../shared/google-user.service';
-import { CursoredUserFeed, dummyRssReaderData, RssReaderData } from './rss-reader-data';
+import { CursoredUserFeed, dummyRssReaderData, Feed, RssReaderData } from './rss-reader-data';
 
 @Injectable({
   providedIn: 'root'
@@ -65,19 +65,31 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
   }
 
   /**
-   * Add a new feed to subscriptions.
+   * Subscribe to a feed with given URL.
    *
    * @param {string} url url of the feed.
    * @returns {Promise<boolean>} promise to tell whether the operations succeeds.
    */
-  async addFeed(url: string): Promise<boolean> {
+  async subscribe(url: string): Promise<boolean> {
     const data = await this.postParamsForData<RssReaderData | null>(
-      '/add_feed', { 'url': url });
+      '/subscribe', { 'url': url });
     if (data == null) {
       return false;
     }
     this._data = data;
     return true;
+  }
+
+  /**
+   * Unsubscribe a feed at the given the index.
+   *
+   * @param {Feed} feed the feed to unsubscribe.
+   * @param {number} index the index of the feed.
+   * @returns {Promise<void>} promise when done.
+   */
+  async unsubscribe(feed: Feed, index: number): Promise<void> {
+    await this.deleteData('/unsubscribe', { 'key': feed.key });
+    this._data.subscriptions.splice(index, 1);
   }
 
 }

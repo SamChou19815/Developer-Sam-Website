@@ -6,11 +6,11 @@
       <div class="search-box-container">
         <mat-form-field class="search-box">
           <input matInput type="url" [(ngModel)]="rssFeedUrlInput"
-                 placeholder="RSS Feed URL" (keypress)="addFeed($event)" required>
+                 placeholder="RSS Feed URL" (keypress)="subscribe($event)" required>
         </mat-form-field>
         <button mat-button color="primary"
                 [disabled]="isAddFeedButtonDisabled"
-                (click)="addFeed()">Add</button>
+                (click)="subscribe()">Add</button>
       </div>
     </mat-card-content>
   </mat-card>
@@ -18,7 +18,7 @@
   <div class="section-text" *ngIf="subscriptions.length === 0">
     You don't have any subscriptions. :(
   </div>
-  <mat-card *ngFor="let feed of subscriptions">
+  <mat-card *ngFor="let feed of subscriptions; let i = index">
     <mat-card-title>{{feed.title}}</mat-card-title>
     <mat-card-content class="multi-line">
       Description:<br>
@@ -26,6 +26,7 @@
     </mat-card-content>
     <mat-card-actions *ngIf="feed.link">
       <a mat-button color="primary" [href]="feed.link" target="_blank">Website</a>
+      <button mat-button color="accent" (click)="unsubscribe(feed, i)">Unsubscribe</button>
     </mat-card-actions>
   </mat-card>
 </ng-container>

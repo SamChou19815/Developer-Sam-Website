@@ -34,6 +34,7 @@ data class UserData(val feed: CursoredUserFeed, val subscriptions: List<Feed>) {
      */
     private object ItemTable : TypedTable<ItemTable>(tableName = "RssUserFeedItem") {
         val userKey = keyProperty(name = "user_key")
+        val feedKey = keyProperty(name = "feed_key")
         val feedItemKey = keyProperty(name = "feed_item_key")
         val isRead = boolProperty(name = "is_read")
         val lastUpdatedTime = longProperty(name = "last_updated_time")
@@ -102,36 +103,52 @@ data class UserData(val feed: CursoredUserFeed, val subscriptions: List<Feed>) {
     object Subscriptions {
 
         /**
-         * [batchRefresh] refreshes the feed subscription data for all users whose feed items with
-         * the given [feedItemKeys] needed to be refreshed.
+         * [batchRefreshUserFeedItems] refreshes the feed subscription data for the user with given
+         * [userKey] whose feed items with the given [feedItemKeys] with common parent [feedKey]
+         * needed to be refreshed.
          */
         @JvmStatic
-        internal fun batchRefresh(feedItemKeys: List<Key>) {
-            SubscriptionEntity.all().map { it.userKey }.forEach { userKey ->
-                val newKeys = arrayListOf<Key>()
-                val entities = feedItemKeys.mapNotNull { key ->
-                    val keyOpt = ItemEntity.query {
-                        filter {
-                            table.userKey eq userKey
-                            table.feedItemKey eq key
-                        }
-                    }.firstOrNull()
-                    if (keyOpt == null) {
-                        newKeys.add(element = key)
+        private fun batchRefreshUserFeedItems(userKey: Key, feedKey: Key, feedItemKeys: List<Key>) {
+            // Find new keys to insert and old entities to update.
+            val newKeys = arrayListOf<Key>()
+            val entities = feedItemKeys.mapNotNull { key ->
+                val keyOpt = ItemEntity.query {
+                    filter {
+                        table.userKey eq userKey
+                        table.feedItemKey eq key
                     }
-                    keyOpt
+                }.firstOrNull()
+                if (keyOpt == null) {
+                    newKeys.add(element = key)
                 }
-                val nowTime = System.currentTimeMillis()
-                ItemEntity.batchInsert(source = newKeys) { feedItemKey ->
-                    table.userKey gets userKey
-                    table.feedItemKey gets feedItemKey
-                    table.isRead gets false
-                    table.lastUpdatedTime gets nowTime
-                }
-                ItemEntity.batchUpdate(entities = entities) {
-                    table.isRead gets false
-                    table.lastUpdatedTime gets nowTime
-                }
+                keyOpt
+            }
+            // Insert and update
+            val nowTime = System.currentTimeMillis()
+            ItemEntity.batchInsert(source = newKeys) { feedItemKey ->
+                table.userKey gets userKey
+                table.feedKey gets feedKey
+                table.feedItemKey gets feedItemKey
+                table.isRead gets false
+                table.lastUpdatedTime gets nowTime
+            }
+            ItemEntity.batchUpdate(entities = entities) {
+                table.isRead gets false
+                table.lastUpdatedTime gets nowTime
+            }
+        }
+
+        /**
+         * [batchRefresh] refreshes the feed subscription data for all users whose feed items with
+         * the given [feedItemKeys] with common parent [feedKey] needed to be refreshed.
+         */
+        @JvmStatic
+        internal fun batchRefresh(feedKey: Key, feedItemKeys: List<Key>) {
+            // Find all users and update for each user.
+            SubscriptionEntity.all().map { it.userKey }.forEach { userKey ->
+                batchRefreshUserFeedItems(
+                        userKey = userKey, feedKey = feedKey, feedItemKeys = feedItemKeys
+                )
             }
         }
 
@@ -143,18 +160,43 @@ data class UserData(val feed: CursoredUserFeed, val subscriptions: List<Feed>) {
         @JvmStatic
         fun subscribe(user: GoogleUser, url: String): Boolean {
             val userKey = user.keyNotNull
+            // Parse and record feed metadata
             val (feed, items) = FeedParser.parse(url = url) ?: return false
             val feedKey = feed.upsert()
+            // Reject subscribe to existing ones.
             val exists = SubscriptionEntity.any { filter { table.feedKey eq feedKey } }
             if (exists) {
                 return false
             }
+            // Record Data
             SubscriptionEntity.insert(parent = feedKey) {
                 table.userKey gets userKey
                 table.feedKey gets feedKey
             }
             FeedItem.batchRefresh(feedKey = feedKey, items = items)
             return true
+        }
+
+        /**
+         * [unsubscribe] makes the user unsubscribe the feed with given [feedKey].
+         */
+        @JvmStatic
+        fun unsubscribe(user: GoogleUser, feedKey: Key) {
+            val userKey = user.keyNotNull
+            // Delete bindings in subscription table.
+            SubscriptionEntity.query {
+                filter {
+                    table.userKey eq userKey
+                    table.feedKey eq feedKey
+                }
+            }.map { it.key }.toList().let { SubscriptionEntity.delete(keys = it) }
+            // Delete items in user item table
+            ItemEntity.query {
+                filter {
+                    table.userKey eq userKey
+                    table.feedKey eq feedKey
+                }
+            }.map { it.key }.toList().let { SubscriptionEntity.delete(keys = it) }
         }
 
     }

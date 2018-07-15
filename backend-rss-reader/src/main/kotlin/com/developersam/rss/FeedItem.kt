@@ -100,7 +100,7 @@ data class FeedItem(
                 ItemEntity.batchUpdate(entities = this, source = existingItems, builder = builder)
             }.forEach { itemKeys.add(element = it.key) }
             // Step 3: Collect items keys to update user feed.
-            UserData.Subscriptions.batchRefresh(feedItemKeys = itemKeys)
+            UserData.Subscriptions.batchRefresh(feedKey = feedKey, feedItemKeys = itemKeys)
         }
 
     }

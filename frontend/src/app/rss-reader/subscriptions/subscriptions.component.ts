@@ -61,21 +61,38 @@ export class SubscriptionsComponent implements OnInit {
   }
 
   /**
-   * Add a feed.
+   * Subscribe to a feed.
    *
    * @param {KeyboardEvent} event the optional keyboard event.
    */
-  addFeed(event?: KeyboardEvent): void {
+  subscribe(event?: KeyboardEvent): void {
     if (event != null && event.code !== 'Enter') {
       return;
     }
     asyncRun(async () => {
       const ref = this.loadingService.open();
-      const isSuccessful = await this.dataService.addFeed(this.rssFeedUrlInput);
+      const isSuccessful = await this.dataService.subscribe(this.rssFeedUrlInput);
       const msg = isSuccessful ? 'You have successfully added a feed.' : 'The feed URL is invalid.';
+      if (isSuccessful) {
+        this.rssFeedUrlInput = '';
+      }
       ref.close();
       this.dialog.open(AlertComponent, { data: msg });
     });
+  }
+
+  /**
+   * Unsubscribe the feed at the given index.
+   *
+   * @param {Feed} feed the feed to unsubscribe.
+   * @param {number} index the index of the feed.
+   */
+  unsubscribe(feed: Feed, index: number) {
+    if (!confirm('Do you really want to unsubscribe?')) {
+      return;
+    }
+    const ref = this.loadingService.open();
+    this.dataService.unsubscribe(feed, index).then(ref.close);
   }
 
 }

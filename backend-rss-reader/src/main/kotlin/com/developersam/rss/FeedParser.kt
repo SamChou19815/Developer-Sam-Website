@@ -31,7 +31,12 @@ internal object FeedParser {
         val items = rawFeed.entries?.mapNotNull { entry ->
             val title = entry.title ?: return@mapNotNull null
             val link = entry.link ?: return@mapNotNull null
-            val description = entry.description?.value ?: return@mapNotNull null
+            val description = when {
+                entry.description != null -> entry.description.value
+                entry.contents != null && entry.contents.isNotEmpty() ->
+                    entry.contents.joinToString(separator = "\n") { it.value }
+                else -> return@mapNotNull null
+            }
             val publicationTime = entry.publishedDate?.time ?: nowTime
             FeedItem(
                     title = title, link = link,

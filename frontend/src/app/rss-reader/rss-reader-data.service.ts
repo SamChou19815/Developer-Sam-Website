@@ -22,7 +22,7 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
    * @private
    */
   private _data: RssReaderData = <RssReaderData>{
-    feed: <UserFeed>{ items: [], cursor: '' },
+    feed: <UserFeed>{ items: [], limit: 50, cursor: '' },
     subscriptions: [],
     isNotInitialized: true
   };
@@ -64,15 +64,15 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
 
   /**
    * Load more feed data to the client.
-   *
    * @returns {Promise<void>} promise when done.
    */
   async loadMoreFeed(): Promise<void> {
+    const feed = this._data.feed;
     const { cursor, items } = await this.getData<UserFeed>('/load_more_feed', {
-      'cursor': this._data.feed.cursor
+      'cursor': feed.cursor
     });
-    this._data.feed.cursor = cursor;
-    this._data.feed.items.push(...items);
+    feed.cursor = cursor;
+    feed.items.push(...items);
   }
 
   /**

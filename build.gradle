@@ -43,7 +43,7 @@ allprojects {
         // Test
         testImplementation 'junit:junit:4.12'
         // DB
-        api 'com.github.SamChou19815:TypedStore:0.5.0'
+        api 'com.github.SamChou19815:TypedStore:0.6.0'
     }
 
     compileKotlin {

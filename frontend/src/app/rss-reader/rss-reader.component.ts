@@ -71,6 +71,24 @@ export class RssReaderComponent implements OnInit {
   }
 
   /**
+   * Returns whether the user can load more feed.
+   *
+   * @returns {boolean} whether the user can load more feed.
+   */
+  get canLoadMoreFeed(): boolean {
+    const feed = this.dataService.data.feed;
+    return feed.items.length % feed.limit === 0;
+  }
+
+  /**
+   * Load more feed data to the client.
+   */
+  loadMoreFeed(): void {
+    const ref = this.loadingService.open();
+    this.dataService.loadMoreFeed().then(ref.close);
+  }
+
+  /**
    * Read an item at the specified index.
    *
    * @param {UserFeedItemWithIndex} itemWithIndex the item to read with its index.

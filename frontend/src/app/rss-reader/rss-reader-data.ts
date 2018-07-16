@@ -1,7 +1,6 @@
 /**
  * [Feed] defines an RSS feed's most general information.
  */
-import { User } from 'firebase';
 
 export interface Feed {
   /**
@@ -88,6 +87,10 @@ export interface UserFeed {
    * The collection of items.
    */
   readonly items: UserFeedItem[];
+  /**
+   * The limit of fetching.
+   */
+  readonly limit: number;
   /**
    * The cursor for pagination fetch.
    */

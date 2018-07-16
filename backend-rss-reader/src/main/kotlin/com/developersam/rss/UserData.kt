@@ -214,13 +214,18 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
      */
     data class UserFeed(val items: List<UserFeedItem>, val cursor: Cursor) {
 
+        /**
+         * [limit] is the limit of fetching. The field is used to give information to the frontend.
+         */
+        private val limit: Int = Constants.FETCH_LIMIT
+
         companion object {
 
             /**
              * [get] returns an [UserFeed] for the given user.
              */
             operator fun get(user: GoogleUser, startCursor: Cursor? = null): UserFeed {
-                val (sequence, cursor) = ItemEntity.queryCursored {
+                val (entities, cursor) = ItemEntity.queryCursored {
                     filter { table.userKey eq user.keyNotNull }
                     order {
                         table.lastUpdatedTime.desc()
@@ -229,7 +234,7 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
                     withLimit(limit = Constants.FETCH_LIMIT)
                     startCursor?.let { startAt(cursor = it) }
                 }
-                val items = ItemEntity.entitiesToItems(entities = sequence.toList())
+                val items = ItemEntity.entitiesToItems(entities = entities)
                 return UserFeed(items = items, cursor = cursor)
             }
 

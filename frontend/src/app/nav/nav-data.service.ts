@@ -38,7 +38,7 @@ export class NavDataService {
       ]
     },
     <NavGroup>{
-      name: 'Rss Reader', icon: Icon.ofMaterial('chrome_reader_mode'),
+      name: 'RSS Reader', icon: Icon.ofMaterial('chrome_reader_mode'),
       children: [
         {
           name: 'Articles', icon: Icon.ofMaterial('library_books'),

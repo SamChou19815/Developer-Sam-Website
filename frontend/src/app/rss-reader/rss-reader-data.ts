@@ -1,6 +1,8 @@
 /**
  * [Feed] defines an RSS feed's most general information.
  */
+import { User } from 'firebase';
+
 export interface Feed {
   /**
    * Key of the feed.
@@ -55,15 +57,33 @@ export interface FeedItem {
  */
 export interface UserFeedItem extends FeedItem {
   /**
+   * Key of the item.
+   */
+  readonly key: string;
+  /**
    * Whether the item is read.
    */
   readonly isRead: boolean;
 }
 
 /**
- * [CursoredUserFeed] defines a collection feed with a cursor for pagination fetch.
+ * [UserFeedItemWithIndex] is a simple wrapper for a [UserFeedItem] with its index.
  */
-export interface CursoredUserFeed {
+export interface UserFeedItemWithIndex {
+  /**
+   * The item itself.
+   */
+  readonly item: UserFeedItem;
+  /**
+   * Index of the item.
+   */
+  readonly index: number;
+}
+
+/**
+ * [UserFeed] defines a collection feed with a cursor for pagination fetch.
+ */
+export interface UserFeed {
   /**
    * The collection of items.
    */
@@ -81,7 +101,7 @@ export interface RssReaderData {
   /**
    * Feed data.
    */
-  readonly feed: CursoredUserFeed;
+  readonly feed: UserFeed;
   /**
    * Subscription data.
    */

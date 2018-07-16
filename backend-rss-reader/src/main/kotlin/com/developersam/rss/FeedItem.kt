@@ -29,11 +29,12 @@ data class FeedItem(
 
     /**
      * [toUserFeedItem] returns the [UserFeedItem] form of the this item with required additional
-     * info [isRead].
+     * info [isRead], and the [key] of the [UserFeedItem].
      */
-    internal fun toUserFeedItem(isRead: Boolean): UserFeedItem =
+    internal fun toUserFeedItem(key: Key, isRead: Boolean): UserFeedItem =
             UserFeedItem(
-                    feedKey = feedKey, title = title, link = link, description = description,
+                    feedKey = feedKey!!, key = key,
+                    title = title, link = link, description = description,
                     publicationTime = publicationTime, isRead = isRead
             )
 

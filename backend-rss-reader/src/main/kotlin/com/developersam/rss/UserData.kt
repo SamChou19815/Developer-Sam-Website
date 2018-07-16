@@ -11,7 +11,7 @@ import typedstore.TypedTable
 /**
  * [UserData] contains a collection of operations related to user and feed.
  */
-data class UserData(val feed: CursoredUserFeed, val subscriptions: List<Feed>) {
+data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
 
     /*
      * --------------------------------------------------------------------------------
@@ -64,6 +64,7 @@ data class UserData(val feed: CursoredUserFeed, val subscriptions: List<Feed>) {
      * [ItemEntity] is the entity definition for [UserFeedItem].
      */
     private class ItemEntity(entity: Entity) : TypedEntity<ItemTable>(entity = entity) {
+        val userKey: Key = ItemTable.userKey.delegatedValue
         val feedItemKey: Key = ItemTable.feedItemKey.delegatedValue
         val isRead: Boolean = ItemTable.isRead.delegatedValue
 
@@ -81,7 +82,7 @@ data class UserData(val feed: CursoredUserFeed, val subscriptions: List<Feed>) {
                     error(message = "DB corrupted")
                 }
                 return entities.mapIndexed { index, entity ->
-                    feedItems[index].toUserFeedItem(isRead = entity.isRead)
+                    feedItems[index].toUserFeedItem(key = entity.key, isRead = entity.isRead)
                 }
             }
 
@@ -208,17 +209,17 @@ data class UserData(val feed: CursoredUserFeed, val subscriptions: List<Feed>) {
      */
 
     /**
-     * [CursoredUserFeed] represents a list of user RSS [items] with a [cursor] to mark the
-     * fetch breakpoint.
+     * [UserFeed] represents a list of user RSS [items] with a [cursor] to mark the fetch
+     * breakpoint.
      */
-    data class CursoredUserFeed(val items: List<UserFeedItem>, val cursor: Cursor) {
+    data class UserFeed(val items: List<UserFeedItem>, val cursor: Cursor) {
 
         companion object {
 
             /**
-             * [get] returns an [CursoredUserFeed] for the given user.
+             * [get] returns an [UserFeed] for the given user.
              */
-            operator fun get(user: GoogleUser, startCursor: Cursor? = null): CursoredUserFeed {
+            operator fun get(user: GoogleUser, startCursor: Cursor? = null): UserFeed {
                 val (sequence, cursor) = ItemEntity.queryCursored {
                     filter { table.userKey eq user.keyNotNull }
                     order {
@@ -229,7 +230,17 @@ data class UserData(val feed: CursoredUserFeed, val subscriptions: List<Feed>) {
                     startCursor?.let { startAt(cursor = it) }
                 }
                 val items = ItemEntity.entitiesToItems(entities = sequence.toList())
-                return CursoredUserFeed(items = items, cursor = cursor)
+                return UserFeed(items = items, cursor = cursor)
+            }
+
+            /**
+             * [markAs] marks a user feed item with [userFeedItemKey] belonging to [user] as
+             * [isRead]. If the [user] does not own the item, this operation has no effect.
+             */
+            fun markAs(user: GoogleUser, userFeedItemKey: Key, isRead: Boolean) {
+                ItemEntity[userFeedItemKey]?.takeIf { it.userKey == user.keyNotNull }?.let { e ->
+                    ItemEntity.update(entity = e) { table.isRead gets isRead }
+                }
             }
 
         }
@@ -256,7 +267,7 @@ data class UserData(val feed: CursoredUserFeed, val subscriptions: List<Feed>) {
          */
         fun getRssReaderData(user: GoogleUser): UserData =
                 UserData(
-                        feed = CursoredUserFeed[user],
+                        feed = UserFeed[user],
                         subscriptions = Feed[getFeedKeys(user = user)]
                 )
 

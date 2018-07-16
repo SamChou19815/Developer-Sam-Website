@@ -120,7 +120,7 @@ private fun initializeRssReaderApiHandlers() {
     get(path = "/load") { UserData.getRssReaderData(user = user) }
     get(path = "/load_more_feed") {
         val cursor = queryParamsForCursor(name = "cursor")
-        UserData.CursoredUserFeed[user, cursor]
+        UserData.UserFeed[user, cursor]
     }
     post(path = "/subscribe") {
         val url = queryParams("url") ?: badRequest()
@@ -132,6 +132,11 @@ private fun initializeRssReaderApiHandlers() {
     delete(path = "/unsubscribe") {
         val key = queryParamsForKey("key")
         UserData.Subscriptions.unsubscribe(user = user, feedKey = key)
+    }
+    post(path = "/mark_as") {
+        val key = queryParamsForKey("key")
+        val isRead = queryParams("is_read")?.toBoolean() ?: badRequest()
+        UserData.UserFeed.markAs(user = user, userFeedItemKey = key, isRead = isRead)
     }
 }
 

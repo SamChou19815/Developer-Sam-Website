@@ -2,7 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
 import { GoogleUserService } from '../shared/google-user.service';
-import { CursoredUserFeed, Feed, RssReaderData } from './rss-reader-data';
+import { asyncRun } from '../shared/util';
+import {
+  Feed,
+  RssReaderData,
+  UserFeed,
+  UserFeedItem,
+  UserFeedItemWithIndex
+} from './rss-reader-data';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +22,7 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
    * @private
    */
   private _data: RssReaderData = <RssReaderData>{
-    feed: <CursoredUserFeed>{ items: [], cursor: '' },
+    feed: <UserFeed>{ items: [], cursor: '' },
     subscriptions: [],
     isNotInitialized: true
   };
@@ -61,7 +68,7 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
    * @returns {Promise<void>} promise when done.
    */
   async loadMoreFeed(): Promise<void> {
-    const { cursor, items } = await this.getData<CursoredUserFeed>('/load_more_feed', {
+    const { cursor, items } = await this.getData<UserFeed>('/load_more_feed', {
       'cursor': this._data.feed.cursor
     });
     this._data.feed.cursor = cursor;
@@ -94,6 +101,25 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
   async unsubscribe(feed: Feed, index: number): Promise<void> {
     await this.deleteData('/unsubscribe', { 'key': feed.key });
     this._data.subscriptions.splice(index, 1);
+  }
+
+  /**
+   * Mark the item as read or not.
+   *
+   * @param {UserFeedItem} item the item to mark.
+   * @param {number} index index of the item to mark.
+   * @param {boolean} isRead whether the item should be marked as 'read' or not.
+   */
+  markAs({ item, index }: UserFeedItemWithIndex, isRead: boolean) {
+    asyncRun(async () => {
+      await this.postParamsForText('/mark_as', {
+        'key': item.key, 'is_read': String(isRead)
+      });
+      // Replace with new item
+      this._data.feed.items.splice(index, 1, <UserFeedItem>{
+        ...item, isRead: isRead
+      });
+    });
   }
 
 }

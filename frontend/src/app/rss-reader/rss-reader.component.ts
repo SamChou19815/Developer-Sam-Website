@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { LoadingOverlayService } from '../shared/overlay/loading-overlay.service';
 import { shortDelay } from '../shared/util';
-import { RssReaderData, UserFeedItem } from './rss-reader-data';
+import { RssReaderData, UserFeedItem, UserFeedItemWithIndex } from './rss-reader-data';
 import { RssReaderDataService } from './rss-reader-data.service';
 
 @Component({
@@ -13,11 +13,11 @@ import { RssReaderDataService } from './rss-reader-data.service';
 export class RssReaderComponent implements OnInit {
 
   /**
-   * Selected item is the current article selected by the user, which can be null to indicate that
-   * the user is not reading any one now.
-   * @type {UserFeedItem | null}
+   * Selected item with index is the current article selected by the user and its index, which can
+   * be null to indicate that the user is not reading any one now.
+   * @type {UserFeedItemWithIndex | null}
    */
-  private _selectedItem: UserFeedItem | null = null;
+  private _selectedItemWithIndex: UserFeedItemWithIndex | null = null;
 
   constructor(private dataService: RssReaderDataService,
               private loadingService: LoadingOverlayService,
@@ -55,7 +55,7 @@ export class RssReaderComponent implements OnInit {
    * @returns {boolean} whether we have a selected item.
    */
   get hasSelectedItem(): boolean {
-    return this._selectedItem != null;
+    return this._selectedItemWithIndex != null;
   }
 
   /**
@@ -64,27 +64,38 @@ export class RssReaderComponent implements OnInit {
    * @returns {UserFeedItem} the current article selected by the user.
    */
   get selectedItem(): UserFeedItem {
-    if (this._selectedItem == null) {
+    if (this._selectedItemWithIndex == null) {
       throw new Error();
     }
-    return this._selectedItem;
+    return this._selectedItemWithIndex.item;
   }
 
   /**
    * Read an item at the specified index.
    *
-   * @param {UserFeedItem} item the item to read.
-   * @param {number} index the index of the item.
+   * @param {UserFeedItemWithIndex} itemWithIndex the item to read with its index.
    */
-  readItem(item: UserFeedItem, index: number) {
-    this._selectedItem = item;
+  readItem(itemWithIndex: UserFeedItemWithIndex) {
+    this._selectedItemWithIndex = itemWithIndex;
+    this.dataService.markAs(itemWithIndex, true);
+  }
+
+  /**
+   * Mark the selected item with its index as unread.
+   */
+  markAsUnread() {
+    if (this._selectedItemWithIndex == null) {
+      return;
+    }
+    this.dataService.markAs(this._selectedItemWithIndex, false);
+    this._selectedItemWithIndex = null;
   }
 
   /**
    * Go back to the item list.
    */
   goBackToItemList() {
-    this._selectedItem = null;
+    this._selectedItemWithIndex = null;
   }
 
 }

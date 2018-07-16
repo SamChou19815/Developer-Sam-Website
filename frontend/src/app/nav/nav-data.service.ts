@@ -16,9 +16,6 @@ export class NavDataService {
       name: 'Developer Sam', icon: Icon.ofMaterial('home'),
       link: '/', isInternal: true
     },
-    <NavItem>{
-      name: 'Friends', icon: Icon.ofMaterial('group'), link: '/friends', isInternal: true
-    },
     <NavGroup>{
       name: 'Scheduler', icon: Icon.ofMaterial('event_note'),
       children: [
@@ -29,6 +26,10 @@ export class NavDataService {
         {
           name: 'Events', icon: Icon.ofMaterial('event'),
           link: '/scheduler/events', isInternal: true
+        },
+        {
+          name: 'Friends', icon: Icon.ofMaterial('group'),
+          link: '/friends', isInternal: true
         },
         {
           name: 'Auto Scheduling', icon: Icon.ofMaterial('dashboard'),

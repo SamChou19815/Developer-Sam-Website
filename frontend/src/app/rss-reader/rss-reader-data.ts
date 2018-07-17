@@ -62,7 +62,7 @@ export interface UserFeedItem extends FeedItem {
   /**
    * Whether the item is read.
    */
-  readonly isRead: boolean;
+  isRead: boolean;
 }
 
 /**

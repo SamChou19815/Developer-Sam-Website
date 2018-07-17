@@ -4,7 +4,7 @@
       {{article.title}}
     </mat-panel-title>
     <mat-panel-description>
-      <span>Submitted Time: {{time}}</span>
+      <span>Submitted Time: {{timeToDateString(article.time)}}</span>
       <span>Word Count: {{article.tokenCount}}</span>
     </mat-panel-description>
   </mat-expansion-panel-header>

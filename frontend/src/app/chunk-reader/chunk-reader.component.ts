@@ -21,6 +21,14 @@ export class ChunkReaderComponent implements OnInit {
    */
   articles: AnalyzedArticle[] = [];
 
+  /**
+   * Convert time to date string.
+   *
+   * @param {number} t time to convert.
+   * @returns {string} the converted date string.
+   */
+  timeToDateString: (t: number) => string = t => new Date(t).toLocaleDateString();
+
   constructor(private googleUserService: GoogleUserService,
               private networkService: ChunkReaderNetworkService,
               private loadingService: LoadingOverlayService,

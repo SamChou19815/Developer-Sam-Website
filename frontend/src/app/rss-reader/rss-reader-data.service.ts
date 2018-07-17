@@ -3,13 +3,7 @@ import { Injectable } from '@angular/core';
 import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
 import { GoogleUserService } from '../shared/google-user.service';
 import { asyncRun } from '../shared/util';
-import {
-  Feed,
-  RssReaderData,
-  UserFeed,
-  UserFeedItem,
-  UserFeedItemWithIndex
-} from './rss-reader-data';
+import { Feed, RssReaderData, UserFeed, UserFeedItem } from './rss-reader-data';
 
 @Injectable({
   providedIn: 'root'
@@ -107,18 +101,26 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
    * Mark the item as read or not.
    *
    * @param {UserFeedItem} item the item to mark.
-   * @param {number} index index of the item to mark.
    * @param {boolean} isRead whether the item should be marked as 'read' or not.
    */
-  markAs({ item, index }: UserFeedItemWithIndex, isRead: boolean) {
+  markAs(item: UserFeedItem, isRead: boolean) {
     asyncRun(async () => {
       await this.postParamsForText('/mark_as', {
         'key': item.key, 'is_read': String(isRead)
       });
-      // Replace with new item
-      this._data.feed.items.splice(index, 1, <UserFeedItem>{
-        ...item, isRead: isRead
-      });
+      item.isRead = isRead;
+    });
+  }
+
+  /**
+   * Mark all items as read or not.
+   *
+   * @param {boolean} isRead whether the items should be marked as 'read' or not.
+   */
+  markAllAs(isRead: boolean) {
+    asyncRun(async () => {
+      await this.postParamsForText('/mark_all_as', { 'is_read': String(isRead) });
+      this._data.feed.items.forEach(item => item.isRead = isRead);
     });
   }
 

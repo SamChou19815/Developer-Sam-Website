@@ -138,6 +138,10 @@ private fun initializeRssReaderApiHandlers() {
         val isRead = queryParams("is_read")?.toBoolean() ?: badRequest()
         UserData.UserFeed.markAs(user = user, userFeedItemKey = key, isRead = isRead)
     }
+    post(path = "/mark_all_as") {
+        val isRead = queryParams("is_read")?.toBoolean() ?: badRequest()
+        UserData.UserFeed.markAllAs(user = user, isRead = isRead)
+    }
 }
 
 /**

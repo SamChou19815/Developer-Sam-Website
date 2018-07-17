@@ -52,7 +52,7 @@ export class NavDataService {
     },
     <NavItem>{
       name: 'Chunk Reader', icon: Icon.ofMaterial('speaker_notes'),
-      link: '/chunkreader', isInternal: true
+      link: '/chunk_reader', isInternal: true
     },
     <NavGroup>{
       name: 'Playground', icon: Icon.ofMaterial('apps'),

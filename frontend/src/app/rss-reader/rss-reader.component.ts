@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { LoadingOverlayService } from '../shared/overlay/loading-overlay.service';
-import { shortDelay } from '../shared/util';
-import { RssReaderData, UserFeedItem, UserFeedItemWithIndex } from './rss-reader-data';
+import { asyncRun, shortDelay } from '../shared/util';
+import { RssReaderData, UserFeedItem } from './rss-reader-data';
 import { RssReaderDataService } from './rss-reader-data.service';
 
 @Component({
@@ -13,15 +12,19 @@ import { RssReaderDataService } from './rss-reader-data.service';
 export class RssReaderComponent implements OnInit {
 
   /**
-   * Selected item with index is the current article selected by the user and its index, which can
+   * Selected item is the current article selected by the user and its index, which can
    * be null to indicate that the user is not reading any one now.
-   * @type {UserFeedItemWithIndex | null}
+   * @type {UserFeedItem | null}
    */
-  private _selectedItemWithIndex: UserFeedItemWithIndex | null = null;
+  private _selectedItem: UserFeedItem | null = null;
+  /**
+   * Reports whether the system is loading more data.
+   * @type {boolean}
+   */
+  private _isLoadingMore = false;
 
   constructor(private dataService: RssReaderDataService,
-              private loadingService: LoadingOverlayService,
-              private dialog: MatDialog) {
+              private loadingService: LoadingOverlayService) {
   }
 
   ngOnInit() {
@@ -55,7 +58,7 @@ export class RssReaderComponent implements OnInit {
    * @returns {boolean} whether we have a selected item.
    */
   get hasSelectedItem(): boolean {
-    return this._selectedItemWithIndex != null;
+    return this._selectedItem != null;
   }
 
   /**
@@ -64,10 +67,19 @@ export class RssReaderComponent implements OnInit {
    * @returns {UserFeedItem} the current article selected by the user.
    */
   get selectedItem(): UserFeedItem {
-    if (this._selectedItemWithIndex == null) {
+    if (this._selectedItem == null) {
       throw new Error();
     }
-    return this._selectedItemWithIndex.item;
+    return this._selectedItem;
+  }
+
+  /**
+   * Returns whether the system is loading more data.
+   *
+   * @returns {boolean} whether the system is loading more data.
+   */
+  get isLoadingMore(): boolean {
+    return this._isLoadingMore;
   }
 
   /**
@@ -80,40 +92,71 @@ export class RssReaderComponent implements OnInit {
     return feed.items.length % feed.limit === 0;
   }
 
+  onScroll(event: Event) {
+    const target = event.target;
+    if (target == null) {
+      return;
+    }
+    const htmlElement = target as HTMLElement;
+    console.log(htmlElement.offsetHeight);
+    console.log(htmlElement.scrollTop);
+    console.log(htmlElement.scrollHeight);
+    if (htmlElement.offsetHeight + htmlElement.scrollTop >= htmlElement.scrollHeight - 50) {
+      this.loadMoreFeed();
+    }
+  }
+
   /**
    * Load more feed data to the client.
    */
   loadMoreFeed(): void {
-    const ref = this.loadingService.open();
-    this.dataService.loadMoreFeed().then(ref.close);
-  }
-
-  /**
-   * Read an item at the specified index.
-   *
-   * @param {UserFeedItemWithIndex} itemWithIndex the item to read with its index.
-   */
-  readItem(itemWithIndex: UserFeedItemWithIndex) {
-    this._selectedItemWithIndex = itemWithIndex;
-    this.dataService.markAs(itemWithIndex, true);
-  }
-
-  /**
-   * Mark the selected item with its index as unread.
-   */
-  markAsUnread() {
-    if (this._selectedItemWithIndex == null) {
+    if (!this.canLoadMoreFeed || this._isLoadingMore) {
       return;
     }
-    this.dataService.markAs(this._selectedItemWithIndex, false);
-    this._selectedItemWithIndex = null;
+    this._isLoadingMore = true;
+    this.dataService.loadMoreFeed().then(() => this._isLoadingMore = false);
+  }
+
+  /**
+   * Read an item.
+   *
+   * @param {UserFeedItem} item the item to read.
+   */
+  readItem(item: UserFeedItem) {
+    this._selectedItem = item;
+    this.dataService.markAs(item, true);
+  }
+
+  /**
+   * Mark the selected item as unread.
+   */
+  markAsUnread() {
+    if (this._selectedItem == null) {
+      return;
+    }
+    this.dataService.markAs(this._selectedItem, false);
+    this.goBackToItemList();
+  }
+
+  /**
+   * Mark all as read.
+   */
+  markAllAsRead() {
+    this.dataService.markAllAs(true);
+  }
+
+  /**
+   * Mark all as unread.
+   */
+  markAllAsUnread() {
+    this.dataService.markAllAs(false);
   }
 
   /**
    * Go back to the item list.
    */
   goBackToItemList() {
-    this._selectedItemWithIndex = null;
+    this._selectedItem = null;
   }
 
 }

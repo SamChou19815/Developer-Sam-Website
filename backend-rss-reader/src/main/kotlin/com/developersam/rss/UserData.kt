@@ -248,6 +248,15 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
                 }
             }
 
+            /**
+             * [markAllAs] marks all user feed item belongs to [user] as [isRead].
+             */
+            fun markAllAs(user: GoogleUser, isRead: Boolean) {
+                val userKey = user.keyNotNull
+                val entities = ItemEntity.query { filter { table.userKey eq userKey } }.toList()
+                ItemEntity.batchUpdate(entities = entities) { table.isRead gets isRead }
+            }
+
         }
 
     }

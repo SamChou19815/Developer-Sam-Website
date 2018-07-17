@@ -8,11 +8,7 @@ import 'hammerjs';
 
 if (environment.production) {
   enableProdMode();
-}
-
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .then(() => {
-    console.log(`
+  console.log(`
     |-------------\\          |------------------------|     \\--\\                 /--/
     |              \\         |                        |      \\  \\               /  /
     |   |------\\    \\        |     |------------------|       \\  \\             /  /
@@ -25,7 +21,7 @@ platformBrowserDynamic().bootstrapModule(AppModule)
     |              /         |                        |              \\     /
     |-------------/          |------------------------|               \\---/
     `);
-    console.log(`
+  console.log(`
     |------------------|               /----\\              |----\\              /----|
     |                  |              /      \\             |     \\            /     |
     |   |--------------|             /  /--\\  \\            |  |\\  \\          /  /|  |
@@ -38,5 +34,6 @@ platformBrowserDynamic().bootstrapModule(AppModule)
     |                  |      /  /                \\  \\     |  |       \\  /       |  |
     |------------------|     /--/                  \\--\\    |--|        \\/        |--|
     `);
-  })
-  .catch(err => console.log(err));
+}
+
+platformBrowserDynamic().bootstrapModule(AppModule).catch(err => console.log(err));

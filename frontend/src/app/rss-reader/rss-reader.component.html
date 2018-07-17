@@ -24,9 +24,22 @@
   <ng-container *ngIf="hasSelectedItem">
     <mat-toolbar>
       <mat-icon class="back-button" (click)="goBackToItemList()">arrow_back</mat-icon>
-      <span class="toolbar-title">{{selectedItem.title}}</span>
+      <span class="toolbar-title">Article</span>
       <button mat-button color="primary" (click)="markAsUnread()">Mark As Unread</button>
     </mat-toolbar>
-    <div class="article-box content" [innerHTML]="selectedItem.description"></div>
+    <div class="content">
+      <mat-card>
+        <mat-card-title>{{selectedItem.title}}</mat-card-title>
+        <mat-card-content>
+          <div [innerHTML]="selectedItem.description"></div>
+        </mat-card-content>
+        <mat-card-actions>
+          <!--suppress HtmlUnknownAttribute -->
+          <a mat-button color="primary" [href]="selectedItem.link" target="_blank">
+            Original Article
+          </a>
+        </mat-card-actions>
+      </mat-card>
+    </div>
   </ng-container>
 </ng-container>

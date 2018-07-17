@@ -35,11 +35,6 @@ mat-toolbar {
   text-overflow: ellipsis;
 }
 
-.article-box {
-  background-color: white;
-  padding: 1em;
-}
-
 mat-list {
   background-color: white;
 }
@@ -55,4 +50,8 @@ mat-list-item.item-read {
 mat-list-item.load-more-disabled {
   cursor: auto;
   opacity: 0.3;
+}
+
+mat-card {
+  width: 90%;
 }

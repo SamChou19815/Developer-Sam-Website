@@ -89,7 +89,8 @@ export class RssReaderComponent implements OnInit {
    */
   get canLoadMoreFeed(): boolean {
     const feed = this.dataService.data.feed;
-    return feed.items.length % feed.limit === 0;
+    const len = feed.items.length;
+    return len !== 0 && len % feed.limit === 0;
   }
 
   onScroll(event: Event) {

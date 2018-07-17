@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthenticatedNetworkService } from '../shared/authenticated-network-service';
 import { GoogleUserService } from '../shared/google-user.service';
-import { asyncRun } from '../shared/util';
+import { ignore } from '../shared/util';
 import { Feed, RssReaderData, UserFeed, UserFeedItem } from './rss-reader-data';
 
 @Injectable({
@@ -90,11 +90,10 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
    *
    * @param {Feed} feed the feed to unsubscribe.
    * @param {number} index the index of the feed.
-   * @returns {Promise<void>} promise when done.
    */
-  async unsubscribe(feed: Feed, index: number): Promise<void> {
-    await this.deleteData('/unsubscribe', { 'key': feed.key });
+  unsubscribe(feed: Feed, index: number): void {
     this._data.subscriptions.splice(index, 1);
+    this.deleteData('/unsubscribe', { 'key': feed.key }).then(ignore);
   }
 
   /**
@@ -103,13 +102,11 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
    * @param {UserFeedItem} item the item to mark.
    * @param {boolean} isRead whether the item should be marked as 'read' or not.
    */
-  markAs(item: UserFeedItem, isRead: boolean) {
-    asyncRun(async () => {
-      await this.postParamsForText('/mark_as', {
-        'key': item.key, 'is_read': String(isRead)
-      });
-      item.isRead = isRead;
-    });
+  markAs(item: UserFeedItem, isRead: boolean): void {
+    item.isRead = isRead;
+    this.postParamsForText('/mark_as', {
+      'key': item.key, 'is_read': String(isRead)
+    }).then(ignore);
   }
 
   /**
@@ -117,11 +114,9 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
    *
    * @param {boolean} isRead whether the items should be marked as 'read' or not.
    */
-  markAllAs(isRead: boolean) {
-    asyncRun(async () => {
-      await this.postParamsForText('/mark_all_as', { 'is_read': String(isRead) });
-      this._data.feed.items.forEach(item => item.isRead = isRead);
-    });
+  markAllAs(isRead: boolean): void {
+    this._data.feed.items.forEach(item => item.isRead = isRead);
+    this.postParamsForText('/mark_all_as', { 'is_read': String(isRead) }).then(ignore);
   }
 
 }

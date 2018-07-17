@@ -111,19 +111,20 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
             // Find new keys to insert and old entities to update.
             val newItems = arrayListOf<FeedItem>()
             val existingItems = arrayListOf<FeedItem>()
-            val entities = feedItems.mapNotNull { item ->
-                val keyOpt = ItemEntity.query {
+            val entities = arrayListOf<ItemEntity>()
+            for (item in feedItems) {
+                val entityOpt = ItemEntity.query {
                     filter {
                         table.userKey eq userKey
                         table.feedItemKey eq item.feedItemKeyNotNull
                     }
                 }.firstOrNull()
-                if (keyOpt == null) {
+                if (entityOpt == null) {
                     newItems.add(element = item)
                 } else {
                     existingItems.add(element = item)
+                    entities.add(element = entityOpt)
                 }
-                keyOpt
             }
             // Insert and update
             ItemEntity.batchInsert(source = newItems) { feedItem ->
@@ -227,10 +228,7 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
             operator fun get(user: GoogleUser, startCursor: Cursor? = null): UserFeed {
                 val (entities, cursor) = ItemEntity.queryCursored {
                     filter { table.userKey eq user.keyNotNull }
-                    order {
-                        table.lastUpdatedTime.desc()
-                        table.isRead.asc()
-                    }
+                    order { table.lastUpdatedTime.desc() }
                     withLimit(limit = Constants.FETCH_LIMIT)
                     startCursor?.let { startAt(cursor = it) }
                 }

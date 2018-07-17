@@ -166,9 +166,6 @@ task updateDatastoreIndices {
         exec {
             commandLine 'sh', '-c', "gcloud datastore create-indexes $indexFile"
         }
-        exec {
-            commandLine 'sh', '-c', "gcloud datastore cleanup-indexes $indexFile"
-        }
     }
 }
 

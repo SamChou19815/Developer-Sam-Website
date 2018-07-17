@@ -91,8 +91,7 @@ export class SubscriptionsComponent implements OnInit {
     if (!confirm('Do you really want to unsubscribe?')) {
       return;
     }
-    const ref = this.loadingService.open();
-    this.dataService.unsubscribe(feed, index).then(ref.close);
+    this.dataService.unsubscribe(feed, index);
   }
 
 }

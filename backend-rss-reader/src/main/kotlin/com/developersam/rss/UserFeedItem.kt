@@ -21,4 +21,9 @@ data class UserFeedItem(
         private val description: String,
         private val publicationTime: Long,
         private val isRead: Boolean
-)
+) : Comparable<UserFeedItem> {
+
+    override fun compareTo(other: UserFeedItem): Int =
+            -publicationTime.compareTo(other = other.publicationTime)
+
+}

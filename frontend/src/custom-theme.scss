@@ -21,7 +21,7 @@ $theme: mat-light-theme($primary, $accent, $warn);
 @mixin dev-sam-theme($theme) {
   @include angular-material-theme($theme);
   mat-card-content a {
-    color: mat-color($accent);
+    color: mat-color($primary);
   }
   .cdk-overlay-light-backdrop {
     background-color: rgba(255, 255, 255, 0.8);

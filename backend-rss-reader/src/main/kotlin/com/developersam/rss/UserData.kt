@@ -77,7 +77,7 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
              */
             fun entitiesToItems(entities: List<ItemEntity>): List<UserFeedItem> {
                 val entitiesKeyList = entities.map { it.feedItemKey }
-                val feedItems = FeedItem[entitiesKeyList]
+                val feedItems = FeedItem[entitiesKeyList].sorted()
                 if (feedItems.size != entitiesKeyList.size) {
                     error(message = "DB corrupted")
                 }
@@ -135,7 +135,6 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
                 table.lastUpdatedTime gets feedItem.publicationTime
             }
             ItemEntity.batchUpdate(entities = entities, source = existingItems) { feedItem ->
-                table.isRead gets false
                 table.lastUpdatedTime gets feedItem.publicationTime
             }
         }

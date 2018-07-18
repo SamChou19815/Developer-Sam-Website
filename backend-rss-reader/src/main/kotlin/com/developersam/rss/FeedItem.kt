@@ -20,7 +20,7 @@ data class FeedItem(
         private val link: String,
         private val description: String,
         internal val publicationTime: Long
-) {
+) : Comparable<FeedItem> {
 
     /**
      * [feedItemKeyNotNull] returns the [feedItemKey] that is not null.
@@ -37,6 +37,9 @@ data class FeedItem(
                     title = title, link = link, description = description,
                     publicationTime = publicationTime, isRead = isRead
             )
+
+    override fun compareTo(other: FeedItem): Int =
+            -publicationTime.compareTo(other = other.publicationTime)
 
     /**
      * [Table] is the table definition of [FeedItem].

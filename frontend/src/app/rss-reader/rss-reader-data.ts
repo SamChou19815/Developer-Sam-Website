@@ -63,6 +63,10 @@ export interface UserFeedItem extends FeedItem {
    * Whether the item is read.
    */
   isRead: boolean;
+  /**
+   * Whether the item is starred.
+   */
+  isStarred: boolean;
 }
 
 /**
@@ -105,6 +109,10 @@ export interface RssReaderData {
    * Feed data.
    */
   readonly feed: UserFeed;
+  /**
+   * Starred items.
+   */
+  readonly starredItems: UserFeedItem[];
   /**
    * Subscription data.
    */

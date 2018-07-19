@@ -10,8 +10,16 @@ import typedstore.TypedTable
 
 /**
  * [UserData] contains a collection of operations related to user and feed.
+ *
+ * @property feed the main feed.
+ * @property starredItems a list of starred items.
+ * @property subscriptions user's subscriptions
  */
-data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
+data class UserData(
+        val feed: UserFeed,
+        val starredItems: List<UserFeedItem>,
+        val subscriptions: List<Feed>
+) {
 
     /*
      * --------------------------------------------------------------------------------
@@ -37,6 +45,7 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
         val feedKey = keyProperty(name = "feed_key")
         val feedItemKey = keyProperty(name = "feed_item_key")
         val isRead = boolProperty(name = "is_read")
+        val isStarred = boolProperty(name = "is_starred")
         val lastUpdatedTime = longProperty(name = "last_updated_time")
     }
 
@@ -67,6 +76,7 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
         val userKey: Key = ItemTable.userKey.delegatedValue
         val feedItemKey: Key = ItemTable.feedItemKey.delegatedValue
         val isRead: Boolean = ItemTable.isRead.delegatedValue
+        val isStarred: Boolean = ItemTable.isStarred.delegatedValue
 
         companion object : TypedEntityCompanion<ItemTable, ItemEntity>(table = ItemTable) {
 
@@ -82,7 +92,9 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
                     error(message = "DB corrupted")
                 }
                 return entities.mapIndexed { index, entity ->
-                    feedItems[index].toUserFeedItem(key = entity.key, isRead = entity.isRead)
+                    feedItems[index].toUserFeedItem(
+                            key = entity.key, isRead = entity.isRead, isStarred = entity.isStarred
+                    )
                 }
             }
 
@@ -132,6 +144,7 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
                 table.feedKey gets feedKey
                 table.feedItemKey gets feedItem.feedItemKeyNotNull
                 table.isRead gets false
+                table.isStarred gets false
                 table.lastUpdatedTime gets feedItem.publicationTime
             }
             ItemEntity.batchUpdate(entities = entities, source = existingItems) { feedItem ->
@@ -236,6 +249,18 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
             }
 
             /**
+             * [getStarred] returns a list of all starred feed item for user.
+             */
+            fun getStarred(user: GoogleUser): List<UserFeedItem> =
+                    ItemEntity.query {
+                        filter {
+                            table.userKey eq user.keyNotNull
+                            table.isStarred eq true
+                        }
+                        order { table.lastUpdatedTime.desc() }
+                    }.toList().let(block = ItemEntity.Companion::entitiesToItems)
+
+            /**
              * [markAs] marks a user feed item with [userFeedItemKey] belonging to [user] as
              * [isRead]. If the [user] does not own the item, this operation has no effect.
              */
@@ -253,6 +278,31 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
                 val entities = ItemEntity.query { filter { table.userKey eq userKey } }.toList()
                 ItemEntity.batchUpdate(entities = entities) { table.isRead gets isRead }
             }
+
+            /**
+             * [changeStarred] changes the star status of a feed item with [userFeedItemKey]
+             * belonging to the [user]. If the [user] does not own the item, this operation has no
+             * effect.
+             */
+            private fun changeStarred(user: GoogleUser, userFeedItemKey: Key, isStarred: Boolean) {
+                ItemEntity[userFeedItemKey]?.takeIf { it.userKey == user.keyNotNull }?.let { e ->
+                    ItemEntity.update(entity = e) { table.isStarred gets isStarred }
+                }
+            }
+
+            /**
+             * [star] stars an item with [userFeedItemKey] belonging to the [user].
+             * If the [user] does not own the item, this operation has no effect.
+             */
+            fun star(user: GoogleUser, userFeedItemKey: Key): Unit =
+                    changeStarred(user = user, userFeedItemKey = userFeedItemKey, isStarred = true)
+
+            /**
+             * [unstar] unstars an item with [userFeedItemKey] belonging to the [user].
+             * If the [user] does not own the item, this operation has no effect.
+             */
+            fun unstar(user: GoogleUser, userFeedItemKey: Key): Unit =
+                    changeStarred(user = user, userFeedItemKey = userFeedItemKey, isStarred = false)
 
         }
 
@@ -278,7 +328,7 @@ data class UserData(val feed: UserFeed, val subscriptions: List<Feed>) {
          */
         fun getRssReaderData(user: GoogleUser): UserData =
                 UserData(
-                        feed = UserFeed[user],
+                        feed = UserFeed[user], starredItems = UserFeed.getStarred(user = user),
                         subscriptions = Feed[getFeedKeys(user = user)]
                 )
 

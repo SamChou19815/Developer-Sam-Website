@@ -4,6 +4,10 @@
   align-items: center;
 }
 
+.star-icon {
+  width: 30px;
+}
+
 .title {
   white-space: nowrap;
   overflow: hidden;

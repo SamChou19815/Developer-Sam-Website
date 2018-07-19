@@ -129,9 +129,10 @@ private fun initializeRssReaderApiHandlers() {
             UserData.getRssReaderData(user = user)
         } else null
     }
-    delete(path = "/unsubscribe") {
+    post(path = "/unsubscribe") {
         val key = queryParamsForKey("key")
         UserData.Subscriptions.unsubscribe(user = user, feedKey = key)
+        UserData.getRssReaderData(user = user)
     }
     post(path = "/mark_as") {
         val key = queryParamsForKey("key")
@@ -141,6 +142,14 @@ private fun initializeRssReaderApiHandlers() {
     post(path = "/mark_all_as") {
         val isRead = queryParams("is_read")?.toBoolean() ?: badRequest()
         UserData.UserFeed.markAllAs(user = user, isRead = isRead)
+    }
+    post(path = "/star") {
+        val key = queryParamsForKey("key")
+        UserData.UserFeed.star(user = user, userFeedItemKey = key)
+    }
+    post(path = "/unstar") {
+        val key = queryParamsForKey("key")
+        UserData.UserFeed.unstar(user = user, userFeedItemKey = key)
     }
 }
 

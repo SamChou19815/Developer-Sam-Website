@@ -12,6 +12,7 @@ import com.google.cloud.datastore.Key
  * @property description description of the item.
  * @property publicationTime publication time of the item.
  * @property isRead whether the item is read.
+ * @property isStarred whether the item is starred.
  */
 data class UserFeedItem(
         private val feedKey: Key,
@@ -20,7 +21,8 @@ data class UserFeedItem(
         private val link: String,
         private val description: String,
         private val publicationTime: Long,
-        private val isRead: Boolean
+        private val isRead: Boolean,
+        private val isStarred: Boolean
 ) : Comparable<UserFeedItem> {
 
     override fun compareTo(other: UserFeedItem): Int =

@@ -17,6 +17,7 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
    */
   private _data: RssReaderData = <RssReaderData>{
     feed: <UserFeed>{ items: [], limit: 50, cursor: '' },
+    starredItems: [],
     subscriptions: [],
     isNotInitialized: true
   };
@@ -93,7 +94,8 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
    */
   unsubscribe(feed: Feed, index: number): void {
     this._data.subscriptions.splice(index, 1);
-    this.deleteData('/unsubscribe', { 'key': feed.key }).then(ignore);
+    this.postParamsForData<RssReaderData>('/unsubscribe', { 'key': feed.key })
+      .then(data => this._data = data);
   }
 
   /**
@@ -117,6 +119,35 @@ export class RssReaderDataService extends AuthenticatedNetworkService {
   markAllAs(isRead: boolean): void {
     this._data.feed.items.forEach(item => item.isRead = isRead);
     this.postParamsForText('/mark_all_as', { 'is_read': String(isRead) }).then(ignore);
+  }
+
+  /**
+   * Change star changes the star status of an item.
+   *
+   * @param {UserFeedItem} item the item to change star status.
+   */
+  toggleStar(item: UserFeedItem): void {
+    const newIsStarred = !item.isStarred;
+    const url = newIsStarred ? 'star' : 'unstar';
+    this.postParamsForText(url, { 'key': item.key }).then(ignore);
+    item.isStarred = newIsStarred;
+    this._data.feed.items.forEach(i => {
+      if (i.key === item.key) {
+        i.isStarred = newIsStarred;
+      }
+    });
+    const starredItems = this._data.starredItems;
+    if (newIsStarred) {
+      starredItems.push(item);
+      starredItems.sort((a, b) => b.publicationTime - a.publicationTime);
+    } else {
+      for (let i = 0; i < starredItems.length; i++) {
+        if (starredItems[i].key === item.key) {
+          starredItems.splice(i, 1);
+          return;
+        }
+      }
+    }
   }
 
 }

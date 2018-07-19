@@ -1,6 +1,6 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { LoadingOverlayService } from '../shared/overlay/loading-overlay.service';
-import { asyncRun, shortDelay } from '../shared/util';
+import { shortDelay } from '../shared/util';
 import { RssReaderData, UserFeedItem } from './rss-reader-data';
 import { RssReaderDataService } from './rss-reader-data.service';
 
@@ -22,6 +22,11 @@ export class RssReaderComponent implements OnInit {
    * @type {boolean}
    */
   private _isLoadingMore = false;
+  /**
+   * Whether to show all articles.
+   * @type {boolean}
+   */
+  doesShowAllArticles = true;
 
   constructor(private dataService: RssReaderDataService,
               private loadingService: LoadingOverlayService) {
@@ -50,6 +55,15 @@ export class RssReaderComponent implements OnInit {
    */
   get feed(): UserFeedItem[] {
     return this.dataService.data.feed.items;
+  }
+
+  /**
+   * Returns a list of starred articles for display.
+   *
+   * @returns {UserFeedItem[]} a list of starred articles for display.
+   */
+  get starredArticles(): UserFeedItem[] {
+    return this.dataService.data.starredItems;
   }
 
   /**
@@ -129,6 +143,20 @@ export class RssReaderComponent implements OnInit {
   }
 
   /**
+   * Returns whether all items are read.
+   *
+   * @returns {boolean} whether all items are read.
+   */
+  get isAllRead(): boolean {
+    const feed = this.feed;
+    if (feed.length === 0) {
+      // Reject this vacuously true case.
+      return false;
+    }
+    return feed.every(i => i.isRead);
+  }
+
+  /**
    * Mark the selected item as unread.
    */
   markAsUnread() {
@@ -151,6 +179,16 @@ export class RssReaderComponent implements OnInit {
    */
   markAllAsUnread() {
     this.dataService.markAllAs(false);
+  }
+
+  /**
+   * Toggle star status of the selected item.
+   */
+  toggleStar() {
+    if (this._selectedItem == null) {
+      throw new Error();
+    }
+    this.dataService.toggleStar(this._selectedItem);
   }
 
   /**

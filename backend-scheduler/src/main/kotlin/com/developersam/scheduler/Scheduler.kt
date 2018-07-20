@@ -522,7 +522,7 @@ class Scheduler(config1: SchedulerData, config2: SchedulerData = SchedulerData.e
                     TaggedInterval(type = type, title = title, start = i.start, end = i.end)
                 }
                 .sorted()
-                .toList()
+                .let { TaggedInterval.mergeAdjacentInterval(intervals = it) }
     }
 
 }

@@ -6,7 +6,7 @@ mat-icon.hamburger-icon, mat-icon.close-icon {
 }
 
 mat-toolbar {
-  position: sticky;
+  position: fixed;
   right: 0;
   top: 0;
   width: 100%;

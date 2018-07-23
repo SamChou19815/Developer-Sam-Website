@@ -6,17 +6,17 @@
         {{doesShowAllArticles ? 'All Articles' : 'Starred Articles'}}
       </span>
       <button mat-button color="primary" (click)="doesShowAllArticles = !doesShowAllArticles">
-        {{doesShowAllArticles ? 'Starred Articles' : 'All Articles' }}
+        {{doesShowAllArticles ? 'Starred' : 'All' }}
       </button>
       <button mat-button color="primary"
               *ngIf="!isAllRead"
               (click)="markAllAsRead()">
-        Mark All As Read
+        Read All
       </button>
       <button mat-button color="primary"
               *ngIf="isAllRead"
               (click)="markAllAsUnread()">
-        Mark All As Unread
+        Unread All
       </button>
     </mat-toolbar>
     <mat-list *ngIf="doesShowAllArticles" (scroll)="onScroll($event)">

@@ -22,10 +22,6 @@ export interface NavItem extends BaseNavData {
    * The actual link of the item, which can be internal or external.
    */
   readonly link: string;
-  /**
-   * Whether this link is pointing to an internal resource.
-   */
-  readonly isInternal: boolean;
 }
 
 /**

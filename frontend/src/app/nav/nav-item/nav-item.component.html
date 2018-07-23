@@ -1,17 +1,8 @@
 <a class="nav-item"
    [class.as-child]="isChild"
-   *ngIf="item.isInternal"
    [routerLink]="[item.link]"
    routerLinkActive="selected"
    [routerLinkActiveOptions]="{ exact: true }">
-  <app-icon [icon]="item.icon"></app-icon>
-  <span class="nav-item-text">{{item.name}}</span>
-</a>
-<a class="nav-item"
-   [class.as-child]="isChild"
-   *ngIf="!item.isInternal"
-   [href]="item.link"
-   target="_blank">
   <app-icon [icon]="item.icon"></app-icon>
   <span class="nav-item-text">{{item.name}}</span>
 </a>

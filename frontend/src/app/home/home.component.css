@@ -52,3 +52,11 @@ div.mat-card-wrapper {
     width: 350px;
   }
 }
+
+span.separator {
+  margin-right: 5px;
+}
+
+fa {
+  font-size: 19px;
+}

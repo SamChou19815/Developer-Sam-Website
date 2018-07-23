@@ -195,6 +195,7 @@ private fun initializePublicApiHandlers() {
  * [initializeApiHandlers] initializes a list of handlers.
  */
 private fun initializeApiHandlers() {
+    get(path = "/") { "OK" } // Used for health check
     get(path = "/apis/echo") { "OK" } // Used for health check
     path("/apis/public", ::initializePublicApiHandlers)
     path("/apis/user", ::initializeUserApiHandlers)

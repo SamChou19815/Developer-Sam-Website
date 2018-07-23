@@ -169,32 +169,8 @@ task updateDatastoreIndices {
     }
 }
 
-task stageContainerBuild {
-    doLast {
-        exec {
-            commandLine 'sh', '-c', 'mkdir -p build/staging'
-        }
-        exec {
-            commandLine 'sh', '-c', 'cp build/libs/website-5.0-all.jar build/staging'
-        }
-        exec {
-            commandLine 'sh', '-c', 'cp src/main/docker/* build/staging'
-        }
-    }
-}
-
-task cloudBuildBackendContainer {
-    String setConfigCommand = 'gcloud config set project dev-sam'
-    String containerTag = 'gcr.io/dev-sam/backend-container .'
-    String cloudBuildCommand = "gcloud container builds submit --tag $containerTag"
-    doLast {
-        exec {
-            commandLine 'sh', '-c', "cd build/staging; $setConfigCommand; $cloudBuildCommand"
-        }
-    }
-}
-
 task localBuildAndRunBackendContainer {
+    String stageDir = 'build/staging'
     String imageTag = 'local-test-image'
     String containerName = 'local-test-container'
     String buildCommand = "docker build -t $imageTag ."
@@ -204,11 +180,18 @@ task localBuildAndRunBackendContainer {
     String cmd = "cd build/staging; $buildCommand; $stopCommand; $removeCommand; $runCommand"
     doLast {
         exec {
+            commandLine 'sh', '-c', "mkdir -p $stageDir"
+        }
+        exec {
+            commandLine 'sh', '-c', "cp build/libs/website-5.0-all.jar $stageDir"
+        }
+        exec {
+            commandLine 'sh', '-c', "cp src/main/docker/* $stageDir"
+        }
+        exec {
             commandLine 'sh', '-c', cmd
         }
     }
 }
 
-stageContainerBuild.dependsOn(build)
-cloudBuildBackendContainer.dependsOn(stageContainerBuild)
-localBuildAndRunBackendContainer.dependsOn(stageContainerBuild)
+localBuildAndRunBackendContainer.dependsOn(build)

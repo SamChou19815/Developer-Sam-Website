@@ -1,0 +1,8 @@
+node_modules
+e2e
+src
+Dockerfile
+.DS_Store
+.firebaserc
+.editorconfig
+LICENSE

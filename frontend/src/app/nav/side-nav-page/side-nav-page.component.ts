@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef,
   Component,
   HostListener,
-  Input,
   OnInit,
   ViewChild
 } from '@angular/core';
@@ -21,15 +20,15 @@ import { NavDataService } from '../nav-data.service';
 export class SideNavPageComponent implements OnInit, AfterViewInit {
 
   /**
-   * Navigation data list.
-   * @type {NavDataList}
-   */
-  readonly navDataList: NavDataList;
-  /**
    * Title displayed at the top.
    * @type {string}
    */
   title: string;
+  /**
+   * Whether the page is home page.
+   * @type {boolean}
+   */
+  isHome = true;
   /**
    * Current width of the window.
    */
@@ -76,7 +75,6 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
               private navDataService: NavDataService,
               private changeDetector: ChangeDetectorRef,
               private router: Router) {
-    this.navDataList = navDataService.navDataList;
     this.title = this.navDataList.list[0].name;
     this.windowWidth = window.innerWidth;
   }
@@ -85,7 +83,14 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
     this.router.events.subscribe((e) => {
       if (e instanceof RouterEvent && e instanceof NavigationStart) {
         const currentUrl = e.url;
-        const title = this.navDataList.getNameByUrl(currentUrl);
+        let title: string;
+        if (currentUrl === '/') {
+          title = 'Developer Sam';
+          this.isHome = true;
+        } else {
+          title = this.navDataList.getNameByUrl(currentUrl);
+          this.isHome = false;
+        }
         this.titleService.setTitle(title);
         this.title = title;
       }
@@ -94,6 +99,15 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.changeDetector.detectChanges();
+  }
+
+  /**
+   * Returns the nav data list for display.
+   *
+   * @returns {NavDataList} the nav data list for display.
+   */
+  get navDataList(): NavDataList {
+    return this.navDataService.getNavData(this.isHome);
   }
 
   /**
@@ -120,7 +134,7 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
    * @returns {boolean}
    */
   get sideNavInitiallyOpened(): boolean {
-    return this.isScreenWide;
+    return this.isScreenWide && !this.isHome;
   }
 
   /**

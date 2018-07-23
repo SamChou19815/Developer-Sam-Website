@@ -2,6 +2,8 @@
 
 set -x
 
+npm run build
+
 container_name='gcr.io/dev-sam/frontend-container'
 container_tag=`date +%s`
 full_container_tag="${container_name}:${container_tag}"

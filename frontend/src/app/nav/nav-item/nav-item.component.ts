@@ -13,7 +13,7 @@ export class NavItemComponent implements OnInit {
    * A simple navigation item to display.
    * @type {NavItem}
    */
-  @Input() item: NavItem = { name: '', icon: Icon.ofDummy, link: '', isInternal: true };
+  @Input() item: NavItem = { name: '', icon: Icon.ofDummy, link: '' };
   /**
    * Whether the item is displayed as a child in a group.
    * @type {boolean}

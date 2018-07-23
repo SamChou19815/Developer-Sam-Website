@@ -86,13 +86,11 @@ data class UserData(
              * [entitiesToItems] converts this collection of [entities] to a list of [UserFeedItem].
              */
             fun entitiesToItems(entities: List<ItemEntity>): List<UserFeedItem> {
-                val entitiesKeyList = entities.map { it.feedItemKey }
-                val feedItems = FeedItem[entitiesKeyList].sorted()
-                if (feedItems.size != entitiesKeyList.size) {
-                    error(message = "DB corrupted")
-                }
-                return entities.mapIndexed { index, entity ->
-                    feedItems[index].toUserFeedItem(
+                val entitiesKeyMap = entities.associateBy { it.feedItemKey }
+                val feedItems = FeedItem[entitiesKeyMap.keys].sorted()
+                return feedItems.mapNotNull { item ->
+                    val entity = entitiesKeyMap[item.feedItemKey] ?: return@mapNotNull null
+                    item.toUserFeedItem(
                             key = entity.key, isRead = entity.isRead, isStarred = entity.isStarred
                     )
                 }

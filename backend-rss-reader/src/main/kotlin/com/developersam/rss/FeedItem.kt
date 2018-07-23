@@ -15,7 +15,7 @@ import typedstore.TypedTable
  */
 data class FeedItem(
         private val feedKey: Key? = null,
-        private val feedItemKey: Key? = null,
+        internal val feedItemKey: Key? = null,
         private val title: String,
         private val link: String,
         private val description: String,

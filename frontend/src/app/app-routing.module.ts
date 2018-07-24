@@ -17,11 +17,11 @@ const routes: Routes = [
     loadChildren: 'app/scheduler/scheduler.module#SchedulerModule'
   },
   {
-    path: 'rss_reader',
+    path: 'rss-reader',
     loadChildren: 'app/rss-reader/rss-reader.module#RssReaderModule'
   },
   {
-    path: 'playground/chunk_reader',
+    path: 'playground/chunk-reader',
     loadChildren: 'app/chunk-reader/chunk-reader.module#ChunkReaderModule'
   },
   {

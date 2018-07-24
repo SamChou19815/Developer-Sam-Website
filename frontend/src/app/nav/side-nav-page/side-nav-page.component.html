@@ -1,4 +1,4 @@
-<mat-toolbar color="primary" class="mat-elevation-z4">
+<mat-toolbar color="primary">
   <mat-icon class="hamburger-icon" (click)="drawer.toggle()">menu</mat-icon>
   <span class="title-content">{{title}}</span>
   <span style="flex: 1 1 auto;"></span>
@@ -6,7 +6,7 @@
   <a mat-button *ngIf="!isHome" (click)="backToHome()">Home Page</a>
 </mat-toolbar>
 <mat-sidenav-container [autosize]="false">
-  <mat-sidenav mode="over" class="mat-elevation-z4" #drawer>
+  <mat-sidenav mode="over" #drawer>
     <nav class="nav-toolbar">
       <app-nav-group *ngFor="let group of navDataList.list"
                      [group]="group"

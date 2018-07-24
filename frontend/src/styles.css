@@ -3,6 +3,10 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+a {
+  min-width: 0 !important;
+}
+
 .multi-line {
   white-space: pre-line;
 }

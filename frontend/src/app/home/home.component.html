@@ -1,118 +1,35 @@
 <!--suppress HtmlUnknownAttribute -->
-<div class="mat-card-wrapper">
-  <mat-card>
-    <img src="../../assets/app-icons/scheduler.png" alt="Scheduler" mat-card-image/>
-    <mat-card-content>
-      A manager and auto-scheduler for your projects and events.
-    </mat-card-content>
-    <mat-card-actions>
-      <a mat-button color="primary" routerLink="/scheduler">Visit</a>
-    </mat-card-actions>
-  </mat-card>
-</div>
-<div class="mat-card-wrapper">
-  <mat-card>
-    <img src="../../assets/app-icons/rss-reader.png" alt="RSS Reader" mat-card-image/>
-    <mat-card-content>
-      A reader for subscribed RSS feeds. Source of my potential ML data.
-    </mat-card-content>
-    <mat-card-actions>
-      <a mat-button color="primary" routerLink="/rss_reader">Visit</a>
-    </mat-card-actions>
-  </mat-card>
-</div>
-<div class="mat-card-wrapper">
-  <mat-card>
-    <img src="../../assets/app-icons/sampl.png" alt="SAMPL" mat-card-image/>
-    <mat-card-content>
-      A statically-typed functional programming language with basic type inference.
-    </mat-card-content>
-    <mat-card-actions>
-      <a mat-button color="primary" routerLink="/playground/chunk_reader">Visit</a>
-    </mat-card-actions>
-  </mat-card>
-</div>
-<div class="mat-card-wrapper">
-  <mat-card>
-    <img src="../../assets/app-icons/chunk-reader.png" alt="Chunk Reader" mat-card-image/>
-    <mat-card-content>
-      A service to extract key information and summary from text.
-    </mat-card-content>
-    <mat-card-actions>
-      <a mat-button color="primary" routerLink="/playground/chunk_reader">Visit</a>
-    </mat-card-actions>
-  </mat-card>
-</div>
-<div class="mat-card-wrapper">
-  <mat-card>
-    <img src="../../assets/app-icons/ten.png" alt="TEN" mat-card-image/>
-    <mat-card-content>
-      An interesting game with simple rules. Powered by an MCTS AI.
-    </mat-card-content>
-    <mat-card-actions>
-      <a mat-button color="primary" routerLink="/playground/ten">Visit</a>
-    </mat-card-actions>
-  </mat-card>
-</div>
-<div class="mat-card-wrapper">
-  <mat-card>
-    <img src="../../assets/app-icons/more-projects.png" alt="More Projects" mat-card-image/>
-    <mat-card-content>
-      Other open source projects that are not hosted on this website.
-    </mat-card-content>
-    <mat-card-actions>
-      <a mat-button color="primary" href="https://github.com/SamChou19815">See all of them</a>
-    </mat-card-actions>
-  </mat-card>
-</div>
-<div class="mat-card-wrapper">
-  <mat-card>
-    <mat-card-title>Student</mat-card-title>
-    <mat-card-content>Major in computer science at Cornell University.</mat-card-content>
-    <mat-card-content>GPA: 4.15/4.3</mat-card-content>
-  </mat-card>
-</div>
-<div class="mat-card-wrapper">
-  <mat-card>
-    <mat-card-title>Researcher</mat-card-title>
-    <mat-card-content>
-      Researched in machine learning and artificial intelligence.
-    </mat-card-content>
-    <mat-card-content>
-      Published paper about the application of neural networks.
-    </mat-card-content>
-    <mat-card-actions>
-      <a mat-button color="primary" href="../../assets/papers/EvolutionandAssimilation.pdf"
-         target=_blank>
-        Latest Paper
-      </a>
-    </mat-card-actions>
-  </mat-card>
-</div>
-<div class="mat-card-wrapper">
-  <mat-card>
-    <mat-card-title>Know more about Sam</mat-card-title>
-    <mat-card-actions>
-      <a mat-button color="primary" href="https://github.com/SamChou19815" target=_blank>
-        <fa name="github" size="lg"></fa>
-        <span class="separator"></span>
-        <span>Open Source</span>
-      </a>
-      <a mat-button color="primary" href="https://docs.developersam.com" target=_blank>
-        <mat-icon>folder</mat-icon>
-        <span class="separator"></span>
-        <span>Documentation</span>
-      </a>
-      <a mat-button color="primary" href="https://blog.developersam.com" target=_blank>
-        <mat-icon>language</mat-icon>
-        <span class="separator"></span>
-        <span>Blog</span>
-      </a>
-      <a mat-button color="primary" href="../../assets/docs/Resume.pdf" target=_blank>
-        <mat-icon>account_box</mat-icon>
-        <span class="separator"></span>
-        <span>Resume</span>
-      </a>
-    </mat-card-actions>
-  </mat-card>
+<section id="about-me-section">
+  <div class="about-me-row hello-world-row">
+    I am Sam Zhou.
+  </div>
+  <div class="about-me-row">
+    Student at Cornell University.
+  </div>
+  <div class="about-me-row">
+    Major: Computer Science GPA: 4.15/4.3.
+  </div>
+  <div style="flex: 1 1;"></div>
+  <div class="about-me-row">
+    <a mat-stroked-button href="https://github.com/SamChou19815" target=_blank>
+      <fa name="github"></fa>
+      <span class="separator"></span>
+      <span class="separator"></span>
+      <span>GitHub</span>
+    </a>
+    <a mat-stroked-button href="https://blog.developersam.com" target=_blank>
+      <mat-icon>language</mat-icon>
+      <span class="separator"></span>
+      <span>Blog</span>
+    </a>
+    <a mat-stroked-button href="../../assets/docs/Resume.pdf" target=_blank>
+      <mat-icon>account_box</mat-icon>
+      <span class="separator"></span>
+      <span>Resume</span>
+    </a>
+  </div>
+</section>
+<mat-toolbar id="project-toolbar">My Projects</mat-toolbar>
+<div id="projects-container">
+  <app-project-card *ngFor="let data of projects" [data]="data"></app-project-card>
 </div>

@@ -38,11 +38,11 @@ export class NavDataService {
     children: [
       {
         name: 'Articles', icon: Icon.ofMaterial('library_books'),
-        link: '/rss_reader/articles'
+        link: '/rss-reader/articles'
       },
       {
         name: 'Subscriptions', icon: Icon.ofMaterial('rss_feed'),
-        link: '/rss_reader/subscriptions'
+        link: '/rss-reader/subscriptions'
       },
     ]
   };
@@ -55,7 +55,7 @@ export class NavDataService {
     children: [
       <NavItem>{
         name: 'Chunk Reader', icon: Icon.ofMaterial('speaker_notes'),
-        link: '/playground/chunk_reader'
+        link: '/playground/chunk-reader'
       },
       <NavItem>{
         name: 'TEN', icon: Icon.ofMaterial('grid_on'),

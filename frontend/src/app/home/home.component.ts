@@ -1,16 +1,49 @@
 import { Component, OnInit } from '@angular/core';
-import { Icon } from '../shared/icon';
+import { ProjectCardData } from './project-card/project-card-data';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
 
-  readonly githubIcon: Icon = Icon.ofFontAwesome('github');
+  /**
+   * A list of projects to display.
+   * @type {ProjectCardData[]}
+   */
+  readonly projects: ProjectCardData[] = [
+    <ProjectCardData>{
+      name: 'Scheduler', logo: '/assets/app-icons/scheduler.png', routerLink: '/scheduler',
+      intro: 'A manager and auto-scheduler for your projects and events.'
+    },
+    <ProjectCardData>{
+      name: 'RSS Reader', logo: '/assets/app-icons/rss-reader.png', routerLink: '/rss-reader',
+      intro: 'A reader for subscribed RSS feeds. Source of my potential ML data.'
+    },
+    <ProjectCardData>{
+      name: 'SAMPL', logo: '/assets/app-icons/sampl.png',
+      externalResource: { prompt: 'Check It', link: 'https://github.com/SamChou19815/sampl' },
+      intro: 'A statically-typed functional programming language with basic type inference.'
+    },
+    <ProjectCardData>{
+      name: 'Chunk Reader', logo: '/assets/app-icons/chunk-reader.png',
+      routerLink: '/playground/chunk-reader',
+      intro: 'A service to extract key information and summary from text.'
+    },
+    <ProjectCardData>{
+      name: 'TEN', logo: '/assets/app-icons/ten.png', routerLink: '/playground/ten',
+      intro: 'An interesting game with simple rules. Powered by an MCTS AI.'
+    },
+    <ProjectCardData>{
+      name: 'More Projects', logo: '/assets/app-icons/more-projects.png',
+      externalResource: { prompt: 'Check Them All', link: 'https://github.com/SamChou19815' },
+      intro: 'Other open source projects that are not hosted on this website.'
+    }
+  ];
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
   }

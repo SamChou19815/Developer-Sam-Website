@@ -1,22 +1,4 @@
-@media (min-width: 1300px) {
-  :host {
-    display: block;
-    column-count: 3;
-    column-gap: 0;
-    column-fill: initial;
-  }
-}
-
-@media (min-width: 800px) and (max-width: 1300px) {
-  :host {
-    display: block;
-    column-count: 2;
-    column-gap: 0;
-    column-fill: initial;
-  }
-}
-
-div.mat-card-wrapper {
+:host {
   display: flex;
   break-inside: avoid;
   flex-direction: row;
@@ -49,14 +31,6 @@ div.mat-card-wrapper {
 @media (min-width: 900px) {
   mat-card {
     margin: 1em;
-    width: 350px;
+    width: 300px;
   }
-}
-
-span.separator {
-  margin-right: 5px;
-}
-
-fa {
-  font-size: 19px;
 }

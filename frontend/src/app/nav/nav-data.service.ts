@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Icon } from '../shared/icon';
-import { NavData, NavDataList, NavGroup, NavItem } from './nav-data';
+import { NavDataList, NavGroup, NavItem } from './nav-data';
 
 @Injectable({
   providedIn: 'root'
@@ -67,7 +67,7 @@ export class NavDataService {
    * The nav data list for display.
    * @type {NavDataList}
    */
-  readonly navDataList: NavDataList = new NavDataList(<NavData[]>[
+  readonly navDataList: NavDataList = new NavDataList(<NavGroup[]>[
     this.schedulerNavGroup, this.rssReaderGroup, this.playgroundGroup
   ]);
 

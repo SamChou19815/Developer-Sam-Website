@@ -32,6 +32,7 @@
   background-color: #e0ecff;
 }
 
-.nav-item:hover {
+.nav-item:hover, .nav-item:focus, .nav-item:active {
   border: none;
+  outline: none;
 }

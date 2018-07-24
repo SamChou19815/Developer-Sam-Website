@@ -10,7 +10,7 @@ import { MatDrawer } from '@angular/material';
 import { Title } from '@angular/platform-browser';
 import { NavigationStart, Router, RouterEvent } from '@angular/router';
 import { ignore } from '../../shared/util';
-import { NavData, NavDataList, NavGroup, NavItem } from '../nav-data';
+import { NavDataList, NavGroup, NavItem } from '../nav-data';
 import { NavDataService } from '../nav-data.service';
 
 @Component({
@@ -39,38 +39,6 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
    * The reference to the drawer.
    */
   @ViewChild('drawer') private drawer: MatDrawer | undefined;
-
-  /**
-   * [isItem] checks whether the data is an item.
-   *
-   * @param {NavData} data the given data.
-   * @returns {boolean} whether the data is an item.
-   */
-  readonly isItem = (data: NavData) => data.hasOwnProperty('link');
-
-  /**
-   * [isGroup] checks whether the data is a group.
-   *
-   * @param {NavData} data the given data.
-   * @returns {boolean} whether the data is a group.
-   */
-  readonly isGroup = (data: NavData) => data.hasOwnProperty('children');
-
-  /**
-   * Returns the data as a nav item.
-   *
-   * @param {NavData} data the given data.
-   * @returns {NavItem} the data as a nav item.
-   */
-  readonly getItem = (data: NavData) => data as NavItem;
-
-  /**
-   * Returns the data as a nav group.
-   *
-   * @param {NavData} data the given data.
-   * @returns {NavGroup} the data as a nav group.
-   */
-  readonly getGroup = (data: NavData) => data as NavGroup;
 
   constructor(private titleService: Title,
               private navDataService: NavDataService,
@@ -121,32 +89,12 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Mode for the drawer.
-   *
-   * @returns {string}
-   */
-  get mode(): string {
-    return this.isScreenWide ? 'side' : 'over';
-  }
-
-  /**
-   * Whether the side nav should be open initially.
-   *
-   * @returns {boolean}
-   */
-  get sideNavInitiallyOpened(): boolean {
-    return this.isScreenWide && !this.isHome;
-  }
-
-  /**
    * Handle clicking nav.
    */
   clickNav(): void {
-    (async () => {
-      if (!this.isScreenWide && this.drawer != null) {
-        await this.drawer.close();
-      }
-    })();
+    if (this.drawer != null) {
+      this.drawer.close().then(ignore);
+    }
   }
 
   /**

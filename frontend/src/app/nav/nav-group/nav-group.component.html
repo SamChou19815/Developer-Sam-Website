@@ -1,6 +1,5 @@
-<a class="nav-item">
-  <app-icon [icon]="group.icon"></app-icon>
-  <span class="nav-item-text">{{group.name}}</span>
+<a class="nav-group">
+  <span class="nav-group-text">{{group.name | uppercase}}</span>
   <mat-icon (click)="doesShowChild = !doesShowChild">
     {{doesShowChild ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}
   </mat-icon>

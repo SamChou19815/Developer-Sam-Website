@@ -8,13 +8,6 @@ import { NavData, NavDataList, NavGroup, NavItem } from './nav-data';
 export class NavDataService {
 
   /**
-   * The item for home page.
-   * @type {NavItem}
-   */
-  private readonly homeNavItem: NavItem = <NavItem>{
-    name: 'Developer Sam', icon: Icon.ofMaterial('home'), link: '/'
-  };
-  /**
    * The group for scheduler.
    * @type {NavGroup}
    */
@@ -54,49 +47,31 @@ export class NavDataService {
     ]
   };
   /**
-   * The item for chunk reader.
-   * @type {NavItem}
-   */
-  private readonly chunkReaderItem: NavItem = <NavItem>{
-    name: 'Chunk Reader', icon: Icon.ofMaterial('speaker_notes'), link: '/chunk_reader'
-  };
-  /**
    * The group for playground
    * @type {NavGroup}
    */
   private readonly playgroundGroup: NavGroup = <NavGroup>{
     name: 'Playground', icon: Icon.ofMaterial('apps'),
     children: [
-      { name: 'TEN', icon: Icon.ofMaterial('grid_on'), link: '/playground/ten' }
+      <NavItem>{
+        name: 'Chunk Reader', icon: Icon.ofMaterial('speaker_notes'),
+        link: '/playground/chunk_reader'
+      },
+      <NavItem>{
+        name: 'TEN', icon: Icon.ofMaterial('grid_on'),
+        link: '/playground/ten'
+      }
     ]
   };
   /**
-   * The nav data list for home.
+   * The nav data list for display.
    * @type {NavDataList}
    */
-  private readonly navDataListForHome: NavDataList = new NavDataList(<NavData[]>[
-    this.schedulerNavGroup, this.rssReaderGroup, this.chunkReaderItem, this.playgroundGroup
-  ]);
-  /**
-   * The nav data list for apps.
-   * @type {NavDataList}
-   */
-  private readonly navDataListForApps: NavDataList = new NavDataList(<NavData[]>[
-    this.homeNavItem, this.schedulerNavGroup, this.rssReaderGroup,
-    this.chunkReaderItem, this.playgroundGroup
+  readonly navDataList: NavDataList = new NavDataList(<NavData[]>[
+    this.schedulerNavGroup, this.rssReaderGroup, this.playgroundGroup
   ]);
 
   constructor() {
-  }
-
-  /**
-   * Returns the nav data depending on the location of the user.
-   *
-   * @param {boolean} isHome whether the user is in home.
-   * @returns {NavDataList} the nav data depending on the location of the user.
-   */
-  getNavData(isHome: boolean): NavDataList {
-    return isHome ? this.navDataListForHome : this.navDataListForApps;
   }
 
 }

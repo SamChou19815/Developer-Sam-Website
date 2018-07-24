@@ -9,6 +9,7 @@ import {
 import { MatDrawer } from '@angular/material';
 import { Title } from '@angular/platform-browser';
 import { NavigationStart, Router, RouterEvent } from '@angular/router';
+import { ignore } from '../../shared/util';
 import { NavData, NavDataList, NavGroup, NavItem } from '../nav-data';
 import { NavDataService } from '../nav-data.service';
 
@@ -107,7 +108,7 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
    * @returns {NavDataList} the nav data list for display.
    */
   get navDataList(): NavDataList {
-    return this.navDataService.getNavData(this.isHome);
+    return this.navDataService.navDataList;
   }
 
   /**
@@ -155,6 +156,13 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
   onResize(): void {
     this.windowWidth = window.innerWidth;
     this.changeDetector.detectChanges();
+  }
+
+  /**
+   * Back to the home page.
+   */
+  backToHome(): void {
+    this.router.navigateByUrl('/').then(ignore);
   }
 
 }

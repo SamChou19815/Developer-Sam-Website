@@ -1,15 +1,15 @@
-.nav-item {
+.nav-group {
   display: flex;
   flex-direction: row;
   text-decoration: none;
   font-size: 14px;
   font-weight: 400;
-  padding: 20px 40px;
+  padding: 1em 1em 1em 0.5em;
   color: #757575;
   cursor: pointer;
 }
 
-.nav-item-text {
+.nav-group-text {
   display: inline-block;
   flex: 1 1;
   height: 24px;
@@ -23,16 +23,4 @@
   white-space: nowrap;
   direction: ltr;
   -webkit-font-smoothing: antialiased;
-}
-
-.nav-item.as-child {
-  padding: 16px 40px 16px 60px;
-}
-
-.nav-item.selected {
-  background-color: #e0ecff;
-}
-
-.nav-item:hover {
-  border: none;
 }

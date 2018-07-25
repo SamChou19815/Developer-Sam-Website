@@ -1,35 +1,8 @@
-<!--suppress HtmlUnknownAttribute -->
-<section id="about-me-section">
-  <div class="about-me-row hello-world-row">
-    I am Sam Zhou.
-  </div>
-  <div class="about-me-row">
-    Student at Cornell University.
-  </div>
-  <div class="about-me-row">
-    Major: Computer Science GPA: 4.15/4.3.
-  </div>
-  <div style="flex: 1 1;"></div>
-  <div class="about-me-row">
-    <a mat-stroked-button href="https://github.com/SamChou19815" target=_blank>
-      <fa name="github"></fa>
-      <span class="separator"></span>
-      <span class="separator"></span>
-      <span>GitHub</span>
-    </a>
-    <a mat-stroked-button href="https://blog.developersam.com" target=_blank>
-      <mat-icon>language</mat-icon>
-      <span class="separator"></span>
-      <span>Blog</span>
-    </a>
-    <a mat-stroked-button href="../../assets/docs/Resume.pdf" target=_blank>
-      <mat-icon>account_box</mat-icon>
-      <span class="separator"></span>
-      <span>Resume</span>
-    </a>
-  </div>
-</section>
+<div id="about"></div>
+<mat-toolbar id="about-me-toolbar">Developer Sam</mat-toolbar>
+<app-home-about-me-section></app-home-about-me-section>
+<div id="projects"></div>
 <mat-toolbar id="project-toolbar">My Projects</mat-toolbar>
-<div id="projects-container">
-  <app-project-card *ngFor="let data of projects" [data]="data"></app-project-card>
-</div>
+<section id="project-section">
+  <app-home-project-card *ngFor="let data of projects" [data]="data"></app-home-project-card>
+</section>

@@ -10,7 +10,7 @@ import { MatDrawer } from '@angular/material';
 import { Title } from '@angular/platform-browser';
 import { NavigationStart, Router, RouterEvent } from '@angular/router';
 import { ignore } from '../../shared/util';
-import { NavDataList, NavGroup, NavItem } from '../nav-data';
+import { NavDataList } from '../nav-data';
 import { NavDataService } from '../nav-data.service';
 
 @Component({
@@ -34,7 +34,6 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
    * Current width of the window.
    */
   private windowWidth: number;
-
   /**
    * The reference to the drawer.
    */
@@ -51,7 +50,11 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.router.events.subscribe((e) => {
       if (e instanceof RouterEvent && e instanceof NavigationStart) {
-        const currentUrl = e.url;
+        let currentUrl = e.url;
+        const hashTagIndex = currentUrl.indexOf('#');
+        if (hashTagIndex !== -1) {
+          currentUrl = currentUrl.substring(0, hashTagIndex);
+        }
         let title: string;
         if (currentUrl === '/') {
           title = 'Developer Sam';

@@ -11,12 +11,16 @@ import { HomeComponent } from './home/home.component';
 import { NavModule } from './nav/nav.module';
 import { SharedModule } from './shared/shared.module';
 import { ProjectCardComponent } from './home/project-card/project-card.component';
+import { AboutMeRowComponent } from './home/about-me-row/about-me-row.component';
+import { AboutMeSectionComponent } from './home/about-me-section/about-me-section.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    ProjectCardComponent
+    ProjectCardComponent,
+    AboutMeRowComponent,
+    AboutMeSectionComponent
   ],
   imports: [
     BrowserModule, NavModule, BrowserAnimationsModule,

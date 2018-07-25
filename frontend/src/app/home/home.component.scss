@@ -1,5 +1,8 @@
 @import '~@angular/material/theming';
 
+$near-black: mat-color(mat-palette($mat-blue-gray, 900));
+$blue-gray: mat-color(mat-palette($mat-blue-gray, 500));
+
 :host {
   position: absolute;
   top: 0;
@@ -7,6 +10,7 @@
   left: 0;
   right: 0;
   overflow: scroll;
+  scroll-behavior: smooth;
 }
 
 mat-toolbar {
@@ -18,52 +22,24 @@ mat-toolbar {
   justify-content: center;
 }
 
-#about-me-section {
-  background-color: mat-color(mat-palette($mat-blue, 700));
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  text-align: center;
-  color: white;
-  font-size: 2em;
-  font-weight: 100;
+#about-me-toolbar {
+  background-color: $near-black;
 }
 
-.about-me-row {
-  padding: 1em 0;
-}
-
-.hello-world-row {
-  font-size: 2.5em;
-  font-family: 'Roboto Mono', 'Source Code Pro', 'Courier New', Courier, sans-serif;
-  font-weight: 100;
-}
-
-@media (max-height: 900px) {
-  #about-me-section {
-    font-size: 1.5em;
-  }
-  .hello-world-row {
-    font-size: 2em;
-  }
-  .about-me-row {
-    padding: 0.5em 0;
-  }
-}
-
-.about-me-row a {
-  margin: 0.5em 1em;
-  line-height: 64px;
-  font-size: 1em;
-  font-weight: 100;
+app-home-about-me-section {
+  background-color: $near-black;
 }
 
 #project-toolbar {
-  background-color: #ff9800;
+  background: $blue-gray;
+}
+
+#project-section {
+  background-color: $blue-gray;
 }
 
 @media (min-width: 960px) {
-  #projects-container {
+  #project-section {
     display: block;
     column-count: 3;
     column-gap: 0;
@@ -72,28 +48,10 @@ mat-toolbar {
 }
 
 @media (min-width: 600px) and (max-width: 960px) {
-  #projects-container {
+  #project-section {
     display: block;
     column-count: 2;
     column-gap: 0;
     column-fill: initial;
   }
-}
-
-a {
-  min-width: 0 !important;
-}
-
-a mat-icon {
-  width: 40px;
-  height: 40px;
-  font-size: 40px;
-}
-
-span.separator {
-  margin-right: 5px;
-}
-
-fa {
-  font-size: 1.4em !important;
 }

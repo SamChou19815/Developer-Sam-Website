@@ -1,29 +1,54 @@
-mat-icon.hamburger-icon, mat-icon.close-icon {
+:host {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: scroll;
+}
+
+#hamburger-icon {
   cursor: pointer;
   display: flex;
   align-items: center;
   margin: 0 0.5em;
 }
 
+#floating-hamburger-icon {
+  position: fixed;
+  color: #FAFAFA;
+  z-index: 4;
+  top: 8px;
+  left: 8px;
+  cursor: pointer;
+  padding: 0.5em;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 mat-toolbar {
   position: fixed;
-  right: 0;
   top: 0;
-  width: 100%;
-  transition: width 0.2s;
+  left: 0;
+  right: 0;
   z-index: 2;
   font-weight: 400;
 }
 
 mat-sidenav-container {
   background: #E8E8E8;
-  position: fixed;
   width: 100%;
+  position: fixed;
   top: 64px;
   bottom: 0;
   left: 0;
   right: 0;
   overflow-y: scroll;
+  /*noinspection CssInvalidFunction*/
+  padding: env(safe-area-inset-top) 0 0 0;
+}
+
+.floating-side-nav-container {
+  top: 0;
 }
 
 mat-sidenav {
@@ -31,8 +56,12 @@ mat-sidenav {
   background-color: #FAFAFA;
 }
 
-/*  Mobile */
 @media (max-width: 600px) {
+  #floating-hamburger-icon {
+    top: 4px;
+    left: 4px;
+  }
+
   mat-sidenav-container {
     top: 56px;
   }

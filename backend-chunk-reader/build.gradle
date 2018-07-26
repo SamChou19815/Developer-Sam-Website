@@ -1,6 +1,4 @@
 dependencies {
     // GCP NLP API
     implementation 'com.google.cloud:google-cloud-language:1.35.0'
-    // Accounts
-    implementation project(':backend-accounts')
 }

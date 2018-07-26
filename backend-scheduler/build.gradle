@@ -1,6 +1,4 @@
 dependencies {
-    // Accounts
-    implementation project(':backend-accounts')
     // Immutable
     implementation 'com.github.SamChou19815:okaml-lib:0.4.0'
 }

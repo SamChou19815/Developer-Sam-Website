@@ -43,7 +43,7 @@ allprojects {
         // Test
         testImplementation 'junit:junit:4.12'
         // DB
-        api 'com.github.SamChou19815:TypedStore:0.6.0'
+        api 'com.github.SamChou19815:kinetics:0.1.0'
     }
 
     compileKotlin {
@@ -78,18 +78,10 @@ dependencies {
     // Spark
     implementation 'com.sparkjava:spark-core:2.7.2'
     implementation 'com.sparkjava:spark-kotlin:1.0.0-alpha'
-    // Google Cloud API
-    implementation 'org.fluentd:fluent-logger:0.3.3' // Stackdriver
-    // Logging
-    implementation 'org.slf4j:slf4j-api:1.7.25'
-    implementation 'org.slf4j:jcl-over-slf4j:1.7.25'
-    implementation 'org.slf4j:slf4j-log4j12:1.7.25'
-    implementation 'log4j:log4j:1.2.17'
     // Public Apps Backend
     implementation 'com.developersam:game-ten:1.0.1'
     implementation 'com.github.SamChou19815:sampl:0.0.4'
     // Sub-modules
-    implementation project(':backend-accounts')
     implementation project(':backend-scheduler')
     implementation project(':backend-rss-reader')
     implementation project(':backend-chunk-reader')

@@ -32,6 +32,7 @@ import org.sampl.exceptions.PLException
 import spark.Spark
 import spark.Spark.path
 import spark.kotlin.halt
+import sun.plugin2.util.PojoUtil.toJson
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
 import kotlin.system.measureTimeMillis

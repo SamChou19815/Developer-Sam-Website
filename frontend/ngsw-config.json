@@ -6,10 +6,14 @@
     "updateMode": "prefetch",
     "resources": {
       "files": [
-        "/assets/**",
         "/index.html",
         "/*.css",
-        "/*.js"
+        "/*.js",
+        "/assets/app-icons/*.png",
+        "/assets/docs/*.pdf",
+        "/assets/icons/favicon.ico",
+        "/assets/icons/*.png",
+        "/assets/papers/*.pdf"
       ]
     }
   }]

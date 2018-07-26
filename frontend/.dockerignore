@@ -6,3 +6,4 @@ Dockerfile
 .firebaserc
 .editorconfig
 LICENSE
+*.key

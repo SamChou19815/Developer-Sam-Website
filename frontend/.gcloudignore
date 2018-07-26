@@ -5,3 +5,4 @@ src
 .firebaserc
 .editorconfig
 LICENSE
+*.key

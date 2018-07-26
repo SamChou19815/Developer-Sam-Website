@@ -20,6 +20,7 @@ import com.developersam.scheduler.SchedulerProject
 import com.developersam.web.badRequest
 import com.developersam.web.delete
 import com.developersam.web.get
+import com.developersam.web.initServer
 import com.developersam.web.post
 import com.developersam.web.queryParamsForCursor
 import com.developersam.web.queryParamsForKey
@@ -27,12 +28,10 @@ import com.developersam.web.toJson
 import org.sampl.PLInterpreter
 import org.sampl.exceptions.CompileTimeError
 import org.sampl.exceptions.PLException
-import spark.Spark
 import spark.Spark.path
 import spark.kotlin.halt
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
-import kotlin.system.measureTimeMillis
 
 /*
  * ------------------------------------------------------------------------------------------
@@ -235,10 +234,4 @@ private fun initializeApiHandlers() {
  *
  * @param args these info will be ignored right now.
  */
-fun main(args: Array<String>) {
-    val initTime = measureTimeMillis {
-        Spark.port(8080)
-        initializeApiHandlers()
-    }
-    println("Initialized in ${initTime}ms.")
-}
+fun main(args: Array<String>): Unit = initServer(initFunction = ::initializeApiHandlers)

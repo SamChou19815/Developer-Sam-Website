@@ -4,10 +4,9 @@ package com.developersam.main
 
 import com.developersam.auth.GoogleUser
 import com.developersam.auth.Role
+import com.developersam.auth.SecurityFilters
 import com.developersam.auth.SecurityFilters.Companion.user
-import com.developersam.chunkreader.Article
-import com.developersam.chunkreader.RawArticle
-import com.developersam.chunkreader.Summary
+import com.developersam.chunkreader.ChunkReaderApiHandlers
 import com.developersam.friend.FriendData
 import com.developersam.friend.FriendPair
 import com.developersam.friend.FriendRequest
@@ -18,7 +17,6 @@ import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerData
 import com.developersam.scheduler.SchedulerEvent
 import com.developersam.scheduler.SchedulerProject
-import com.developersam.web.Filters
 import com.developersam.web.badRequest
 import com.developersam.web.delete
 import com.developersam.web.get
@@ -32,10 +30,20 @@ import org.sampl.exceptions.PLException
 import spark.Spark
 import spark.Spark.path
 import spark.kotlin.halt
-import sun.plugin2.util.PojoUtil.toJson
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
 import kotlin.system.measureTimeMillis
+
+/*
+ * ------------------------------------------------------------------------------------------
+ * Part 0: Config
+ * ------------------------------------------------------------------------------------------
+ */
+
+/**
+ * [Filters] can be used to create security filters.
+ */
+private object Filters : SecurityFilters(adminEmails = setOf())
 
 /*
  * ------------------------------------------------------------------------------------------
@@ -160,23 +168,6 @@ private fun initializeRssReaderApiHandlers() {
 }
 
 /**
- * [initializeChunkReaderApiHandlers] initializes a list of Chunk Reader API handlers.
- */
-private fun initializeChunkReaderApiHandlers() {
-    get(path = "/load") { Article[user] }
-    post(path = "/analyze") { toJson<RawArticle>().process(user = user) }
-    get(path = "/adjust_summary") {
-        val key = queryParamsForKey(name = "key")
-        val limit = queryParams("limit")?.toInt() ?: badRequest()
-        Summary[user, key, limit]
-    }
-    delete(path = "/delete") {
-        val key = queryParamsForKey(name = "key")
-        Article.delete(user = user, key = key)
-    }
-}
-
-/**
  * [initializeUserApiHandlers] initializes a list of user API handlers.
  */
 private fun initializeUserApiHandlers() {
@@ -184,7 +175,7 @@ private fun initializeUserApiHandlers() {
     path("/friends", ::initializeFriendSystemApiHandlers)
     path("/scheduler", ::initializeSchedulerApiHandlers)
     path("/rss_reader", ::initializeRssReaderApiHandlers)
-    path("/chunk_reader", ::initializeChunkReaderApiHandlers)
+    path("/chunk_reader", ChunkReaderApiHandlers::initialize)
 }
 
 /**

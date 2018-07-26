@@ -42,7 +42,7 @@ allprojects {
         implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
         // Test
         testImplementation 'junit:junit:4.12'
-        // DB
+        // Kinetics
         api 'com.github.SamChou19815:kinetics:0.1.0'
     }
 
@@ -79,12 +79,12 @@ dependencies {
     implementation 'com.sparkjava:spark-core:2.7.2'
     implementation 'com.sparkjava:spark-kotlin:1.0.0-alpha'
     // Public Apps Backend
-    implementation 'com.developersam:game-ten:1.0.1'
     implementation 'com.github.SamChou19815:sampl:0.0.4'
+    implementation 'com.github.SamChou19815:chunk-reader:0.2.0'
+    implementation 'com.developersam:game-ten:1.0.1'
     // Sub-modules
     implementation project(':backend-scheduler')
     implementation project(':backend-rss-reader')
-    implementation project(':backend-chunk-reader')
 }
 
 /*

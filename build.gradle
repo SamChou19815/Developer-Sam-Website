@@ -87,8 +87,7 @@ dependencies {
     implementation 'log4j:log4j:1.2.17'
     // Public Apps Backend
     implementation 'com.developersam:game-ten:1.0.1'
-    implementation 'org.antlr:antlr4:4.5'
-    implementation 'com.github.SamChou19815:sampl:0.0.3'
+    implementation 'com.github.SamChou19815:sampl:0.0.4'
     // Sub-modules
     implementation project(':backend-accounts')
     implementation project(':backend-scheduler')

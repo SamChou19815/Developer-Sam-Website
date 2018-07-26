@@ -204,9 +204,8 @@ private fun initializePublicApiHandlers() {
                 "CompileTimeError: $errorMessage"
             } catch (e: PLException) {
                 "RuntimeError: ${e.m}"
-            } catch (e: StackOverflowError) {
-                "RuntimeError: Stack Overflow"
-            }catch (e: Throwable) {
+            } catch (e: Throwable) {
+                e.printStackTrace()
                 "UNKNOWN_ERROR"
             }
             atomicStringValue.set(callback)

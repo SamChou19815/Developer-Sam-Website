@@ -21,6 +21,10 @@ const routes: Routes = [
     loadChildren: 'app/rss-reader/rss-reader.module#RssReaderModule'
   },
   {
+    path: 'playground/sampl',
+    loadChildren: 'app/sampl/sampl.module#SamplModule'
+  },
+  {
     path: 'playground/chunk-reader',
     loadChildren: 'app/chunk-reader/chunk-reader.module#ChunkReaderModule'
   },

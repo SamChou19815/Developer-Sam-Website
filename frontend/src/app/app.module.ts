@@ -7,12 +7,12 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
-import { NavModule } from './nav/nav.module';
-import { SharedModule } from './shared/shared.module';
-import { ProjectCardComponent } from './home/project-card/project-card.component';
 import { AboutMeRowComponent } from './home/about-me-row/about-me-row.component';
 import { AboutMeSectionComponent } from './home/about-me-section/about-me-section.component';
+import { HomeComponent } from './home/home.component';
+import { ProjectCardComponent } from './home/project-card/project-card.component';
+import { NavModule } from './nav/nav.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [

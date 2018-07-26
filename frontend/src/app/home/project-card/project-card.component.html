@@ -3,7 +3,7 @@
   <img [src]="data.logo" [alt]="data.name" mat-card-image/>
   <mat-card-content>{{data.intro}}</mat-card-content>
   <mat-card-actions>
-    <a mat-button color="primary" *ngIf="data.routerLink" [routerLink]="[data.routerLink]">Visit</a>
+    <a mat-button color="primary" *ngIf="data.routerLink" [routerLink]="[data.routerLink]">Try</a>
     <a mat-button color="primary"
        *ngIf="data.externalResource"
        [href]="data.externalResource.link"

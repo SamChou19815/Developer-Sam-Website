@@ -1,0 +1,54 @@
+<mat-card>
+  <mat-card-title>
+    <mat-icon>memory</mat-icon>
+    <span>SAMPL Interpreter (Experimental)</span>
+  </mat-card-title>
+  <mat-card-content>
+    <mat-form-field>
+      <textarea matInput type="text" [(ngModel)]="code" style="min-height: 200px;"
+                placeholder="Your SAMPL Code" required></textarea>
+    </mat-form-field>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button color="primary"
+            [disabled]="code.trim().length === 0"
+            (click)="submit()">
+      Submit
+    </button>
+    <!--suppress HtmlUnknownAttribute -->
+    <a mat-button color="primary" href="https://github.com/SamChou19815/sampl" target="_blank">
+      Read Language Docs
+    </a>
+  </mat-card-actions>
+</mat-card>
+<mat-card *ngIf="hasResponse">
+  <mat-card-title>Interpretation Result</mat-card-title>
+  <mat-card-content *ngIf="result" class="good-resp">
+    Result: {{result.result}}
+  </mat-card-content>
+  <mat-card-content *ngIf="compileError" class="bad-resp">
+    Compile Time Error: {{compileError.message}}
+  </mat-card-content>
+  <mat-card-content *ngIf="runtimeError" class="bad-resp">
+    Runtime Error: {{runtimeError.message}}
+  </mat-card-content>
+  <mat-card-content *ngIf="unknownError" class="bad-resp">
+    Unknown Error.
+  </mat-card-content>
+  <mat-card-content *ngIf="timeLimitExceeded" class="bad-resp">
+    Time limit (1s) exceeded! :((
+  </mat-card-content>
+</mat-card>
+<mat-card>
+  <mat-card-title>
+    <fa name="flask"></fa>
+    <span>Experimental Status Notice</span>
+  </mat-card-title>
+  <mat-card-content>
+    SAMPL is still in Alpha stage, which means the syntax and semantics of this programming language
+    will be changed without notice. <br>
+    Although I do not forbid you to use this public API to waste my
+    resource to perform your computation, you should not rely on it because it has a one-second time
+    limit and it may be removed and changed at any time.
+  </mat-card-content>
+</mat-card>

@@ -26,9 +26,14 @@ import com.developersam.web.post
 import com.developersam.web.queryParamsForCursor
 import com.developersam.web.queryParamsForKey
 import com.developersam.web.toJson
+import org.sampl.PLInterpreter
+import org.sampl.exceptions.CompileTimeError
+import org.sampl.exceptions.PLException
 import spark.Spark
 import spark.Spark.path
 import spark.kotlin.halt
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.concurrent.thread
 import kotlin.system.measureTimeMillis
 
 /*
@@ -187,6 +192,33 @@ private fun initializeUserApiHandlers() {
 private fun initializePublicApiHandlers() {
     // RSS Reader Cron Job
     get(path = "/rss_reader/cron") { Feed.refresh() }
+    // SAMPL
+    post(path = "/sampl/interpret") {
+        val code = body() ?: badRequest()
+        val atomicStringValue = AtomicReference<String>()
+        val evalThread = thread(start = true) {
+            val callback = try {
+                "Result: ${PLInterpreter.interpret(code)}"
+            } catch (e: CompileTimeError) {
+                val errorMessage = e.message ?: error(message = "Impossible")
+                "CompileTimeError: $errorMessage"
+            } catch (e: PLException) {
+                "RuntimeError: ${e.m}"
+            } catch (e: StackOverflowError) {
+                "RuntimeError: Stack Overflow"
+            }catch (e: Throwable) {
+                "UNKNOWN_ERROR"
+            }
+            atomicStringValue.set(callback)
+        }
+        evalThread.join(1000)
+        val callback = atomicStringValue.get() ?: kotlin.run {
+            @Suppress(names = ["DEPRECATION"])
+            evalThread.stop()
+            "TIME_LIMIT_EXCEEDED"
+        }
+        callback
+    }
     // TEN
     post(path = "/ten/response") { Board.respond(toJson()) }
 }

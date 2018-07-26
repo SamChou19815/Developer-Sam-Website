@@ -54,6 +54,10 @@ export class NavDataService {
     name: 'Playground', icon: Icon.ofMaterial('apps'),
     children: [
       <NavItem>{
+        name: 'SAMPL', icon: Icon.ofMaterial('memory'),
+        link: '/playground/sampl'
+      },
+      <NavItem>{
         name: 'Chunk Reader', icon: Icon.ofMaterial('speaker_notes'),
         link: '/playground/chunk-reader'
       },

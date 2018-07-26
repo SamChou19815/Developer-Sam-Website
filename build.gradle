@@ -85,8 +85,10 @@ dependencies {
     implementation 'org.slf4j:jcl-over-slf4j:1.7.25'
     implementation 'org.slf4j:slf4j-log4j12:1.7.25'
     implementation 'log4j:log4j:1.2.17'
-    // Apps Backend
+    // Public Apps Backend
     implementation 'com.developersam:game-ten:1.0.1'
+    implementation 'org.antlr:antlr4:4.5'
+    implementation 'com.github.SamChou19815:sampl:0.0.3'
     // Sub-modules
     implementation project(':backend-accounts')
     implementation project(':backend-scheduler')

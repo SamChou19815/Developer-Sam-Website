@@ -38,20 +38,21 @@ app-home-about-me-section {
   background-color: $blue-gray;
 }
 
-@media (min-width: 960px) {
+@media (min-width: 600px) {
   #project-section {
-    display: block;
-    column-count: 3;
-    column-gap: 0;
-    column-fill: initial;
+    display: flex;
+    flex-direction: row;
+    flex-flow: row;
+    flex-wrap: wrap;
+    align-content: space-between;
+    justify-content: center;
   }
 }
 
-@media (min-width: 600px) and (max-width: 960px) {
-  #project-section {
-    display: block;
-    column-count: 2;
-    column-gap: 0;
-    column-fill: initial;
-  }
+#timeline-toolbar {
+  background: $blue-gray;
+}
+
+#timeline-section {
+  background-color: $blue-gray;
 }

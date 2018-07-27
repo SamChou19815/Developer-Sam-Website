@@ -1,6 +1,7 @@
 @import '~@angular/material/theming';
 
 $near-black: mat-color(mat-palette($mat-blue-gray, 900));
+$blue-dark-gray: mat-color(mat-palette($mat-blue-gray, 700));
 $blue-gray: mat-color(mat-palette($mat-blue-gray, 500));
 
 :host {
@@ -18,48 +19,19 @@ mat-toolbar {
   z-index: 2;
   position: sticky;
   color: #f7f7f7;
-  font-weight: 300;
+  font-size: 1.5em;
+  font-weight: 100;
   justify-content: center;
 }
 
-#about-me-toolbar {
+#about-me-toolbar, app-home-about-me-section {
   background-color: $near-black;
 }
 
-app-home-about-me-section {
-  background-color: $near-black;
-}
-
-#project-toolbar {
+#project-toolbar, app-home-projects-section {
   background: $blue-gray;
 }
 
-#project-section {
-  background-color: $blue-gray;
-}
-
-@media (min-width: 700px) and (max-width: 1080px) {
-  #project-section {
-    display: grid;
-    grid-gap: 1em;
-    grid-template-columns: 340px 340px;
-    justify-content: center;
-  }
-}
-
-@media (min-width: 1080px) {
-  #project-section {
-    display: grid;
-    grid-gap: 1em;
-    grid-template-columns: 350px 350px 350px;
-    justify-content: center;
-  }
-}
-
-#timeline-toolbar {
-  background: $blue-gray;
-}
-
-#timeline-section {
-  background-color: $blue-gray;
+#tech-specs-toolbar, app-home-tech-specs-section {
+  background: $near-black;
 }

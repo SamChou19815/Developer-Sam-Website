@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ProjectCardData } from './project-card-data';
+import { ProjectCardData } from '../project-card-data';
 
 @Component({
   selector: 'app-home-project-card',

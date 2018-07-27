@@ -34,6 +34,7 @@ if (environment.production) {
     |                  |      /  /                \\  \\     |  |       \\  /       |  |
     |------------------|     /--/                  \\--\\    |--|        \\/        |--|
     `);
+  console.log(`Contact Developer Sam: ${atob('c2FtQGRldmVsb3BlcnNhbS5jb20=')}. :)`);
 }
 
 platformBrowserDynamic().bootstrapModule(AppModule).catch(err => console.log(err));

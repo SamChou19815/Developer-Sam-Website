@@ -43,7 +43,7 @@ allprojects {
         // Test
         testImplementation 'junit:junit:4.12'
         // Kinetics
-        api 'com.github.SamChou19815:kinetics:0.1.0'
+        api 'com.github.SamChou19815:kinetics:0.3.0'
     }
 
     compileKotlin {

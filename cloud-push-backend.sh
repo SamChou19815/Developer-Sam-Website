@@ -15,6 +15,8 @@ full_container_tag="${container_name}:${container_tag}"
 echo "The container tag will be: ${full_container_tag}"
 cd build/staging; \
 gcloud config set project dev-sam; \
+gcloud config set compute/zone us-central1-a; \
+gcloud container clusters get-credentials web-cluster; \
 gcloud container builds submit -t ${full_container_tag} .
 
 # Rolling Update

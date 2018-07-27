@@ -4,7 +4,7 @@ import { ProjectCardData } from './project-card-data';
 @Component({
   selector: 'app-home-projects-section',
   templateUrl: './projects-section.component.html',
-  styleUrls: ['./projects-section.component.css']
+  styleUrls: ['./projects-section.component.scss']
 })
 export class ProjectsSectionComponent implements OnInit {
 

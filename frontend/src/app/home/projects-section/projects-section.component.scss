@@ -1,3 +1,11 @@
+@import '~@angular/material/theming';
+
+$blue-gray: mat-color(mat-palette($mat-blue-gray, 500));
+
+:host, app-home-project-card {
+  background-color: $blue-gray;
+}
+
 @media (min-width: 700px) and (max-width: 1080px) {
   :host {
     display: grid;

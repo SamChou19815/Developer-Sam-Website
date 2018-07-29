@@ -10,15 +10,8 @@
 **/.idea/*
 *.iml
 
-# Exclude Configs
-/src/main/webapp/WEB-INF/*.json
-
 # Exclude node_modules
 frontend/node_modules
-
-# Exclude Resources
-**/resources/public/*
-**/resources/secret/*
 
 # Exclude System Files
 .DS_Store

@@ -28,17 +28,9 @@
 }
 
 /*  Desktop */
-@media (min-width: 900px) and (max-width: 1080px) {
+@media (min-width: 900px) {
   mat-card {
     margin: 1em;
-    width: 400px;
-  }
-}
-
-/*  Desktop Large */
-@media (min-width: 1080px) {
-  mat-card {
-    margin: 1em;
-    width: 500px;
+    width: 450px;
   }
 }

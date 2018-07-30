@@ -1,0 +1,11 @@
+<!--suppress HtmlUnknownAttribute -->
+<mat-card>
+  <img [src]="data.logo" [alt]="data.name" mat-card-image/>
+  <mat-card-content>{{data.intro}}</mat-card-content>
+  <mat-card-actions>
+    <a mat-button color="primary" [href]="data.link" target="_blank">
+      <mat-icon>open_in_new</mat-icon>
+      GitHub Repo
+    </a>
+  </mat-card-actions>
+</mat-card>

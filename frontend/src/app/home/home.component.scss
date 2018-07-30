@@ -24,14 +24,10 @@ mat-toolbar {
   justify-content: center;
 }
 
-#about-me-toolbar, app-home-about-me-section {
+#about-me-toolbar, app-home-about-me-section, #tech-specs-toolbar, app-home-tech-specs-section {
   background-color: $near-black;
 }
 
-#project-toolbar, app-home-projects-section {
+#project-toolbar, app-home-projects-section, #open-source-toolbar, app-home-open-source-section {
   background-color: $blue-gray;
-}
-
-#tech-specs-toolbar, app-home-tech-specs-section {
-  background-color: $near-black;
 }

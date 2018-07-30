@@ -43,7 +43,7 @@ allprojects {
         // Test
         testImplementation 'junit:junit:4.12'
         // Kinetics
-        api 'com.github.SamChou19815:kinetics:0.3.0'
+        api 'com.github.SamChou19815:kinetics:0.3.1'
     }
 
     compileKotlin {
@@ -80,7 +80,7 @@ dependencies {
     implementation 'com.sparkjava:spark-kotlin:1.0.0-alpha'
     // Public Apps Backend
     implementation 'com.github.SamChou19815:sampl:0.0.4'
-    implementation 'com.github.SamChou19815:chunk-reader:0.2.0'
+    implementation 'com.github.SamChou19815:chunk-reader:0.2.1'
     implementation 'com.developersam:game-ten:1.0.1'
     // Sub-modules
     implementation project(':backend-scheduler')

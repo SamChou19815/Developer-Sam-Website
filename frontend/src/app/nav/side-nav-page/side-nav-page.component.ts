@@ -48,7 +48,7 @@ export class SideNavPageComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.router.events.subscribe((e) => {
+    this.router.events.subscribe(e => {
       if (e instanceof RouterEvent && e instanceof NavigationStart) {
         let currentUrl = e.url;
         const hashTagIndex = currentUrl.indexOf('#');

@@ -34,3 +34,7 @@
     width: 450px;
   }
 }
+
+.project-name {
+  display: none;
+}

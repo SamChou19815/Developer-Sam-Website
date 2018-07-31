@@ -1,7 +1,8 @@
 <!--suppress HtmlUnknownAttribute -->
-<mat-card>
-  <img [src]="data.logo" [alt]="data.name" mat-card-image/>
-  <mat-card-content>{{data.intro}}</mat-card-content>
+<mat-card itemscope itemtype="https://schema.org/Product">
+  <img [src]="data.logo" [alt]="data.name" mat-card-image itemprop="image"/>
+  <mat-card-content itemprop="description">{{data.intro}}</mat-card-content>
+  <span class="project-name" itemprop="name">{{data.name}}</span>
   <mat-card-actions>
     <a mat-button color="primary" *ngIf="data.routerLink" [routerLink]="[data.routerLink]">
       <mat-icon>call_made</mat-icon>

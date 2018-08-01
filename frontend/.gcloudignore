@@ -1,8 +1,0 @@
-node_modules
-e2e
-src
-.DS_Store
-.firebaserc
-.editorconfig
-LICENSE
-*.key

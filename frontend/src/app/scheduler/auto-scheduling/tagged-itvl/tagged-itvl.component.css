@@ -1,9 +1,0 @@
-:host {
-  display: flex;
-  width: 100%;
-  align-items: center;
-}
-
-mat-icon, span {
-  margin-right: 10px;
-}

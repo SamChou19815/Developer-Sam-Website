@@ -6,7 +6,7 @@
 
 plugins {
     // 3rd-parties
-    id 'org.jetbrains.kotlin.jvm' version '1.2.51'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.60'
     id 'com.github.johnrengelman.shadow' version '2.0.4'
     id 'com.google.cloud.tools.jib' version '0.9.2'
 }
@@ -43,7 +43,7 @@ allprojects {
         // Test
         testImplementation 'junit:junit:4.12'
         // Kinetics
-        api 'com.github.SamChou19815:kinetics:0.3.1'
+        api 'com.github.SamChou19815:kinetics:0.4.0'
     }
 
     compileKotlin {
@@ -79,8 +79,8 @@ dependencies {
     implementation 'com.sparkjava:spark-core:2.7.2'
     implementation 'com.sparkjava:spark-kotlin:1.0.0-alpha'
     // Public Apps Backend
-    implementation 'com.github.SamChou19815:sampl:0.0.4'
-    implementation 'com.github.SamChou19815:chunk-reader:0.2.1'
+    implementation 'com.github.SamChou19815:sampl:0.0.5'
+    implementation 'com.github.SamChou19815:chunk-reader:0.2.2'
     implementation 'com.developersam:game-ten:1.0.1'
     // Sub-modules
     implementation project(':backend-scheduler')

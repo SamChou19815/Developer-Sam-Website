@@ -1,5 +1,8 @@
 # Developer Sam Website Backend
 
+![Build Status](https://firebasestorage.googleapis.com/v0/b/dev-sam.appspot.com/o/badges-4-cloud-build%2Fb%2Fgithub-samchou19815-dev-sam-backend-master.svg?alt=media)
+![GitHub](https://img.shields.io/github/license/SamChou19815/dev-sam-frontend.svg)
+
 The code of my own website backend that is open-sourced.
 
 This is the repository for the frontend of [my website](https://developersam.com), written in 

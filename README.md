@@ -18,10 +18,11 @@ It is impossible for this website to run without:
 - [SAMPL (MIT)](https://github.com/SamChou19815/sampl)
 - [ChunkReader (MIT)](https://github.com/SamChou19815/chunk-reader)
 - [TEN (MIT)](https://github.com/SamChou19815/ten)
-- [OKaml-Lib(MIT)](https://github.com/SamChou19815/okaml-lib)
+- [OKaml-Lib (MIT)](https://github.com/SamChou19815/okaml-lib)
 
 # Build Commands
 
-- Deploy backend to my Google Kubernetes Engine: `bash cloud-push-backend.sh`
+- Compile: `./gradlew build`
+- Deploy backend to my Google Kubernetes Engine: `gcloud builds submit --config=cloudbuild.yaml .`
 - Deploy cron job to my Google App Engine: `bash gae-cron/deploy.sh`
 - Update Datastore indices on GCP: `./gradlew updateDatastoreIndices`

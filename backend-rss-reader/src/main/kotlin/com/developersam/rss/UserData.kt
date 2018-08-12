@@ -196,19 +196,19 @@ data class UserData(
         fun unsubscribe(user: GoogleUser, feedKey: Key) {
             val userKey = user.keyNotNull
             // Delete bindings in subscription table.
-            SubscriptionEntity.query {
+            SubscriptionEntity.queryKeys {
                 filter {
                     table.userKey eq userKey
                     table.feedKey eq feedKey
                 }
-            }.map { it.key }.toList().let { SubscriptionEntity.delete(keys = it) }
+            }.toList().let { SubscriptionEntity.delete(keys = it) }
             // Delete items in user item table
-            ItemEntity.query {
+            ItemEntity.queryKeys {
                 filter {
                     table.userKey eq userKey
                     table.feedKey eq feedKey
                 }
-            }.map { it.key }.toList().let { SubscriptionEntity.delete(keys = it) }
+            }.toList().let { SubscriptionEntity.delete(keys = it) }
         }
 
     }

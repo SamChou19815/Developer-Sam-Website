@@ -11,4 +11,4 @@ steps:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=web-cluster'
 substitutions:
-  _APP_VERSION: 1.0.0
+  _APP_VERSION: 1.0.1

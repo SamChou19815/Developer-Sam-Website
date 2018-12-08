@@ -11,8 +11,6 @@ import com.developersam.friend.FriendData
 import com.developersam.friend.FriendPair
 import com.developersam.friend.FriendRequest
 import com.developersam.game.ten.Board
-import com.developersam.rss.Feed
-import com.developersam.rss.UserData
 import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerData
 import com.developersam.scheduler.SchedulerEvent
@@ -22,7 +20,6 @@ import com.developersam.web.delete
 import com.developersam.web.get
 import com.developersam.web.initServer
 import com.developersam.web.post
-import com.developersam.web.queryParamsForCursor
 import com.developersam.web.queryParamsForKey
 import com.developersam.web.toJson
 import org.sampl.PLInterpreter
@@ -127,53 +124,12 @@ private fun initializeSchedulerApiHandlers() {
 }
 
 /**
- * [initializeRssReaderApiHandlers] initializes a list of RSS Reader API handlers.
- */
-private fun initializeRssReaderApiHandlers() {
-    get(path = "/load") { UserData.getRssReaderData(user = user) }
-    get(path = "/load_more_feed") {
-        val cursor = queryParamsForCursor(name = "cursor")
-        UserData.UserFeed[user, cursor]
-    }
-    post(path = "/subscribe") {
-        val url = queryParams("url") ?: badRequest()
-        val user = user
-        if (UserData.Subscriptions.subscribe(user = user, url = url)) {
-            UserData.getRssReaderData(user = user)
-        } else null
-    }
-    post(path = "/unsubscribe") {
-        val key = queryParamsForKey("key")
-        UserData.Subscriptions.unsubscribe(user = user, feedKey = key)
-        UserData.getRssReaderData(user = user)
-    }
-    post(path = "/mark_as") {
-        val key = queryParamsForKey("key")
-        val isRead = queryParams("is_read")?.toBoolean() ?: badRequest()
-        UserData.UserFeed.markAs(user = user, userFeedItemKey = key, isRead = isRead)
-    }
-    post(path = "/mark_all_as") {
-        val isRead = queryParams("is_read")?.toBoolean() ?: badRequest()
-        UserData.UserFeed.markAllAs(user = user, isRead = isRead)
-    }
-    post(path = "/star") {
-        val key = queryParamsForKey("key")
-        UserData.UserFeed.star(user = user, userFeedItemKey = key)
-    }
-    post(path = "/unstar") {
-        val key = queryParamsForKey("key")
-        UserData.UserFeed.unstar(user = user, userFeedItemKey = key)
-    }
-}
-
-/**
  * [initializeUserApiHandlers] initializes a list of user API handlers.
  */
 private fun initializeUserApiHandlers() {
     Filters.before(path = "/*", role = Role.USER)
     path("/friends", ::initializeFriendSystemApiHandlers)
     path("/scheduler", ::initializeSchedulerApiHandlers)
-    path("/rss_reader", ::initializeRssReaderApiHandlers)
     path("/chunk_reader", ChunkReaderApiHandlers::initialize)
 }
 
@@ -181,8 +137,6 @@ private fun initializeUserApiHandlers() {
  * [initializePublicApiHandlers] initializes a list of public API handlers.
  */
 private fun initializePublicApiHandlers() {
-    // RSS Reader Cron Job
-    get(path = "/rss_reader/cron") { Feed.refresh() }
     // SAMPL
     post(path = "/sampl/interpret") {
         val code = body() ?: badRequest()

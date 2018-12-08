@@ -1,2 +1,0 @@
-webapp2
-google-api-python-client

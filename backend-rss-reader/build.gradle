@@ -1,4 +1,0 @@
-dependencies {
-    // RSS
-    implementation 'com.rometools:rome:1.11.0'
-}

@@ -1,4 +1,0 @@
-cron:
-- description: "RSS Refresh Job"
-  url: /hourly
-  schedule: every 1 hours

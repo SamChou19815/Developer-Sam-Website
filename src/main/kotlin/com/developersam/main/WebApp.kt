@@ -6,11 +6,9 @@ import com.developersam.auth.GoogleUser
 import com.developersam.auth.Role
 import com.developersam.auth.SecurityFilters
 import com.developersam.auth.SecurityFilters.Companion.user
-import com.developersam.chunkreader.ChunkReaderApiHandlers
 import com.developersam.friend.FriendData
 import com.developersam.friend.FriendPair
 import com.developersam.friend.FriendRequest
-import com.developersam.game.ten.Board
 import com.developersam.scheduler.Scheduler
 import com.developersam.scheduler.SchedulerData
 import com.developersam.scheduler.SchedulerEvent
@@ -130,7 +128,6 @@ private fun initializeUserApiHandlers() {
     Filters.before(path = "/*", role = Role.USER)
     path("/friends", ::initializeFriendSystemApiHandlers)
     path("/scheduler", ::initializeSchedulerApiHandlers)
-    path("/chunk_reader", ChunkReaderApiHandlers::initialize)
 }
 
 /**
@@ -163,8 +160,6 @@ private fun initializePublicApiHandlers() {
         }
         callback
     }
-    // TEN
-    post(path = "/ten/response") { Board.respond(toJson()) }
 }
 
 /**
@@ -185,7 +180,5 @@ private fun initializeApiHandlers() {
 
 /**
  * [main] is the entry point.
- *
- * @param args these info will be ignored right now.
  */
-fun main(args: Array<String>): Unit = initServer(initFunction = ::initializeApiHandlers)
+fun main(): Unit = initServer(initFunction = ::initializeApiHandlers)

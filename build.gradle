@@ -6,12 +6,12 @@
 
 plugins {
     // 3rd-parties
-    id 'org.jetbrains.kotlin.jvm' version '1.3.10'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
     id 'com.github.johnrengelman.shadow' version '2.0.4'
 }
 
 group = 'com.developersam'
-version = '1.0.2'
+version = '1.0.3'
 
 /*
  * --------------------------------------------------------------------------------
@@ -79,8 +79,6 @@ dependencies {
     implementation 'com.sparkjava:spark-kotlin:1.0.0-alpha'
     // Public Apps Backend
     implementation 'com.github.SamChou19815:sampl:0.0.6'
-    implementation 'com.github.SamChou19815:chunk-reader:0.2.2'
-    implementation 'com.developersam:game-ten:1.0.1'
     // Sub-modules
     implementation project(':backend-scheduler')
 }

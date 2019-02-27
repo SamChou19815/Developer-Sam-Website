@@ -10,7 +10,7 @@ RUN gradle build
 # Stage 2: Add Jar
 FROM openjdk:8u171-jre-alpine3.7
 
-COPY --from=builder /home/gradle/src/build/libs/website-5.0-all.jar /app/
+COPY --from=builder /home/gradle/src/build/libs/website-5.0.jar /app/
 WORKDIR /app
 EXPOSE 8080
 

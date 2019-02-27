@@ -77,8 +77,6 @@ dependencies {
     // Spark
     implementation 'com.sparkjava:spark-core:2.7.2'
     implementation 'com.sparkjava:spark-kotlin:1.0.0-alpha'
-    // Public Apps Backend
-    implementation 'com.github.SamChou19815:sampl:0.0.6'
     // Sub-modules
     implementation project(':backend-scheduler')
 }

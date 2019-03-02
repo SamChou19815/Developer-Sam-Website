@@ -1,15 +1,18 @@
 # Developer Sam Website Backend
 
+![Status](https://img.shields.io/badge/status-deprecated-red.svg)
 ![Build Status](https://firebasestorage.googleapis.com/v0/b/dev-sam.appspot.com/o/badges-4-cloud-build%2Fb%2Fgithub-samchou19815-dev-sam-backend-master.svg?alt=media)
 ![GitHub](https://img.shields.io/github/license/SamChou19815/dev-sam-frontend.svg)
 
+This repository is no longer actively maintained.
+
 The code of my own website backend that is open-sourced.
+
+https://github.com/SamChou19815/website
 
 This is the repository for the frontend of [my website](https://developersam.com), written in 
 Kotlin and hosted on Google Kubernetes Engine. You can freely use any part of my code while sticking
-to the MIT license. A recommended approach is to take a look at the 
-[KineticS](https://github.com/SamChou19815/kinetics) repo, which is a framework developed by 
-myself to quickly bootstrap your backend, very suitable for hackathon use.
+to the MIT license.
 
 # Open Source Acknowledgement
 
